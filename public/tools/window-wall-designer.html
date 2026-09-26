@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Window Wall Designer — Mullions, Bucks & Unit Sizes | Permit Toolkit</title>
+<meta name="description" content="Lay out a window wall in one opening. Opening stays fixed — units, bucks, and mullions reflow. Split, drag to size, pick unit type, download a shop drawing. Planning aid for South Florida contractors.">
+<meta property="og:title" content="Window Wall Designer — Permit Toolkit">
+<meta property="og:description" content="Puzzle-piece window wall layout. Opening never changes. Units, bucks, and mullions add up to the pocket.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://permittoolkit.com/window-wall-designer.html">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  body.ww-page{background:#fff;height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
+  .ww-page .site-header{flex-shrink:0;}
+  .wrap.wrap-wide{
+    max-width:1280px;width:100%;
+    flex:1;min-height:0;height:auto;max-height:none;
+    padding:8px 16px 8px;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .ww-page h1{font-size:clamp(20px,2.6vw,28px);margin-bottom:2px;}
+  .ww-page .page-sub{margin-bottom:8px;font-size:13px;}
+  .ww-page .back-link{margin-bottom:8px;}
+  .ww-page .aio-bar{margin-bottom:8px;padding:8px 14px;}
+  .ww-page .warn{margin-bottom:8px;padding:8px 12px;font-size:12px;}
+  .ww-app{
+    display:flex;flex-direction:column;
+    flex:1;min-height:0;height:auto;
+    background:#fff;border:1px solid var(--border);border-radius:12px;
+    overflow:hidden;box-shadow:var(--shadow-sm);
+  }
+  .ww-page .legend{display:none;}
+  .ww-page .site-footer{display:none;}
+  .ww-page .aio-promo{
+    flex-shrink:0;margin:0;max-width:none;width:100%;
+    padding:8px 20px;border-radius:0;
+  }
+  .ww-page .aio-promo-inner{grid-template-columns:1fr auto;gap:12px;}
+  .ww-page .aio-promo h2{font-size:14px;margin:0;}
+  .ww-page .aio-promo p,
+  .ww-page .aio-promo .aio-eyebrow,
+  .ww-page .aio-promo .aio-features,
+  .ww-page .aio-email-card{display:none !important;}
+  .ww-page .aio-cta{padding:8px 14px;font-size:13px;}
+  html.paio-embed, html.paio-embed body.ww-page{
+    height:100% !important; max-height:100% !important; overflow:hidden;
+  }
+  html.paio-embed .wrap.wrap-wide{
+    max-width:none; padding:0; height:100%;
+  }
+  html.paio-embed .back-link,
+  html.paio-embed h1,
+  html.paio-embed .page-sub,
+  html.paio-embed .warn,
+  html.paio-embed .legend,
+  html.paio-embed .aio-bar,
+  html.paio-embed .aio-promo,
+  html.paio-embed .site-header,
+  html.paio-embed .site-footer{display:none !important;}
+  html.paio-embed .ww-app{border:0;border-radius:0;box-shadow:none;height:100%;}
+  .ww-bar{
+    display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;
+    padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface-2);
+  }
+  .ww-bar .field{flex:0 0 auto;min-width:110px;max-width:150px;}
+  .ww-bar label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  .ww-bar-types{
+    display:flex;flex-wrap:wrap;gap:4px;align-self:center;
+    flex:1;min-width:0;
+  }
+  .ww-bar-types button{
+    min-height:34px;padding:6px 9px;border-radius:6px;
+    font-size:12px;font-weight:600;white-space:nowrap;
+    border:1px solid var(--border-strong);background:#fff;color:var(--ink);
+  }
+  .ww-bar-types button.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .ww-bar-types{gap:6px;}
+  .ww-bar-types button.ww-type{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    min-height:64px;min-width:78px;padding:6px 8px;font-size:11px;white-space:normal;text-align:center;
+    cursor:grab;line-height:1.15;
+  }
+  .ww-bar-types button.ww-type:active{cursor:grabbing;}
+  .ww-ico{width:44px;height:34px;display:block;flex-shrink:0;}
+  .ww-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .ww-chips .ww-chip{
+    display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;
+    min-height:0;padding:5px 4px;border:1px solid var(--border-strong);border-radius:6px;
+    background:#fff;font-size:11px;font-weight:600;cursor:grab;justify-content:flex-start;
+  }
+  .ww-chips .ww-chip.on{border-color:var(--primary);background:var(--primary-soft);}
+  .ww-canvas-wrap.drop-hint{outline:2px dashed var(--primary);outline-offset:-4px;}
+  .ww-toggle{
+    display:flex;gap:3px;background:#fff;border:1px solid var(--border-strong);
+    border-radius:8px;padding:3px;margin-left:0;align-self:center;
+  }
+  .ww-toggle button{
+    padding:7px 12px;min-height:34px;border-radius:6px;
+    font-size:12px;font-weight:600;color:var(--muted);
+  }
+  .ww-toggle button.on{background:var(--primary);color:#fff;}
+  .ww-body{display:flex;flex:1;min-height:0;}
+  .ww-tools{
+    width:188px;flex-shrink:0;padding:10px;background:var(--surface-2);
+    border-right:1px solid var(--border);overflow:auto;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .ww-canvas-wrap{flex:1;min-width:0;min-height:0;position:relative;background:#f1f5f9;touch-action:none;}
+  .ww-canvas-wrap svg{display:block;width:100%;height:100%;}
+  .ww-side{
+    width:240px;flex-shrink:0;padding:12px;border-left:1px solid var(--border);
+    overflow:auto;background:#fff;
+  }
+  .ww-btn{
+    display:flex;align-items:center;gap:8px;width:100%;
+    min-height:40px;padding:8px 10px;border-radius:8px;text-align:left;
+    font-size:13px;font-weight:600;color:var(--ink);
+    background:#fff;border:1px solid var(--border-strong);
+  }
+  .ww-btn:hover{background:var(--surface-2);}
+  .ww-btn:disabled{opacity:.4;pointer-events:none;}
+  .ww-btn.danger{color:var(--danger);border-color:#fecaca;}
+  .ww-stock{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px;}
+  .ww-stock .l{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:6px;}
+  .ww-stock button{
+    display:flex;justify-content:space-between;width:100%;
+    min-height:34px;padding:6px 10px;border-radius:6px;font-size:13px;
+  }
+  .ww-layers button span:last-child{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+  .ww-layers button.on span:last-child{color:#fff;}
+  .ww-hint{font-size:12px;color:var(--muted);line-height:1.45;padding:0 2px;}
+  .ww-sec{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:12px 0 8px;}
+  .ww-row{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0;}
+  .ww-row dt{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:11px;}
+  .ww-row dd{font-variant-numeric:tabular-nums;}
+  .ww-types{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .ww-types button{
+    min-height:40px;padding:8px 10px;border-radius:8px;text-align:left;
+    font-size:13px;font-weight:600;border:1px solid var(--border-strong);background:#fff;
+  }
+  .ww-types button.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .ww-unit-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .ww-unit-row{
+    display:grid;grid-template-columns:36px 1fr auto 1fr;gap:6px;align-items:center;
+    padding:4px;border-radius:8px;
+  }
+  .ww-unit-row.on{background:var(--primary-soft);}
+  .ww-unit-id{
+    font-size:12px;font-weight:700;color:var(--primary);text-align:left;padding:4px 0;
+  }
+  .ww-unit-row input{
+    width:100%;min-height:34px;padding:4px 8px;border:1px solid var(--border-strong);
+    border-radius:6px;font-size:13px;font-variant-numeric:tabular-nums;
+  }
+  .ww-unit-row span{color:var(--faint);font-size:12px;}
+  .ww-sel-head{margin-bottom:8px;}
+  .ww-sel-sizes{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .ww-sel-sizes label{font-size:11px;font-weight:600;color:var(--faint);display:flex;flex-direction:column;gap:4px;}
+  .ww-sel-sizes input{
+    min-height:40px;padding:8px 10px;border:1px solid var(--border-strong);
+    border-radius:8px;font-size:15px;font-weight:600;
+  }
+  .ww-sel{display:none;}
+  .ww-pdf{
+    position:fixed;inset:0;z-index:100000;background:rgba(11,11,12,.7);
+    display:none;flex-direction:column;
+  }
+  .ww-pdf.open{display:flex;}
+  .ww-pdf-bar{
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+    padding:10px 14px;background:#fff;border-bottom:1px solid var(--border);
+  }
+  .ww-pdf iframe{flex:1;width:100%;background:#fff;border:0;}
+  .ww-live{
+    position:absolute;left:50%;top:10px;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:6px 12px;border-radius:8px;
+    font-size:13px;font-weight:600;pointer-events:none;display:none;z-index:2;
+  }
+  @media (max-width:900px){
+    .ww-app{border-radius:10px;}
+    .ww-body{flex-direction:column;}
+    .ww-tools,.ww-side{display:none;}
+    .ww-dock{
+      display:grid;grid-template-columns:repeat(5,1fr);
+      border-top:1px solid var(--border);background:#fff;
+      padding-bottom:max(4px, env(safe-area-inset-bottom));
+    }
+    .ww-dock button{
+      min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:2px;font-size:10px;font-weight:600;color:var(--ink);
+    }
+    .ww-dock button:disabled{opacity:.35;}
+    .ww-sel{display:block;padding:10px 12px;border-top:1px solid var(--border);background:var(--surface-2);}
+    .ww-sel.empty{display:none;}
+    .ww-page .legend{display:none;}
+  }
+</style>
+</head>
+<body data-page-type="interior" class="ww-page">
+<div class="wrap wrap-wide">
+  <a class="back-link" href="/tools">← All Tools</a>
+  <h1>Window Wall Designer</h1>
+  <div class="page-sub">Click the hatched pocket to place a unit. Split and drag the mullion to size. The opening never changes.</div>
+
+  <div class="warn">
+    <b>Planning aid only.</b> Unit sizes = opening − bucks − mullions. Verify with the manufacturer and the AHJ before ordering or submitting. Not for construction.
+  </div>
+
+  <div class="ww-app" id="wwApp">
+    <div class="ww-bar">
+      <div class="field">
+        <label for="openW">Opening W</label>
+        <input id="openW" type="text" value="120"" autocomplete="off">
+      </div>
+      <span class="ww-times">×</span>
+      <div class="field">
+        <label for="openH">Opening H</label>
+        <input id="openH" type="text" value="120"" autocomplete="off">
+      </div>
+      <div class="ww-bar-types" id="wwTypes" role="group" aria-label="Unit type"></div>
+      <div class="ww-toggle" role="group" aria-label="Units">
+        <button type="button" id="modeFt">Feet</button>
+        <button type="button" id="modeIn" class="on">Inches</button>
+      </div>
+    </div>
+    <div class="ww-body">
+      <aside class="ww-tools" id="wwTools"></aside>
+      <div class="ww-canvas-wrap" id="wwCanvasWrap">
+        <svg id="wwSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="ww-live" id="wwLive"></div>
+      </div>
+      <aside class="ww-side" id="wwSide"></aside>
+    </div>
+    <div class="ww-sel empty" id="wwSel"></div>
+    <nav class="ww-dock" id="wwDock" aria-label="Tools"></nav>
+  </div>
+
+  <div class="legend" style="margin-top:28px;">
+    <h2>How to use it</h2>
+    <p><b>1. Type the opening.</b> Inches (120) or feet-inches (10'-0"). The drawing and PDF always print in inches. The opening is the hole in the wall — it does not change when you add bucks or mullions.</p>
+    <p><b>2. Place a unit</b> by clicking the hatched pocket (or Add unit). Split vertical for two side-by-side, split horizontal for stacked. <b>Split into 3 across</b> or <b>3 stacked</b> for three equal units. Type exact W and H on each unit — those sizes stick; the opening updates to fit. Drag a mullion only if you want to change the mix.</p>
+    <p><b>3. Pick the type</b> on the selected unit: Fixed, Single Hung, Horizontal Roller, Casement, Swing Door, Sliding Glass Door.</p>
+    <p><b>4. Print / save</b> a labeled shop drawing. Mullion stock is actual thickness (2x4 = 1.5"). Bucks wrap all four sides and shrink the pocket.</p>
+    <p><b>5. Layers.</b> Use the Layers panel (Opening, Bucks, Units, Unit IDs, Dimensions, Mullions, Mullion labels) to show or hide each CAD layer on the drawing and the PDF. Off layers do not print.</p>
+  </div>
+</div>
+
+<div class="ww-pdf" id="wwPdf" aria-modal="true" role="dialog">
+  <div class="ww-pdf-bar">
+    <strong style="flex:1;">Shop drawing</strong>
+    <button type="button" class="btn-primary" id="wwPrint">Print</button>
+    <a class="btn-secondary" id="wwSave" download="window-wall.pdf">Save PDF</a>
+    <a class="btn-secondary" id="wwOpen" target="_parent" rel="noopener">Open</a>
+    <button type="button" class="btn-secondary" id="wwPdfClose">Close</button>
+  </div>
+  <iframe id="wwPdfFrame" title="Shop drawing PDF"></iframe>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="./assets/window-wall.js?v=full-draw-1"></script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

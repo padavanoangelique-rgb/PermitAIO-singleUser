@@ -1,0 +1,210 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>PermitAIO Permit Builder Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap">
+<style>
+:root{--bg:#f4f6fa;--panel:#fff;--line:#e5e7eb;--field:#d1d5db;--ink:#111827;--mut:#5b6472;--chip:#f1f3f7;--blue:#2563eb;--purple:#7c3aed;--green:#059669;--on:#fff;--canvas:#eef1f5;--grid:rgba(17,24,39,.07);--grid5:rgba(17,24,39,.14);--wall:#111827;--warn:#b45309;--warnbg:#fdeccb;--shadow:0 1px 2px rgba(15,23,42,.06),0 10px 30px rgba(15,23,42,.10)}
+:root[data-theme=dark]{--bg:#0b1220;--panel:#121a2b;--line:#2a3a52;--field:#3d4f6b;--ink:#f4f7fb;--mut:#9aa8bd;--chip:#1a2740;--blue:#3b82f6;--purple:#a78bfa;--green:#34d399;--on:#fff;--canvas:#0e1626;--grid:rgba(244,247,251,.08);--grid5:rgba(244,247,251,.16);--wall:#f4f7fb;--warn:#fbbf24;--warnbg:#3d2d0c;--shadow:0 10px 30px rgba(0,0,0,.5);color-scheme:dark}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow:auto}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#app{max-width:1280px;margin:0 auto;padding:16px}
+.ribbon{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--blue);color:var(--on);border-radius:16px;padding:10px 16px;font-weight:600;font-size:15px}
+.ribbon .sp{flex:1}
+.ribbon button{border:1px solid color-mix(in srgb,var(--on) 40%,transparent);background:color-mix(in srgb,var(--on) 16%,transparent);color:inherit;border-radius:999px;padding:5px 14px;font-weight:600;font-size:14px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.step{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px 7px 8px;font-size:14.5px;font-weight:600;color:var(--mut)}
+.step b{width:24px;height:24px;border-radius:999px;background:var(--chip);display:grid;place-items:center;font-size:13px}
+.step.done{color:var(--ink)}.step.done b{background:var(--green);color:var(--on)}
+.step.now{border-color:var(--blue);color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 22%,transparent)}.step.now b{background:var(--blue);color:var(--on)}
+.coach{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--purple);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-size:17px;line-height:1.55}
+.coach b{color:var(--purple)}
+.wrap{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tab{height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--chip);font-weight:600;font-size:14.5px;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.tab.on{background:var(--blue);color:var(--on)}.tab.pu.on{background:var(--purple);color:var(--on)}.tab.gr.on{background:var(--green);color:var(--on)}
+.head select{height:36px;border:1px solid var(--field);background:var(--panel);border-radius:999px;padding:0 12px;font-size:14.5px}
+.sp1{flex:1}
+.pdf{height:36px;padding:0 18px;border:0;border-radius:999px;background:var(--green);color:var(--on);font-weight:700;font-size:14.5px}
+.body{display:grid;grid-template-columns:64px minmax(0,1fr) 340px}
+.rail{display:flex;flex-direction:column;gap:6px;padding:8px;border-right:1px solid var(--line)}
+.rb{width:48px;min-height:52px;border:1px solid var(--field);border-radius:16px;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:500;padding:3px 0}
+.rb i{font-style:normal;font-size:18px;line-height:1.1}.rb.on{background:var(--blue);border-color:var(--blue);color:var(--on)}
+.dir{display:flex;flex-direction:column;gap:4px}.dir button{border:1px solid var(--field);background:var(--panel);border-radius:999px;font-size:11px;font-weight:600;padding:3px 0}.dir button.on{background:var(--purple);border-color:var(--purple);color:var(--on)}
+.stage{position:relative;min-width:0;background:var(--canvas)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px}
+.chip{flex:none;height:30px;padding:0 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13.5px;font-weight:600;cursor:grab;display:inline-flex;align-items:center}
+.chip.arm{background:var(--purple);color:var(--on);border-color:var(--purple)}
+svg#plan{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.hint{position:absolute;left:12px;bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;max-width:calc(100% - 24px)}
+.card{border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;max-height:640px}
+.card h3{margin:0;padding:12px 14px 4px;font:700 12.5px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.scr{overflow:auto;flex:1;min-height:0;padding:0 8px}
+table{width:100%;border-collapse:collapse}
+.card th{font-size:12px;color:var(--mut);font-weight:600;text-align:left;padding:6px 4px;white-space:nowrap}
+.card td{padding:5px 4px;border-top:1px solid var(--line);font-size:14px;vertical-align:middle}
+tr.sel td{background:color-mix(in srgb,var(--blue) 12%,transparent)}
+.num{font-weight:700;color:var(--blue);cursor:pointer;text-align:center}
+.in{width:52px;height:30px;border:1px solid var(--field);border-radius:999px;padding:0 8px;background:var(--panel);font-size:14px}
+.ty{max-width:112px;height:30px;border:0;border-radius:999px;background:var(--chip);padding:0 8px;font-size:13px;font-weight:600}
+.zc{display:flex;gap:3px}.z{width:28px;height:28px;border:0;border-radius:999px;background:var(--chip);font-weight:700;font-size:13px}.z.on{background:var(--blue);color:var(--on)}
+.in.pulse{animation:pl 1.4s ease-in-out infinite;border-color:var(--purple)}@keyframes pl{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--purple) 30%,transparent)}}@media (prefers-reduced-motion:reduce){.in.pulse{animation:none}}
+.eg{width:22px;height:22px;accent-color:var(--blue)}
+.foot{padding:10px 12px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+.btn{height:38px;border:0;border-radius:999px;background:var(--blue);color:var(--on);font-weight:700;font-size:14.5px;padding:0 16px}
+.btn.gh{background:var(--chip);color:var(--ink)}.btn.pu{background:var(--purple);color:var(--on)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.view{padding:18px 20px}
+.view h2{margin:0 0 4px;font:700 20px Outfit,Inter,sans-serif}
+.view p.note{margin:6px 0 14px;font-size:16px;color:var(--mut);max-width:780px}
+.sched{width:auto;min-width:100%;font-size:14.5px}
+.sched th,.sched td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+.sched thead th{background:var(--blue);color:var(--on);font-weight:700}
+.sched td.idc{background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue);font-weight:700}
+.sched td.l{text-align:left}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700}
+.tag.ok{background:color-mix(in srgb,var(--green) 22%,transparent);color:var(--green)}.tag.bad{background:var(--warnbg);color:var(--warn)}
+  .noaPick{background:none;border:0;padding:0;font:inherit;color:var(--blue);text-decoration:underline;cursor:pointer}.noaLib{display:flex;gap:8px;flex-wrap:wrap;padding:8px 4px}.noaCirc{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:var(--blue);color:var(--on);font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent}.noaCirc:hover{border-color:var(--purple)}#tourRing{position:fixed;z-index:60;pointer-events:none;border-radius:12px;box-shadow:0 0 0 9999px rgba(15,23,42,.55),0 0 0 3px var(--purple);transition:all .2s ease;display:none}#tourBox{position:fixed;z-index:65;width:min(320px,calc(100vw - 24px));background:var(--panel);border:2px solid var(--purple);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:none;color:var(--ink)}#tourBox h3{margin:0 0 4px;font-size:15px}#tourBox p{margin:0 0 10px;font-size:14px;line-height:1.45}#tourBox .row2{display:flex;gap:8px;justify-content:flex-end}#tourBox button{height:30px;border:0;border-radius:999px;padding:0 12px;font-weight:700;font-size:13px;cursor:pointer}#tourBox .skip{background:var(--chip);color:var(--ink)}#tourBox .next{background:var(--purple);color:#fff}
+.scroll{overflow-x:auto}
+.dp{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:820px}
+.dp label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin-bottom:4px}
+.dp .val{height:42px;border:1px solid var(--field);border-radius:999px;padding:0 16px;display:flex;align-items:center;font-size:16px;background:var(--panel)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;font-weight:600;z-index:50;box-shadow:var(--shadow);max-width:92vw;font-size:15px}
+.empty{padding:18px 12px;color:var(--mut);font-size:15px}
+@media (max-width:640px){#app{padding:10px}.ribbon{font-size:13.5px;padding:8px 12px}.ribbon button{font-size:13px;padding:4px 10px}.steps{flex-wrap:nowrap;overflow-x:auto;margin:10px 0;padding-bottom:4px}.step{flex:none;font-size:13px}.coach{font-size:15px;padding:10px 12px}.head{padding:8px}.tab{height:34px;padding:0 12px;font-size:13.5px}.view{padding:14px 12px}.hint{position:static;margin:8px 10px 10px;border-radius:12px;font-size:13.5px;max-width:none}}
+@media (max-width:900px){.body{grid-template-columns:1fr}.rail{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}.dir{flex-direction:row}.card{border-left:0;border-top:1px solid var(--line);max-height:none}}
+</style></head><body>
+<div id="app">
+  <div class="ribbon"><span>Permit Builder Demo &middot; the sample package downloads to your device</span><span class="sp"></span><div id="tourRing"></div><div id="tourBox"></div><button id="tourBtn">Guided tour</button><button id="sample">Load sample house</button><button id="reset">Start empty</button><button id="theme" aria-label="Toggle dark mode">Light / Dark</button></div>
+  <div class="steps" id="steps"></div>
+  <div class="coach" id="coach"></div>
+  <div class="wrap" id="wrap"></div>
+</div>
+<script>
+(function(){
+var PX=16; /* pixels per foot */
+var VW=960,VH=560,SNAP=8;
+var CH={'Broward':{'4':['+42.60','-46.20'],'5':['+42.60','-57.10']},'Palm Beach':{'4':['+41.50','-45.20'],'5':['+41.50','-55.80']},'Miami-Dade':{'4':['+45.30','-49.10'],'5':['+45.30','-60.40']},'Boca Raton':{'4':['+41.50','-45.20'],'5':['+41.50','-55.80']},'Wellington':{'4':['+43.68','-47.32'],'5':['+43.68','-58.52']}};
+var WTYPES=['Single hung','Fixed','Horizontal roller','Casement','Sliding glass door','Entry door','French door'];
+var ROOMS=['Living room','Kitchen','Master bed','Bed 2','Bath','Garage','Lanai','Laundry','Dining','Office'];
+  var NOALIB=[{c:'PG',n:'FL16330.3 - PGT Impact Window'},{c:'CG',n:'FL10222.5 - CGI Sliding Door'},{c:'SM',n:'FL5680.9 - Simonton Series 9800'},{c:'WD',n:'FL12345.1 - WinDoor 8300'},{c:'AL',n:'FL9988.4 - Alutech Series 500'}];
+var TOOLS=[['select','↖','Select'],['wall','▬','Wall'],['window','▭','Window'],['door','⌷','Door'],['mull','┃','Mullion'],['label','Aa','Room'],['erase','⌫','Delete']];
+var S={tab:'plan',tool:'wall',walls:[],open:[],labels:[],mulls:[],sel:null,draw:null,mouse:null,county:'Broward',dir:'v',arm:null,used:{},nid:1,hist:[],dragging:null,zc:{},noaOpenFor:null};
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2800)}
+function snap(v){return Math.round(v/SNAP)*SNAP}
+function push(){S.hist.push(JSON.stringify({w:S.walls,o:S.open,l:S.labels,m:S.mulls,n:S.nid}));if(S.hist.length>60)S.hist.shift()}
+function undo(){var h=S.hist.pop();if(!h){toast('Nothing to undo');return}var d=JSON.parse(h);S.walls=d.w;S.open=d.o;S.labels=d.l;S.mulls=d.m;S.nid=d.n;S.sel=null;S.draw=null;render()}
+function ft(px){var f=px/PX;var w=Math.floor(f),i=Math.round((f-w)*12);if(i===12){w++;i=0}return w+"'-"+i+'"'}
+/* ---------- geometry ---------- */
+function seg(w){var dx=w.x2-w.x1,dy=w.y2-w.y1,L=Math.hypot(dx,dy)||1;return{L:L,ux:dx/L,uy:dy/L}}
+function nearWall(p,max){var best=null;S.walls.forEach(function(w){var g=seg(w),t=((p.x-w.x1)*g.ux+(p.y-w.y1)*g.uy)/g.L;t=Math.max(0,Math.min(1,t));var cx=w.x1+g.ux*g.L*t,cy=w.y1+g.uy*g.L*t,d=Math.hypot(p.x-cx,p.y-cy);if(d<=max&&(!best||d<best.d))best={w:w,t:t,d:d,x:cx,y:cy}});return best}
+function openPos(o){var w=S.walls.filter(function(x){return x.id===o.wall})[0];if(!w)return null;var g=seg(w);return{w:w,g:g,x:w.x1+g.ux*g.L*o.t,y:w.y1+g.uy*g.L*o.t}}
+function svgPt(e){var s=$('#plan'),r=s.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*VW,y:(e.clientY-r.top)/r.height*VH}}
+function orth(a,b){var dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dy)<Math.abs(dx)*0.18)return{x:b.x,y:a.y};if(Math.abs(dx)<Math.abs(dy)*0.18)return{x:a.x,y:b.y};return b}
+function roomOf(o){var p=openPos(o);if(!p)return '';var best=null;S.labels.forEach(function(l){var d=Math.hypot(l.x-p.x,l.y-p.y);if(d<170&&(!best||d<best.d))best={d:d,t:l.text}});return best?best.t:''}
+/* ---------- drawing ---------- */
+function planSvg(){
+ var s='<svg id="plan" viewBox="0 0 '+VW+' '+VH+'" role="application" aria-label="Floor plan drawing area">';
+ s+='<defs><pattern id="g1" width="'+PX+'" height="'+PX+'" patternUnits="userSpaceOnUse"><path d="M '+PX+' 0 L 0 0 0 '+PX+'" fill="none" stroke="var(--grid)"/></pattern><pattern id="g5" width="'+PX*5+'" height="'+PX*5+'" patternUnits="userSpaceOnUse"><path d="M '+PX*5+' 0 L 0 0 0 '+PX*5+'" fill="none" stroke="var(--grid5)"/></pattern></defs>';
+ s+='<rect width="'+VW+'" height="'+VH+'" fill="url(#g1)"/><rect width="'+VW+'" height="'+VH+'" fill="url(#g5)"/>';
+ S.walls.forEach(function(w){var on=S.sel&&S.sel.k==='wall'&&S.sel.id===w.id;s+='<line x1="'+w.x1+'" y1="'+w.y1+'" x2="'+w.x2+'" y2="'+w.y2+'" stroke="'+(on?'var(--purple)':'var(--wall)')+'" stroke-width="'+(on?7:5)+'" stroke-linecap="round"/>';
+  var g=seg(w);var busy=S.open.some(function(o){if(o.wall!==w.id)return false;return Math.abs(o.t-0.5)*g.L<46});if(g.L>60&&!busy){var mx=(w.x1+w.x2)/2-g.uy*16,my=(w.y1+w.y2)/2+g.ux*16;s+='<text x="'+mx+'" y="'+my+'" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="600" fill="var(--mut)">'+ft(g.L)+'</text>'}});
+ S.labels.forEach(function(l){var on=S.sel&&S.sel.k==='label'&&S.sel.id===l.id;s+='<text x="'+l.x+'" y="'+l.y+'" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="700" fill="'+(on?'var(--purple)':'var(--wall)')+'" data-k="label" data-id="'+l.id+'" style="cursor:pointer">'+esc(l.text)+'</text>'});
+ S.open.forEach(function(o,i){var p=openPos(o);if(!p)return;var on=S.sel&&S.sel.k==='open'&&S.sel.id===o.id;var wf=(Number(o.w)||36)/12*PX,hl=Math.max(10,Math.min(wf/2,p.g.L/2-3));var ax=p.x-p.g.ux*hl,ay=p.y-p.g.uy*hl,bx=p.x+p.g.ux*hl,by=p.y+p.g.uy*hl;var nx=-p.g.uy,ny=p.g.ux;
+  if(o.kind==='door'){s+='<line x1="'+ax+'" y1="'+ay+'" x2="'+bx+'" y2="'+by+'" stroke="var(--canvas)" stroke-width="9"/>';var r=hl*2,ex=ax+nx*r,ey=ay+ny*r;s+='<path d="M '+bx+' '+by+' L '+(bx+nx*r)+' '+(by+ny*r)+'" stroke="var(--blue)" stroke-width="2" fill="none"/><path d="M '+(bx+nx*r)+' '+(by+ny*r)+' A '+r+' '+r+' 0 0 '+(1)+' '+ax+' '+ay+'" stroke="var(--blue)" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity=".7"/>'}
+  else{s+='<line x1="'+ax+'" y1="'+ay+'" x2="'+bx+'" y2="'+by+'" stroke="var(--blue)" stroke-width="9" stroke-linecap="butt"/><line x1="'+ax+'" y1="'+ay+'" x2="'+bx+'" y2="'+by+'" stroke="var(--canvas)" stroke-width="3"/>'}
+  if(on)s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(hl+8)+'" fill="none" stroke="var(--purple)" stroke-width="2" stroke-dasharray="5 4"/>';
+  s+='<g data-k="open" data-id="'+o.id+'" style="cursor:pointer"><circle cx="'+(p.x+nx*-20)+'" cy="'+(p.y+ny*-20)+'" r="11" fill="var(--panel)" stroke="var(--blue)" stroke-width="2"/><text x="'+(p.x-nx*20)+'" y="'+(p.y-ny*20+.5)+'" text-anchor="middle" dominant-baseline="middle" font-size="12.5" font-weight="700" fill="var(--blue)">'+(i+1)+'</text></g>';
+  if(o.egress)s+='<text x="'+(p.x+nx*26)+'" y="'+(p.y+ny*26)+'" text-anchor="middle" dominant-baseline="middle" font-size="10.5" font-weight="700" fill="#dc2626">EGRESS</text>';
+  var wd=o.w?fmtIn(o.w):'',hd=o.h?fmtIn(o.h):'';if(wd||hd)s+='<text x="'+(p.x+nx*44)+'" y="'+(p.y+ny*44)+'" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--mut)">'+wd+(wd&&hd?' x ':'')+hd+'</text>'});
+ S.mulls.forEach(function(m,i){var on=S.sel&&S.sel.k==='mull'&&S.sel.id===m.id;var h=m.dir==='h';var x1=h?m.x-16:m.x,y1=h?m.y:m.y-16,x2=h?m.x+16:m.x,y2=h?m.y:m.y+16;s+='<g data-k="mull" data-id="'+m.id+'" style="cursor:pointer"><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="var(--purple)" stroke-opacity=".28" stroke-width="9"/><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(on?'var(--purple)':'var(--wall)')+'" stroke-width="2.4"/><text x="'+(h?m.x:m.x+16)+'" y="'+(h?m.y-13:m.y-20)+'" text-anchor="middle" font-size="12" font-weight="700" fill="var(--purple)">M'+(i+1)+'</text></g>'});
+ if(S.draw&&S.mouse){var a=S.draw,b=S.mouse;s+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="var(--blue)" stroke-width="4" stroke-dasharray="7 5" stroke-linecap="round"/><text x="'+((a.x+b.x)/2)+'" y="'+((a.y+b.y)/2-12)+'" text-anchor="middle" font-size="13" font-weight="700" fill="var(--blue)">'+ft(Math.hypot(b.x-a.x,b.y-a.y))+'</text><circle cx="'+a.x+'" cy="'+a.y+'" r="5" fill="var(--blue)"/>'}
+ else if(S.mouse&&(S.tool==='wall'))s+='<circle cx="'+S.mouse.x+'" cy="'+S.mouse.y+'" r="5" fill="var(--blue)" opacity=".5"/>';
+ if(S.mouse&&(S.tool==='window'||S.tool==='door'||S.tool==='mull')){var nw=nearWall(S.mouse,S.tool==='mull'?30:26);if(nw)s+='<circle cx="'+nw.x+'" cy="'+nw.y+'" r="8" fill="none" stroke="var(--purple)" stroke-width="2"/>'}
+ return s+'</svg>'}
+function fmtIn(v){v=Number(v);return v?(Math.round(v*10)/10)+'"':''}
+/* ---------- panels ---------- */
+function hintText(){var t=S.tool;if(t==='wall')return S.draw?'Click the next corner. Double-click or press Esc to finish.':'Wall tool: click to start a wall, click again for each corner.';if(t==='window')return S.walls.length?'Window tool: click a wall to place a window.':'Draw some walls first, then place windows on them.';if(t==='door')return S.walls.length?'Door tool: click a wall to place a door.':'Draw some walls first.';if(t==='mull')return 'Mullion tool: click near a wall. Choose Vert or Horiz on the left first.';if(t==='label')return S.arm?'Click the plan to place "'+S.arm+'".':'Pick a room name above, then click the plan (or drag it on).';if(t==='erase')return 'Click any wall, opening, mullion or label to delete it.';return 'Select: click things to edit them. Drag an opening along its wall.'}
+function rowHtml(o,i){var pulse=(i===0&&!S.open.some(function(q){return q.w&&q.h}))?' pulse':'';var sel=S.sel&&S.sel.k==='open'&&S.sel.id===o.id;return '<tr class="'+(sel?'sel':'')+'" data-id="'+o.id+'"><td class="num" data-sel="'+o.id+'">'+(i+1)+'</td><td><input class="in'+pulse+'" data-f="w" inputmode="decimal" value="'+esc(o.w)+'" aria-label="Width in inches" placeholder="in"></td><td><input class="in'+pulse+'" data-f="h" inputmode="decimal" value="'+esc(o.h)+'" aria-label="Height in inches" placeholder="in"></td><td><select class="ty" data-f="type" aria-label="Type">'+WTYPES.map(function(t){return '<option'+(t===o.type?' selected':'')+'>'+t+'</option>'}).join('')+'</select></td><td><div class="zc"><button class="z'+(o.zone==='4'?' on':'')+'" data-z="4">4</button><button class="z'+(o.zone==='5'?' on':'')+'" data-z="5">5</button></div></td><td><input type="checkbox" class="eg" data-f="egress" '+(o.egress?'checked':'')+' aria-label="Egress"></td></tr>'}
+function cardHtml(){var rows=S.open.map(rowHtml).join('')||'<tr><td colspan="6" class="empty">No openings yet. Pick the Window tool and click a wall.</td></tr>';
+ return '<h3>Openings</h3><div class="scr"><table><thead><tr><th>#</th><th>W in</th><th>H in</th><th>Type</th><th>Zn</th><th>Egr</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="foot"><div class="row"><button class="btn" id="calc">Auto-calc pressures</button><button class="btn pu" id="toSched">Open schedule</button></div><div class="row"><button class="btn gh" id="undo">Undo</button><button class="btn gh" id="del">Delete selected</button></div></div>'}
+function schedHtml(){var ch=CH[S.county];var rows=S.open.map(function(o,i){var w=+o.w,h=+o.h,area=(w&&h)?(w*h/144).toFixed(2):'';var er='';if(o.egress){er=(w&&h)?((w*h/144>=5.7&&h>=24&&w>=20)?'<span class="tag ok">Egress OK</span>':'<span class="tag bad">Too small</span>'):'<span class="tag bad">Enter size</span>'}
+  return '<tr><td class="idc">'+(i+1)+'</td><td class="l">'+esc(roomOf(o)||(o.kind==='door'?'Door':'Window'))+'</td><td class="l">'+esc(o.type)+'</td><td>'+esc(o.w||'')+'</td><td>'+esc(o.h||'')+'</td><td>'+area+'</td><td>'+o.zone+'</td><td>'+er+'</td><td>'+(o.pos||'')+'</td><td>'+(o.neg||'')+'</td><td class="l"><button class="noaPick" data-id="'+o.id+'">'+(o.noa?'<span class="tag ok">'+esc(o.noa)+'</span>':'Pick in NOA library')+'</button></td></tr>'+(S.noaOpenFor===o.id?'<tr><td colspan="11"><div class="noaLib">'+NOALIB.map(function(n){return '<span class="noaCirc" data-id="'+o.id+'" data-noa="'+esc(n.n)+'" title="'+esc(n.n)+'">'+esc(n.c)+'</span>'}).join('')+'</div></td></tr>':'')}).join('');
+ var mrows=S.mulls.map(function(m,i){return '<tr><td class="idc">M'+(i+1)+'</td><td>'+(m.dir==='h'?'Horizontal':'Vertical')+'</td><td class="l"><input class="in" style="width:110px" data-mf="size" data-id="'+m.id+'" value="'+esc(m.size||'1x4')+'"></td><td class="l"><input class="in" style="width:170px" data-mf="notes" data-id="'+m.id+'" value="'+esc(m.notes||'')+'" placeholder="Notes"></td></tr>'}).join('');
+ return '<div class="view"><div class="row" style="margin-bottom:8px"><h2>'+S.county+' window &amp; door schedule</h2><span class="sp1"></span><button class="btn" id="pdf">Download PDF</button></div><p class="note">This fills in live from the floor plan. Sizes and zones come from the Openings card. Press <b>Auto-calc pressures</b> on the plan to fill the required design pressures from the '+S.county+' chart.</p><div class="scroll"><table class="sched"><thead><tr><th>#</th><th>Location</th><th>Type</th><th>W in</th><th>H in</th><th>Area sf</th><th>Zone</th><th>Egress</th><th>Required +</th><th>Required &minus;</th><th>Product approval</th></tr></thead><tbody>'+(rows||'<tr><td colspan="11" class="empty">Place windows and doors on the plan and they appear here.</td></tr>')+'</tbody></table></div>'+(S.mulls.length?'<h2 style="margin-top:22px;font-size:18px">Mullion schedule</h2><div class="scroll"><table class="sched" style="min-width:0"><thead><tr><th>Mark</th><th>Direction</th><th>Size</th><th>Notes</th></tr></thead><tbody>'+mrows+'</tbody></table></div>':'')+'</div>'}
+function dpHtml(){var c=CH[S.county];return '<div class="view"><h2>Design pressure report</h2><p class="note">The required pressures for windows and doors with a mean roof height up to 30 ft. Sample values for the demo; the full app reads the official chart for each county.</p><div class="dp"><div><label>Jurisdiction</label><div class="val">'+S.county+'</div></div><div><label>Mean roof height</label><div class="val">20 ft</div></div><div><label>Zone 4 (interior)</label><div class="val">'+c['4'][0]+' / '+c['4'][1]+' psf</div></div><div><label>Zone 5 (corner)</label><div class="val">'+c['5'][0]+' / '+c['5'][1]+' psf</div></div></div></div>'}
+function head(){var t=S.tab;return '<div class="head"><button class="tab'+(t==='plan'?' on':'')+'" data-tab="plan">Floor plan</button><button class="tab pu'+(t==='sched'?' on':'')+'" data-tab="sched">Schedule</button><button class="tab gr'+(t==='dp'?' on':'')+'" data-tab="dp">Design pressure report</button><select id="cty" aria-label="County">'+Object.keys(CH).map(function(c){return '<option'+(c===S.county?' selected':'')+'>'+c+'</option>'}).join('')+'</select><span class="sp1"></span><button class="pdf" id="pdf2">Floor plan PDF</button></div>'}
+function stepsHtml(){var sized=S.open.some(function(o){return o.w&&o.h}),calc=!!S.used.calc;var st=[['Draw walls',S.walls.length>=3],['Place windows and doors',S.open.length>0],['Type the sizes',sized],['Auto-calc pressures',calc],['See the schedule',!!S.used.sched]];var now=-1;st.forEach(function(x,i){if(now<0&&!x[1])now=i});return st.map(function(x,i){return '<div class="step'+(x[1]?' done':(i===now?' now':''))+'"><b>'+(x[1]?'✓':(i+1))+'</b>'+x[0]+'</div>'}).join('')}
+function coachText(){var sized=S.open.some(function(o){return o.w&&o.h});if(S.walls.length<3)return '<b>Step 1.</b> Pick the <b>Wall</b> tool and click to draw the outside of a house. Click each corner, double-click to finish. Or press <b>Load sample house</b> at the top.';if(!S.open.length)return '<b>Step 2.</b> Pick the <b>Window</b> tool and click a wall. Each opening gets a number. Add a <b>Door</b> too.';if(!sized)return '<b>Step 3.</b> In the Openings card, type each opening’s width and height in inches, and choose its type.';if(!S.used.calc)return '<b>Step 4.</b> Mark the corner openings Zone 5, then press <b>Auto-calc pressures</b>. The required design pressures fill in from the county chart.';if(!S.used.sched)return '<b>Step 5.</b> Open the <b>Schedule</b> tab. This is the county window and door schedule, built from your plan. Try adding a <b>Mullion</b> too.';return '<b>Nice.</b> That is the whole builder. In the full app the same plan prints the county’s own forms and goes into the permit package. Nothing here was saved.'}
+function railHtml(){return TOOLS.map(function(k){return '<button class="rb'+(S.tool===k[0]?' on':'')+'" data-tool="'+k[0]+'" aria-label="'+k[2]+'"><i>'+k[1]+'</i>'+k[2]+'</button>'}).join('')+'<div class="dir" title="Direction of the next mullion"><button class="'+(S.dir==='v'?'on':'')+'" data-dir="v">Vert</button><button class="'+(S.dir==='h'?'on':'')+'" data-dir="h">Horiz</button></div>'}
+function chipsHtml(){return ROOMS.map(function(r){return '<span class="chip'+(S.arm===r?' arm':'')+'" draggable="true" data-room="'+r+'">'+r+'</span>'}).join('')}
+function render(){
+ $('#steps').innerHTML=stepsHtml();$('#coach').innerHTML=coachText();
+ var w=$('#wrap'),h=head();
+ if(S.tab==='plan')w.innerHTML=h+'<div class="body"><div class="rail">'+railHtml()+'</div><div class="stage"><div class="chips" id="chips">'+chipsHtml()+'</div>'+planSvg()+'<div class="hint" id="hint">'+hintText()+'</div></div><div class="card" id="card">'+cardHtml()+'</div></div>';
+ else if(S.tab==='sched')w.innerHTML=h+schedHtml();else w.innerHTML=h+dpHtml();
+}
+function redrawPlan(){var s=$('#plan');if(!s)return;var t=document.createElement('div');t.innerHTML=planSvg();s.replaceWith(t.firstChild);var hi=$('#hint');if(hi)hi.textContent=hintText();var st=$('#steps');if(st)st.innerHTML=stepsHtml();var c=$('#coach');if(c)c.innerHTML=coachText()}
+function refreshCard(){var c=$('#card');if(c)c.innerHTML=cardHtml()}
+/* ---------- actions ---------- */
+function addWall(a,b){if(Math.hypot(b.x-a.x,b.y-a.y)<8)return;S.walls.push({id:S.nid++,x1:a.x,y1:a.y,x2:b.x,y2:b.y})}
+function pick(t){var e=t.closest?t.closest('[data-k]'):null;if(e)return{k:e.getAttribute('data-k'),id:+e.getAttribute('data-id')};return null}
+function removeItem(it){push();if(it.k==='wall'){S.walls=S.walls.filter(function(w){return w.id!==it.id});S.open=S.open.filter(function(o){return o.wall!==it.id})}else if(it.k==='open')S.open=S.open.filter(function(o){return o.id!==it.id});else if(it.k==='mull')S.mulls=S.mulls.filter(function(m){return m.id!==it.id});else if(it.k==='label')S.labels=S.labels.filter(function(l){return l.id!==it.id});S.sel=null}
+function wallHit(p){var n=nearWall(p,9);return n?{k:'wall',id:n.w.id}:null}
+function finishChain(){S.draw=null;redrawPlan()}
+function sample(quiet){push();S.walls=[];S.open=[];S.labels=[];S.mulls=[];S.nid=1;var K=function(a){return [snap(100+(a[0]-144)*1.7),snap(70+(a[1]-112)*1.15)]};var P=[[144,112],[560,112],[560,336],[352,336],[352,432],[144,432]].map(K);for(var i=0;i<P.length;i++){var a=P[i],b=P[(i+1)%P.length];S.walls.push({id:S.nid++,x1:a[0],y1:a[1],x2:b[0],y2:b[1]})}
+ var M1=K([352,112]),M2=K([352,336]);S.walls.push({id:S.nid++,x1:M1[0],y1:M1[1],x2:M2[0],y2:M2[1]});
+ function op(w,t,kind,wd,ht,type,z,eg){S.open.push({id:S.nid++,wall:w,t:t,kind:kind,w:wd,h:ht,type:type,zone:z||'4',egress:!!eg,pos:'',neg:''})}
+ op(1,.22,'window','','','Single hung','5');op(1,.72,'window','','','Fixed','4');op(2,.5,'window','','','Single hung','5',true);op(4,.5,'door','','','Entry door','4');op(6,.5,'window','','','Sliding glass door','4');
+ S.labels=[['Master bed',[248,200]],['Living room',[456,224]],['Kitchen',[248,388]]].map(function(q){var c=K(q[1]);return {id:S.nid++,text:q[0],x:c[0],y:c[1]}});S.sel=null;S.draw=null;S.used={};S.tab='plan';S.tool='select';render();if(!quiet)toast('Sample house loaded. Type each opening\u2019s width and height.')}
+/* ---------- events ---------- */
+var wrap=$('#wrap');
+wrap.addEventListener('pointerdown',function(e){var svg=e.target.closest&&e.target.closest('#plan');if(!svg)return;var p=svgPt(e),g={x:snap(p.x),y:snap(p.y)},t=S.tool,hit=pick(e.target);
+ if(t==='wall'){if(!S.draw){S.draw=g;S.mouse=g}else{var b=orth(S.draw,g);push();addWall(S.draw,b);S.draw=b;S.mouse=b}redrawPlan();return}
+ if(t==='window'||t==='door'){var n=nearWall(p,26);if(!n){toast(S.walls.length?'Click on a wall to place it':'Draw a wall first');return}push();var o={id:S.nid++,wall:n.w.id,t:n.t,kind:t,w:'',h:'',type:t==='door'?'Entry door':'Single hung',zone:'4',egress:false,pos:'',neg:''};S.open.push(o);S.sel={k:'open',id:o.id};render();return}
+ if(t==='mull'){var m=nearWall(p,30);if(!m){toast('Click near a wall to drop a mullion');return}push();var mm={id:S.nid++,x:snap(m.x),y:snap(m.y),dir:S.dir,size:'1x4',notes:''};S.mulls.push(mm);S.sel={k:'mull',id:mm.id};render();return}
+ if(t==='label'){if(!S.arm){toast('Pick a room name above the plan first');return}push();S.labels.push({id:S.nid++,text:S.arm,x:g.x,y:g.y});redrawPlan();return}
+ if(t==='erase'){var it=hit||wallHit(p);if(it){removeItem(it);render()}return}
+ if(t==='select'){if(hit){S.sel=hit;if(hit.k==='open')S.dragging={k:'open',id:hit.id,pushed:false};else if(hit.k==='label'||hit.k==='mull')S.dragging={k:hit.k,id:hit.id,pushed:false};render();return}var wh=wallHit(p);S.sel=wh;render()}
+});
+wrap.addEventListener('pointermove',function(e){var svg=e.target.closest&&e.target.closest('#plan');if(!svg&&!S.dragging)return;var p=svgPt(e);
+ if(S.dragging){var d=S.dragging;if(!d.pushed){push();d.pushed=true}if(d.k==='open'){var o=S.open.filter(function(x){return x.id===d.id})[0],n=nearWall(p,60);if(o&&n){o.wall=n.w.id;o.t=Math.max(.05,Math.min(.95,n.t))}}else{var arr=d.k==='label'?S.labels:S.mulls,it=arr.filter(function(x){return x.id===d.id})[0];if(it){it.x=snap(p.x);it.y=snap(p.y)}}redrawPlan();return}
+ var g={x:snap(p.x),y:snap(p.y)};if(S.tool==='wall'){S.mouse=S.draw?orth(S.draw,g):g;redrawPlan()}else if(S.tool==='window'||S.tool==='door'||S.tool==='mull'){S.mouse=p;redrawPlan()}
+});
+window.addEventListener('pointerup',function(){if(S.dragging){S.dragging=null;refreshCard()}});
+wrap.addEventListener('dblclick',function(e){if(S.tool==='wall'&&S.draw){finishChain()}});
+wrap.addEventListener('pointerleave',function(){if(S.tool!=='wall'&&S.mouse){S.mouse=null;redrawPlan()}},true);
+window.addEventListener('keydown',function(e){var tag=(e.target.tagName||'').toLowerCase();if(tag==='input'||tag==='select')return;if(e.key==='Escape'){S.draw=null;S.arm=null;redrawPlan()}if((e.key==='Delete'||e.key==='Backspace')&&S.sel){e.preventDefault();removeItem(S.sel);render()}if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undo()}});
+wrap.addEventListener('click',function(e){var t=e.target;
+ var tb=t.closest('[data-tab]');if(tb){S.tab=tb.getAttribute('data-tab');if(S.tab==='sched')S.used.sched=1;render();return}
+ var tl=t.closest('[data-tool]');if(tl){S.tool=tl.getAttribute('data-tool');S.draw=null;if(S.tool!=='label')S.arm=null;render();return}
+ var dr=t.closest('[data-dir]');if(dr){S.dir=dr.getAttribute('data-dir');S.tool='mull';render();toast(S.dir==='h'?'Horizontal mullion: for stacked windows':'Vertical mullion: for windows side by side');return}
+ var rm=t.closest('[data-room]');if(rm){S.arm=rm.getAttribute('data-room');S.tool='label';render();return}
+ var sl=t.closest('[data-sel]');if(sl){S.sel={k:'open',id:+sl.getAttribute('data-sel')};S.tool='select';render();return}
+ var z=t.closest('[data-z]');if(z){var id=+z.closest('tr').getAttribute('data-id'),o=S.open.filter(function(x){return x.id===id})[0];if(o){push();o.zone=z.getAttribute('data-z');o.pos='';o.neg='';refreshCard();redrawPlan()}return}
+ if(t.closest('#calc')){if(!S.open.length){toast('Place a window first');return}var c=CH[S.county];S.open.forEach(function(o){var v=c[o.zone]||c['4'];o.pos=v[0];o.neg=v[1]});S.used.calc=1;render();toast('Required pressures filled from the '+S.county+' chart');return}
+ if(t.closest('#toSched')){S.tab='sched';S.used.sched=1;render();return}
+                                          var np=t.closest('.noaPick');if(np){var pid=+np.getAttribute('data-id');S.noaOpenFor=S.noaOpenFor===pid?null:pid;render();return}
+                                          var nc=t.closest('.noaCirc');if(nc){var oid=+nc.getAttribute('data-id'),nm=nc.getAttribute('data-noa'),oo=S.open.filter(function(x){return x.id===oid})[0];if(oo)oo.noa=nm;S.noaOpenFor=null;render();toast('Added to the permit package: '+nm);return}
+ if(t.closest('#undo')){undo();return}
+ if(t.closest('#del')){if(S.sel){removeItem(S.sel);render()}else toast('Select something first');return}
+ if(t.closest('#pdf')||t.closest('#pdf2')){toast('The full app prints the county PDF. This sandbox never downloads or saves anything.');return}
+});
+wrap.addEventListener('change',function(e){var t=e.target;
+ if(t.id==='cty'){S.county=t.value;S.open.forEach(function(o){o.pos='';o.neg=''});S.used.calc=0;render();return}
+ var tr=t.closest('tr'),f=t.getAttribute('data-f');if(tr&&f){var id=+tr.getAttribute('data-id'),o=S.open.filter(function(x){return x.id===id})[0];if(!o)return;push();if(f==='egress')o.egress=t.checked;else if(f==='type'){o.type=t.value;o.kind=/door/i.test(t.value)?'door':'window'}else o[f]=(t.value||'').replace(/[^0-9.]/g,'');render();return}
+});
+wrap.addEventListener('input',function(e){var t=e.target,mf=t.getAttribute&&t.getAttribute('data-mf');if(mf){var id=+t.getAttribute('data-id'),m=S.mulls.filter(function(x){return x.id===id})[0];if(m)m[mf]=t.value;return}
+ var f=t.getAttribute&&t.getAttribute('data-f'),tr=t.closest&&t.closest('tr');if(tr&&(f==='w'||f==='h')){var id2=+tr.getAttribute('data-id'),o=S.open.filter(function(x){return x.id===id2})[0];if(o){o[f]=(t.value||'').replace(/[^0-9.]/g,'');redrawPlan()}}});
+wrap.addEventListener('dragstart',function(e){var c=e.target.closest&&e.target.closest('[data-room]');if(c){e.dataTransfer.setData('text/plain',c.getAttribute('data-room'));e.dataTransfer.effectAllowed='copy'}});
+wrap.addEventListener('dragover',function(e){if(e.target.closest&&e.target.closest('#plan')){e.preventDefault()}});
+wrap.addEventListener('drop',function(e){var svg=e.target.closest&&e.target.closest('#plan');if(!svg)return;e.preventDefault();var r=e.dataTransfer.getData('text/plain');if(!r)return;var p=svgPt(e);push();S.labels.push({id:S.nid++,text:r,x:snap(p.x),y:snap(p.y)});S.arm=null;render()});
+$('#sample').addEventListener('click',function(){sample(false)});
+$('#reset').addEventListener('click',function(){push();S.walls=[];S.open=[];S.labels=[];S.mulls=[];S.sel=null;S.draw=null;S.used={};S.tab='plan';S.tool='wall';render();toast('Empty plan. Draw something.')});
+$('#theme').addEventListener('click',function(){var d=document.documentElement,cur=d.getAttribute('data-theme')||'light';d.setAttribute('data-theme',cur==='dark'?'light':'dark')});
+var TOUR=[{sel:'.ribbon',title:'Welcome to the Permit Builder',text:'This short tour shows how a floor plan turns into a ready-to-submit permit package in just a few clicks. Press Next to begin.',before:function(){S.tab='plan';S.noaOpenFor=null;render()}},{sel:'.rail',title:'Step 1 - Draw the walls',text:'Pick the Wall tool and click each corner of the house. We loaded a finished sample so you can see every step end to end.',before:function(){sample(true)}},{sel:'#chips',title:'Step 2 - Label the rooms',text:'Drag a room name onto the plan to label spaces like Master bed, Kitchen and Living room.'},{sel:'#card',title:'Step 3 - Size the openings',text:'Every window and door gets a row here. Type the width and height in inches and choose its type.'},{sel:'#calc',title:'Step 4 - Auto-calculate pressures',text:'One click fills in the required wind pressures for each zone from the county chart.',before:function(){S.tab='plan';render()},action:function(){var b=$('#calc');if(b)b.click()}},{sel:'[data-tab="sched"]',title:'Step 5 - Open the schedule',text:'The Schedule tab turns the plan into the official window and door schedule, already filled in.',action:function(){S.tab='sched';S.used.sched=1;render()}},{sel:'.noaPick',title:'Step 6 - Attach a product approval',text:'Click Pick in NOA library on any row to open the approvals for that opening.',before:function(){S.tab='sched';S.noaOpenFor=null;render()}},{sel:'.noaCirc',title:'Step 7 - Choose the NOA',text:'Tap a circle to attach that Notice of Acceptance. It is now part of the permit package for this opening.',before:function(){S.tab='sched';var f=S.open[0];if(f)S.noaOpenFor=f.id;render()}},{sel:'[data-tab="dp"]',title:'Step 8 - Design pressure report',text:'This tab prints the required pressures for the whole job, ready to drop into the permit set.',action:function(){S.tab='dp';render()}},{sel:'#pdf2',title:'Ready to submit',text:'In the full app, the plan, schedule, pressures and every attached NOA print straight into one ready-to-submit permit package. That is the whole builder in a handful of clicks.',before:function(){S.tab='plan';render()}}];function positionTour(step,i){var el=document.querySelector(step.sel);var ring=$('#tourRing'),box=$('#tourBox');if(el){var r=el.getBoundingClientRect();ring.style.left=(r.left-6)+'px';ring.style.top=(r.top-6)+'px';ring.style.width=(r.width+12)+'px';ring.style.height=(r.height+12)+'px';ring.style.display='block';var bw=Math.min(320,window.innerWidth-24);var bt=r.bottom+12;if(bt+180>window.innerHeight)bt=Math.max(12,r.top-180);var bl=Math.min(Math.max(12,r.left),window.innerWidth-bw-12);box.style.top=bt+'px';box.style.left=bl+'px'}else{ring.style.display='none';box.style.top=(window.innerHeight/2-90)+'px';box.style.left=(window.innerWidth/2-160)+'px'}box.style.display='block';box.innerHTML='<h3>'+esc(step.title)+'</h3><p>'+esc(step.text)+'</p><div class="row2"><button class="skip" id="tourSkip">Skip</button><button class="next" id="tourNext">'+(i===TOUR.length-1?'Done':'Next')+'</button></div>';$('#tourSkip').onclick=endTour;$('#tourNext').onclick=function(){showTourStep(i+1)}}function showTourStep(i){if(i<0||i>=TOUR.length){endTour();return}var step=TOUR[i];if(step.before)step.before();if(step.action)step.action();positionTour(step,i)}function endTour(){var ring=$('#tourRing'),box=$('#tourBox');if(ring)ring.style.display='none';if(box)box.style.display='none'}$('#tourBtn').addEventListener('click',function(){showTourStep(0)});sample(true);S.hist=[];
+})();
+</script></body></html>

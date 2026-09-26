@@ -1,0 +1,26 @@
+-- Real production product approval reference data (25 rows)
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Single Hung','CWS','7100 Series','FL46524.4',80,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Fixed / Picture','CWS','7300 Series Direct Set Eyebrow','FL46528.3',65,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Sliding Glass Door','CWS','7900 Series Double Sliding Door','FL46529.4',56.7,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','CWS','7600 Series Swinging Door','FL46976.2',75,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Slider','CWS','7200 Series Single Slider','FL46525.4',65,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Slider','CWS','7200 Series Triple Slider','FL46525.4',65,-75,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Sliding Glass Door','CWS','7900 Series Triple Sliding Door','FL46529.4',60,-60,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Single Hung','ES','MX1000','25-0728.07',80,-90,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Fixed / Picture','ES','MX1500','25-0929.10',70,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Horizontal Roller','ES','MX2000','24-1101.01',53.3,-85.5,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Sliding Glass Door','ES','MX4000','23-0714.11',70,80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','BHI','6 PANEL','FL15210.1',75,-75,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','ES','MX3000','23-071408',90,90,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Single Hung','CWS','7100 Series','FL46524.4',80,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Fixed / Picture','CWS','7300 Series Direct Set Eyebrow','FL46528.3',65,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Sliding Glass Door','CWS','7900 Series Double Sliding Door','FL46529.4',56.7,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','CWS','7600 Series Swinging Door','FL46976.2',75,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Slider','CWS','7200 Series Single Slider','FL46525.4',65,-65,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Slider','CWS','7200 Series Triple Slider','FL46525.4',65,-75,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Sliding Glass Door','CWS','7900 Series Triple Sliding Door','FL46529.4',60,-60,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Single Hung','ES','MX1000','25-0728.07',80,-90,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Fixed / Picture','ES','MX1500','25-0929.10',70,-80,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Horizontal Roller','ES','MX2000','24-1101.01',53.3,-85.5,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','ES','MX3000','23-0714.08',90,90,'windows');
+insert into template_product_approvals (type, manufacturer, series, noa, pos, neg, trade) values ('Entry Door','BHI','6 PANEL','FL15210.1',75,75,'windows');

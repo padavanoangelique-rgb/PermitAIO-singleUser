@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rough Opening Calculator — Window &amp; Door Sizing | Permit Toolkit</title>
+<meta name="description" content="Convert between unit size, rough opening, and masonry opening for windows and doors. Calculates shim gaps, tolerance, and required rough opening dimensions for South Florida installs.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  .mode-toggle{display:flex; gap:6px; background:var(--surface-2); padding:5px; border-radius:10px; margin-bottom:20px;}
+  .mode-toggle button{
+    flex:1; padding:10px 14px; font-size:13px; font-weight:600; color:var(--muted);
+    background:transparent; border-radius:7px; transition:all .15s;
+  }
+  .mode-toggle button.active{background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);}
+  .ro-diagram{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px;
+    padding:24px; margin:20px 0;
+  }
+  .ro-svg-wrap{max-width:520px; margin:0 auto;}
+  .ro-result-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    gap:12px; margin-top:16px;
+  }
+  .ro-stat{
+    background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;
+  }
+  .ro-stat-label{font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-bottom:4px;}
+  .ro-stat-value{font-family:'General Sans',system-ui,sans-serif; font-size:22px; font-weight:600; color:var(--ink); line-height:1.1;}
+  .ro-stat-unit{font-size:14px; font-weight:500; color:var(--muted); margin-left:3px;}
+  .ro-stat-hint{font-size:12px; color:var(--muted); margin-top:5px;}
+  .ro-stat.primary{background:linear-gradient(180deg,#eff6ff,#ffffff); border-color:#dbeafe;}
+  .ro-stat.primary .ro-stat-label{color:var(--primary);}
+  .fraction-hint{
+    background:var(--surface-2); border-left:3px solid var(--primary); padding:12px 16px;
+    border-radius:6px; margin-top:16px; font-size:13px; color:var(--ink-2); line-height:1.55;
+  }
+  .fraction-hint b{color:var(--ink);}
+  .tolerance-check{
+    margin-top:20px; padding:16px 18px; border-radius:10px;
+    border:1px solid var(--border); background:var(--bg);
+  }
+  .tolerance-check.ok{background:#f0fdf4; border-color:#bbf7d0;}
+  .tolerance-check.warn{background:#fffbeb; border-color:#fed7aa;}
+  .tolerance-check.bad{background:#fef2f2; border-color:#fecaca;}
+  .tolerance-check .th{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:6px;}
+  .tolerance-check.ok .th{color:#15803d;}
+  .tolerance-check.warn .th{color:#92400e;}
+  .tolerance-check.bad .th{color:#b91c1c;}
+  .tolerance-check p{font-size:13px; color:var(--ink-2); line-height:1.55;}
+</style>
+</head>
+<body data-page-type="interior">
+<div class="wrap-narrow">
+  <a class="back-link" href="/tools">← All Tools</a>
+  <h1>Rough Opening Calculator</h1>
+  <div class="page-sub">Convert between unit size, rough opening (RO), and masonry opening (MO) for windows and doors. Uses generic industry-standard shim gaps and clearances — always cross-check against the specific product's installation manual before framing or ordering.</div>
+
+  <div class="warn">
+    <b>Generic tolerances only.</b> These use industry-standard values (3/8" shim gap around perimeter, 1/2" head clearance for windows, 3/4" for doors). Individual manufacturers (PGT, CGI, WinDoor, etc.) publish their own required RO dimensions in the installation manual — always defer to the manufacturer's spec on any real job.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Calculation Mode</div>
+    <div class="mode-toggle">
+      <button class="active" data-mode="unit-to-ro">Unit → Rough Opening</button>
+      <button data-mode="ro-to-unit">Rough Opening → Unit Size</button>
+    </div>
+
+    <div class="inputs-grid">
+      <div class="field">
+        <label for="type">Opening Type</label>
+        <select id="type">
+          <option value="window" selected>Window</option>
+          <option value="door">Door / Sliding Glass Door</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="wall">Wall Construction</label>
+        <select id="wall">
+          <option value="frame" selected>Wood / Metal Frame (RO)</option>
+          <option value="masonry">CMU / Concrete (Masonry Opening)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="inW" id="inWLabel">Nominal Unit Width (in)</label>
+        <input type="number" id="inW" value="36" step="0.125" min="0">
+      </div>
+      <div class="field">
+        <label for="inH" id="inHLabel">Nominal Unit Height (in)</label>
+        <input type="number" id="inH" value="60" step="0.125" min="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="ro-diagram">
+    <div class="ro-svg-wrap">
+      <svg id="roSvg" viewBox="0 0 520 400" style="width:100%; height:auto;" xmlns="http://www.w3.org/2000/svg">
+        <!-- populated by JS -->
+      </svg>
+    </div>
+    <div class="ro-result-grid" id="results"></div>
+    <div id="toleranceCheck"></div>
+  </div>
+
+  <div class="fraction-hint">
+    <b>Field tip:</b> Always measure the opening in three places (top, middle, bottom for width; left, middle, right for height) and use the <b>smallest</b> dimension when ordering. Openings are almost never square — the widest window that will fit is the one that fits at the tightest measurement.
+  </div>
+
+  <div class="legend">
+    <h2>Standard Tolerances Used</h2>
+    <p><b>Windows in frame wall:</b> RO = unit width + 3/4" (3/8" shim each side), unit height + 1/2" (3/8" bottom + 1/8" head + shim room).</p>
+    <p><b>Windows in masonry:</b> MO = unit width + 1" (1/2" gap each side for buck + shim), unit height + 3/4" (buck head + shim).</p>
+    <p><b>Doors in frame wall:</b> RO = unit width + 2-1/2" (jamb + shim), unit height + 2" (jamb + threshold).</p>
+    <p><b>Sliding glass doors in masonry:</b> MO = unit width + 1", unit height + 3/4".</p>
+  </div>
+
+  <div class="legend">
+    <h2>Why This Matters</h2>
+    <p><b>Too tight:</b> Frame will bind, sash won't operate correctly, sealant joint will fail under thermal cycling — Florida sun expands vinyl and aluminum measurably.</p>
+    <p><b>Too loose:</b> Can't be sealed properly, air/water infiltration ratings from the NOA won't hold, and the opening may fail final inspection or a blower-door test.</p>
+    <p><b>Impact glazing note:</b> HVHZ impact products have <b>stricter</b> RO tolerances than non-impact — the anchor spacing in the NOA assumes the frame is properly aligned. Always verify against the NOA's installation detail sheet.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  // Tolerance rules: [width add, height add] in inches
+  var tol = {
+    'window-frame':   {w: 0.75, h: 0.5,  name:'RO (frame)',     shimSide: 3/8, shimTop: 1/4, shimBot: 3/8},
+    'window-masonry': {w: 1.0,  h: 0.75, name:'MO (masonry)',   shimSide: 1/2, shimTop: 3/8, shimBot: 3/8},
+    'door-frame':     {w: 2.5,  h: 2.0,  name:'RO (frame)',     shimSide: 3/8, shimTop: 1/2, shimBot: 0},
+    'door-masonry':   {w: 1.0,  h: 0.75, name:'MO (masonry)',   shimSide: 1/2, shimTop: 3/8, shimBot: 3/8}
+  };
+
+  var state = {mode:'unit-to-ro'};
+
+  function toFraction(inches){
+    // Convert decimal inches to nearest 1/16" fraction display
+    var whole = Math.floor(inches);
+    var frac = inches - whole;
+    var sixteenths = Math.round(frac * 16);
+    if (sixteenths === 16) return (whole + 1) + '"';
+    if (sixteenths === 0) return whole + '"';
+    // Reduce fraction
+    var num = sixteenths, den = 16;
+    while (num % 2 === 0 && den % 2 === 0){ num /= 2; den /= 2; }
+    return (whole > 0 ? whole + '-' : '') + num + '/' + den + '"';
+  }
+
+  function buildSvg(unitW, unitH, roW, roH, mode, openingType){
+    var svg = $('roSvg');
+    // Scale to fit ~440x340 with 40px margin
+    var maxW = 440, maxH = 320;
+    var scale = Math.min(maxW / roW, maxH / roH);
+    var drawnRoW = roW * scale;
+    var drawnRoH = roH * scale;
+    var drawnUnitW = unitW * scale;
+    var drawnUnitH = unitH * scale;
+    var cx = 260, cy = 200;
+    var roX = cx - drawnRoW/2, roY = cy - drawnRoH/2;
+    var unitX = cx - drawnUnitW/2, unitY = cy - drawnUnitH/2;
+
+    var html = '';
+    // Outer RO/MO box
+    html += '<rect x="' + roX + '" y="' + roY + '" width="' + drawnRoW + '" height="' + drawnRoH + '" fill="#eff6ff" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 3"/>';
+    // Inner unit box
+    html += '<rect x="' + unitX + '" y="' + unitY + '" width="' + drawnUnitW + '" height="' + drawnUnitH + '" fill="#ffffff" stroke="#0b0b0c" stroke-width="1.5"/>';
+    // Glass indicator (interior rectangle)
+    html += '<rect x="' + (unitX + 6) + '" y="' + (unitY + 6) + '" width="' + (drawnUnitW - 12) + '" height="' + (drawnUnitH - 12) + '" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.75"/>';
+    // Width dimension line (top)
+    var dimY = roY - 22;
+    html += '<line x1="' + roX + '" y1="' + dimY + '" x2="' + (roX + drawnRoW) + '" y2="' + dimY + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<line x1="' + roX + '" y1="' + (dimY-4) + '" x2="' + roX + '" y2="' + (dimY+4) + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<line x1="' + (roX + drawnRoW) + '" y1="' + (dimY-4) + '" x2="' + (roX + drawnRoW) + '" y2="' + (dimY+4) + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<text x="' + (roX + drawnRoW/2) + '" y="' + (dimY - 6) + '" text-anchor="middle" font-family="General Sans, sans-serif" font-size="13" font-weight="600" fill="#2563eb">' + (mode === 'ro-to-unit' ? toFraction(roW) : toFraction(roW)) + '</text>';
+    // Height dimension line (right)
+    var dimX = roX + drawnRoW + 22;
+    html += '<line x1="' + dimX + '" y1="' + roY + '" x2="' + dimX + '" y2="' + (roY + drawnRoH) + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<line x1="' + (dimX-4) + '" y1="' + roY + '" x2="' + (dimX+4) + '" y2="' + roY + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<line x1="' + (dimX-4) + '" y1="' + (roY + drawnRoH) + '" x2="' + (dimX+4) + '" y2="' + (roY + drawnRoH) + '" stroke="#2563eb" stroke-width="1.5"/>';
+    html += '<text x="' + (dimX + 10) + '" y="' + (roY + drawnRoH/2 + 4) + '" font-family="General Sans, sans-serif" font-size="13" font-weight="600" fill="#2563eb">' + toFraction(roH) + '</text>';
+    // Unit width label (bottom, inside)
+    html += '<text x="' + (unitX + drawnUnitW/2) + '" y="' + (unitY + drawnUnitH/2 - 8) + '" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="11" fill="#475569">Unit ' + toFraction(unitW) + ' × ' + toFraction(unitH) + '</text>';
+    html += '<text x="' + (unitX + drawnUnitW/2) + '" y="' + (unitY + drawnUnitH/2 + 8) + '" text-anchor="middle" font-family="Satoshi, sans-serif" font-size="10" fill="#64748b">' + (openingType === 'door' ? 'Door' : 'Window') + '</text>';
+    // Shim gap arrows on left side (annotation)
+    var leftGap = (roX - unitX);
+    if (leftGap > 12){
+      html += '<line x1="' + roX + '" y1="' + cy + '" x2="' + unitX + '" y2="' + cy + '" stroke="#dc2626" stroke-width="1"/>';
+      html += '<text x="' + (roX - 8) + '" y="' + (cy - 6) + '" text-anchor="end" font-family="Satoshi, sans-serif" font-size="10" fill="#dc2626">shim</text>';
+    }
+    // Legend
+    html += '<rect x="20" y="360" width="14" height="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2"/>';
+    html += '<text x="40" y="369" font-family="Satoshi, sans-serif" font-size="11" fill="#475569">' + (state.mode === 'ro-to-unit' ? 'Rough Opening (given)' : 'Rough / Masonry Opening') + '</text>';
+    html += '<rect x="220" y="360" width="14" height="10" fill="#ffffff" stroke="#0b0b0c" stroke-width="1.5"/>';
+    html += '<text x="240" y="369" font-family="Satoshi, sans-serif" font-size="11" fill="#475569">Window / Door Unit</text>';
+
+    svg.innerHTML = html;
+  }
+
+  function compute(){
+    var t = $('type').value;
+    var w = $('wall').value;
+    var key = t + '-' + w;
+    var rule = tol[key];
+    var inW = parseFloat($('inW').value) || 0;
+    var inH = parseFloat($('inH').value) || 0;
+    var unitW, unitH, roW, roH;
+
+    if (state.mode === 'unit-to-ro'){
+      unitW = inW; unitH = inH;
+      roW = inW + rule.w; roH = inH + rule.h;
+      $('inWLabel').textContent = 'Nominal Unit Width (in)';
+      $('inHLabel').textContent = 'Nominal Unit Height (in)';
+    } else {
+      roW = inW; roH = inH;
+      unitW = Math.max(0, inW - rule.w); unitH = Math.max(0, inH - rule.h);
+      $('inWLabel').textContent = 'Rough Opening Width (in)';
+      $('inHLabel').textContent = 'Rough Opening Height (in)';
+    }
+
+    buildSvg(unitW, unitH, roW, roH, state.mode, t);
+
+    var stats = [
+      {label:'Unit Width', value:toFraction(unitW), hint:'Order this size', primary: state.mode === 'ro-to-unit'},
+      {label:'Unit Height', value:toFraction(unitH), hint:'Order this size', primary: state.mode === 'ro-to-unit'},
+      {label:rule.name + ' Width', value:toFraction(roW), hint:'Frame to this', primary: state.mode === 'unit-to-ro'},
+      {label:rule.name + ' Height', value:toFraction(roH), hint:'Frame to this', primary: state.mode === 'unit-to-ro'},
+      {label:'Shim Gap (each side)', value:toFraction(rule.shimSide), hint:'Perimeter clearance'},
+      {label:'Head Clearance', value:toFraction(rule.shimTop), hint:'Above unit'}
+    ];
+    $('results').innerHTML = stats.map(function(s){
+      return '<div class="ro-stat' + (s.primary?' primary':'') + '">'
+        + '<div class="ro-stat-label">' + s.label + '</div>'
+        + '<div class="ro-stat-value">' + s.value + '</div>'
+        + '<div class="ro-stat-hint">' + s.hint + '</div>'
+        + '</div>';
+    }).join('');
+
+    // Tolerance sanity check
+    var tc = $('toleranceCheck');
+    if (unitW <= 0 || unitH <= 0){
+      tc.innerHTML = '<div class="tolerance-check bad"><div class="th">⚠ Invalid dimensions</div><p>Check your inputs — the resulting unit size is zero or negative.</p></div>';
+    } else if (unitW < 12 || unitH < 12){
+      tc.innerHTML = '<div class="tolerance-check warn"><div class="th">⚠ Unusually small</div><p>Result is under 12" — verify manufacturer offers that size. Most stock windows start around 18-24" nominal.</p></div>';
+    } else if (unitW > 72 || unitH > 84){
+      tc.innerHTML = '<div class="tolerance-check warn"><div class="th">⚠ Custom-size territory</div><p>Result exceeds typical stock sizes (72" wide / 84" tall). Confirm the product line supports these dimensions and check the NOA design pressure — larger openings need higher DP.</p></div>';
+    } else {
+      tc.innerHTML = '<div class="tolerance-check ok"><div class="th">✓ Within standard sizing</div><p>Result falls within common stock window/door dimensions.</p></div>';
+    }
+  }
+
+  document.querySelectorAll('.mode-toggle button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.mode = btn.dataset.mode;
+      document.querySelectorAll('.mode-toggle button').forEach(function(b){ b.classList.toggle('active', b === btn); });
+      compute();
+    });
+  });
+
+  ['type','wall','inW','inH'].forEach(function(id){
+    $(id).addEventListener('input', compute);
+    $(id).addEventListener('change', compute);
+  });
+
+  compute();
+})();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

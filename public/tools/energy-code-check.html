@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fenestration Energy Code Check — U-factor &amp; SHGC</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  .verdict { display:flex; align-items:center; gap:.75rem; padding:1rem 1.1rem; border-radius:.75rem; font-weight:600; font-size:1.05rem; margin-bottom:.5rem; }
+  .verdict.pass { background:#dcfce7; color:#14532d; border:1px solid #86efac; }
+  .verdict.fail { background:#fee2e2; color:#7f1d1d; border:1px solid #fca5a5; }
+  .verdict .icon { font-size:1.4rem; }
+  .row-check { display:grid; grid-template-columns: 1fr auto auto auto; gap:.5rem 1rem; align-items:baseline; padding:.55rem 0; border-bottom:1px solid #e5e7eb; }
+  .row-check:last-child { border-bottom:none; }
+  .row-check .metric { font-weight:600; color:#0f172a; }
+  .row-check .val { font-variant-numeric: tabular-nums; color:#111827; }
+  .row-check .limit { color:#6b7280; font-variant-numeric: tabular-nums; }
+  .row-check .status { font-weight:700; font-size:.85rem; padding:.15rem .5rem; border-radius:.35rem; text-align:center; min-width:56px; }
+  .row-check .status.pass { background:#dcfce7; color:#14532d; }
+  .row-check .status.fail { background:#fee2e2; color:#7f1d1d; }
+  .row-check .status.na { background:#e5e7eb; color:#4b5563; }
+  .estar-badge { display:inline-block; margin-top:.5rem; padding:.35rem .7rem; border-radius:.4rem; font-size:.85rem; font-weight:600; }
+  .estar-badge.yes { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+  .estar-badge.no  { background:#f3f4f6; color:#4b5563; border:1px solid #d1d5db; }
+  .cite { font-size:.82rem; color:#6b7280; margin-top:.4rem; }
+  .cite a { color:#3730a3; text-decoration:underline; }
+</style>
+</head>
+<body data-page-type="interior">
+<div class="wrap">
+  <h1>Fenestration Energy Code Check</h1>
+  <div class="sub">Check U-factor &amp; SHGC against 2023 Florida Building Code — Energy Conservation (8th Edition)</div>
+
+  <div class="warn">
+    <b>Screening tool only — not a permit submittal.</b> This checks a single window/door's NFRC-labeled U-factor and SHGC against the Florida prescriptive energy path (R402.1.2). Whole-building compliance can also be shown via the Simulated Performance (R405), UA-alternative (R402.1.5), or ERI (R406) paths — those aren't covered here. Also confirm against the project's approved Form R405 or Energy Performance Level Display Card before install.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Project Inputs</div>
+
+      <div class="field">
+        <label for="zone">Climate Zone</label>
+        <select id="zone">
+          <option value="1">Zone 1 — Miami-Dade, Broward, Monroe</option>
+          <option value="2" selected>Zone 2 — Rest of Florida (incl. Palm Beach, Martin, Indian River)</option>
+        </select>
+        <div class="hint">Florida is split into just two zones under the FBC. All HVHZ counties are Zone 1.</div>
+      </div>
+
+      <div class="field">
+        <label for="projtype">Project Type</label>
+        <select id="projtype">
+          <option value="new" selected>New construction</option>
+          <option value="addition">Addition (new conditioned floor area)</option>
+          <option value="replacement">Window/door replacement (existing opening)</option>
+        </select>
+        <div class="hint">Replacements and additions generally must meet the same fenestration limits when replacing the entire product. Sash-only repairs are typically exempt.</div>
+      </div>
+
+      <div class="field">
+        <label for="impact">Impact-Rated Product?</label>
+        <select id="impact">
+          <option value="no" selected>No — standard fenestration</option>
+          <option value="yes">Yes — HVHZ / WBDR impact-rated</option>
+        </select>
+        <div class="hint">Impact-rated products may use a relaxed U-factor limit in Zone 2 (footnote j, R402.1.2).</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">NFRC Label Values</div>
+
+      <div class="field">
+        <label for="ufactor">U-Factor (Btu/h·ft²·°F)</label>
+        <input type="number" id="ufactor" value="0.30" step="0.01" min="0" max="2">
+        <div class="hint">Lower is better. Typical impact vinyl: 0.28–0.40. Aluminum impact: often 0.55–0.70.</div>
+      </div>
+
+      <div class="field">
+        <label for="shgc">SHGC (Solar Heat Gain Coefficient)</label>
+        <input type="number" id="shgc" value="0.24" step="0.01" min="0" max="1">
+        <div class="hint">Lower is better in Florida (blocks more solar heat). Range 0–1. Typical impact tinted: 0.20–0.30.</div>
+      </div>
+
+      <div class="field">
+        <label for="glazetype">Fenestration Type</label>
+        <select id="glazetype">
+          <option value="vertical" selected>Vertical fenestration (window or door)</option>
+          <option value="skylight">Skylight (roof-mounted)</option>
+        </select>
+        <div class="hint">Skylights have separate, looser limits under FBC-EC.</div>
+      </div>
+    </div>
+
+    <div class="card result-card">
+      <div class="card-label">Result</div>
+
+      <div id="verdict" class="verdict pass">
+        <span class="icon">✓</span>
+        <span id="verdict-text">Meets FBC prescriptive limits</span>
+      </div>
+
+      <div id="checks"></div>
+
+      <div id="estar" class="estar-badge no">ENERGY STAR (Southern zone): —</div>
+
+      <div class="cite">
+        Prescriptive limits: <b>2023 Florida Building Code — Energy Conservation</b>, Table R402.1.2 (Insulation &amp; Fenestration by Component). Impact-rated footnote j applies in Zone 2. ENERGY STAR criteria: Version 7.0, Southern zone (all of Florida).
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;">
+    <div class="card-label">How the limits work</div>
+    <table style="width:100%; border-collapse:collapse; margin-top:.5rem; font-size:.92rem;">
+      <thead>
+        <tr style="text-align:left; border-bottom:1px solid #d1d5db;">
+          <th style="padding:.4rem .5rem;">Climate Zone</th>
+          <th style="padding:.4rem .5rem;">U-Factor (max)</th>
+          <th style="padding:.4rem .5rem;">SHGC (max)</th>
+          <th style="padding:.4rem .5rem;">Impact-Rated U-Factor Alt.</th>
+          <th style="padding:.4rem .5rem;">Skylight U (max)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e7eb;">
+          <td style="padding:.4rem .5rem;"><b>Zone 1</b><br><span style="font-size:.85rem; color:#6b7280;">Miami-Dade, Broward, Monroe</span></td>
+          <td style="padding:.4rem .5rem;">0.50</td>
+          <td style="padding:.4rem .5rem;">0.25</td>
+          <td style="padding:.4rem .5rem;">— (not stated)</td>
+          <td style="padding:.4rem .5rem;">0.75</td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .5rem;"><b>Zone 2</b><br><span style="font-size:.85rem; color:#6b7280;">Rest of Florida</span></td>
+          <td style="padding:.4rem .5rem;">0.40</td>
+          <td style="padding:.4rem .5rem;">0.25</td>
+          <td style="padding:.4rem .5rem;">0.65 (impact-rated)</td>
+          <td style="padding:.4rem .5rem;">0.65</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="cite" style="margin-top:.75rem;">
+      Values from Table R402.1.2, 2023 FBC-EC (8th Edition). SHGC limit is uniform across both Florida zones. The Zone 2 impact-rated 0.65 alternate is footnote j — Zone 1 has no equivalent published alternate, so impact products in Miami-Dade/Broward/Monroe must meet the 0.50 U-factor. Skylight values per Table R402.1.2 (skylight column).
+    </div>
+  </div>
+
+  <p class="footer-back"><a href="/tools">← Back to all tools</a></p>
+</div>
+
+<script>
+(function(){
+  var LIMITS = {
+    '1': { u: 0.50, shgc: 0.25, uImpact: null,  uSkylight: 0.75 },
+    '2': { u: 0.40, shgc: 0.25, uImpact: 0.65,  uSkylight: 0.65 }
+  };
+  // ENERGY STAR V7 Southern zone (all of FL): U ≤ 0.40, SHGC ≤ 0.25.
+  var ESTAR = { u: 0.40, shgc: 0.25 };
+
+  function el(id){ return document.getElementById(id); }
+  function fmt(n){ return Number(n).toFixed(2); }
+
+  function calc(){
+    var zone     = el('zone').value;
+    var isImpact = el('impact').value === 'yes';
+    var isSky    = el('glazetype').value === 'skylight';
+    var u        = parseFloat(el('ufactor').value);
+    var shgc     = parseFloat(el('shgc').value);
+
+    var lim = LIMITS[zone];
+
+    // Which U-factor limit applies to this row?
+    var uLimit, uLimitLabel;
+    if (isSky) {
+      uLimit = lim.uSkylight;
+      uLimitLabel = 'Skylight max (Zone ' + zone + ')';
+    } else if (isImpact && lim.uImpact !== null) {
+      uLimit = lim.uImpact;
+      uLimitLabel = 'Impact-rated alt. (Zone ' + zone + ', footnote j)';
+    } else {
+      uLimit = lim.u;
+      uLimitLabel = 'Standard max (Zone ' + zone + ')';
+    }
+    // SHGC limit is the same regardless of impact rating.
+    var shgcLimit = lim.shgc;
+    var shgcLabel = 'Max (Zone ' + zone + ')';
+    // Note: FBC-EC applies SHGC to glazed fenestration; skylights follow the same 0.25 cap in FL zones.
+
+    var uPass    = !isNaN(u)    && u    <= uLimit    + 1e-9;
+    var shgcPass = !isNaN(shgc) && shgc <= shgcLimit + 1e-9;
+    var overall  = uPass && shgcPass;
+
+    // Render row-by-row check
+    var rows = '';
+    rows += rowHtml('U-Factor',
+                    isNaN(u) ? '—' : fmt(u),
+                    '≤ ' + fmt(uLimit),
+                    uLimitLabel,
+                    isNaN(u) ? 'na' : (uPass ? 'pass' : 'fail'));
+    rows += rowHtml('SHGC',
+                    isNaN(shgc) ? '—' : fmt(shgc),
+                    '≤ ' + fmt(shgcLimit),
+                    shgcLabel,
+                    isNaN(shgc) ? 'na' : (shgcPass ? 'pass' : 'fail'));
+    el('checks').innerHTML = rows;
+
+    // Overall verdict
+    var v = el('verdict'), vt = el('verdict-text');
+    if (overall) {
+      v.className = 'verdict pass';
+      v.querySelector('.icon').textContent = '✓';
+      vt.textContent = 'Meets FBC prescriptive limits'
+        + (isImpact && !isSky && lim.uImpact !== null ? ' (impact-rated U-factor alternate applied)' : '');
+    } else {
+      v.className = 'verdict fail';
+      v.querySelector('.icon').textContent = '✗';
+      var fails = [];
+      if (!uPass && !isNaN(u))       fails.push('U-factor over limit');
+      if (!shgcPass && !isNaN(shgc)) fails.push('SHGC over limit');
+      if (isNaN(u) || isNaN(shgc))   fails.push('missing input');
+      vt.textContent = 'Does not meet prescriptive path — ' + fails.join(' · ');
+    }
+
+    // ENERGY STAR (Southern zone, V7)
+    var estarPass = !isNaN(u) && !isNaN(shgc) && u <= ESTAR.u + 1e-9 && shgc <= ESTAR.shgc + 1e-9;
+    var e = el('estar');
+    if (isSky) {
+      // ENERGY STAR skylight criteria are separate (V7 Southern: U ≤ 0.55, SHGC ≤ 0.28).
+      // Keep this simple: mark N/A for skylights to avoid mixing categories.
+      e.className = 'estar-badge no';
+      e.textContent = 'ENERGY STAR: check skylight-specific criteria (V7 Southern skylight U ≤ 0.55, SHGC ≤ 0.28)';
+    } else if (estarPass) {
+      e.className = 'estar-badge yes';
+      e.textContent = 'ENERGY STAR V7 (Southern zone): eligible — U ≤ 0.40, SHGC ≤ 0.25';
+    } else {
+      e.className = 'estar-badge no';
+      e.textContent = 'ENERGY STAR V7 (Southern zone): not eligible (needs U ≤ 0.40 and SHGC ≤ 0.25)';
+    }
+  }
+
+  function rowHtml(metric, val, limit, limitLabel, status){
+    var badge = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : '—';
+    return '<div class="row-check">'
+      + '<div><span class="metric">' + metric + '</span><div class="hint" style="margin-top:.15rem;">' + escapeHtml(limitLabel) + '</div></div>'
+      + '<div class="val">' + val + '</div>'
+      + '<div class="limit">' + limit + '</div>'
+      + '<div class="status ' + status + '">' + badge + '</div>'
+      + '</div>';
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  document.querySelectorAll('input, select').forEach(function(el){
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+  calc();
+})();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

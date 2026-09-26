@@ -1,0 +1,24 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/dynamics365-sync",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/gmail-check",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/sheets-sync",
+      "schedule": "0 11,16,21 * * *"
+    },
+    {
+      "path": "/api/cron/permit-scout",
+      "schedule": "0 12,21 * * *"
+    },
+    {
+      "path": "/api/cron/knowledge-review",
+      "schedule": "0 13 * * 1"
+    }
+  ]
+}

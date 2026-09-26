@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Photo Report — Numbered Field Photos to PDF | Permit Toolkit</title>
+<meta name="description" content="Take photos on the job, number them, tag the room, add a note, and print a labeled PDF report. No account. Built for South Florida contractors.">
+<meta property="og:title" content="Photo Report — Permit Toolkit">
+<meta property="og:description" content="Camera to numbered PDF. Room, note, and photo on every page.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://permittoolkit.com/photo-report.html">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  body.pr-page{background:#fff;height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
+  .pr-page .site-header{flex-shrink:0;}
+  .pr-page .wrap{max-width:880px;width:100%;flex:1;min-height:0;padding:8px 16px;display:flex;flex-direction:column;overflow:hidden;}
+  .pr-page h1{font-size:clamp(22px,3vw,30px);margin-bottom:2px;}
+  .pr-page .page-sub{margin-bottom:8px;font-size:13px;}
+  .pr-page .back-link{margin-bottom:8px;}
+  .pr-page .aio-bar{margin-bottom:8px;padding:8px 14px;}
+  .pr-page .legend,.pr-page .site-footer{display:none;}
+  .pr-page .aio-promo{flex-shrink:0;margin:0;max-width:none;width:100%;padding:8px 20px;border-radius:0;}
+  .pr-page .aio-promo-inner{grid-template-columns:1fr auto;gap:12px;}
+  .pr-page .aio-promo h2{font-size:14px;margin:0;}
+  .pr-page .aio-promo p,.pr-page .aio-promo .aio-eyebrow,.pr-page .aio-promo .aio-features,.pr-page .aio-email-card{display:none !important;}
+  .pr-page .aio-cta{padding:8px 14px;font-size:13px;}
+  .pr-app{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .pr-job{border-bottom:1px solid var(--border);background:var(--surface-2);}
+  .pr-job summary{list-style:none;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer;}
+  .pr-job summary::-webkit-details-marker{display:none;}
+  .pr-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 10px;}
+  @media(min-width:720px){.pr-meta{grid-template-columns:repeat(4,1fr);}}
+  .pr-meta label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  .pr-meta input,.pr-shoot input,.pr-row input,.pr-fields textarea{font-size:16px;}
+  .pr-shoot{display:flex;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid var(--border);background:#fff;}
+  .pr-next-room{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+  .pr-next-room input{min-height:44px;padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0;}
+  .pr-keep{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;white-space:nowrap;}
+  .pr-keep input{width:20px;height:20px;}
+  .pr-dock{display:grid;grid-template-columns:2.2fr 1fr 1fr;gap:8px;padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));border-top:1px solid var(--border);background:#fff;}
+  .pr-dock button{min-height:52px;font-weight:600;border-radius:10px;border:1px solid var(--border-strong);background:#fff;font-size:14px;}
+  .pr-dock button.cam{background:var(--primary);color:#fff;border-color:var(--primary);font-size:16px;}
+  .pr-dock button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .pr-list{flex:1;min-height:0;overflow:auto;padding:10px 12px;background:#f8fafc;-webkit-overflow-scrolling:touch;}
+  .pr-card{display:grid;grid-template-columns:96px 1fr;gap:10px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px;}
+  .pr-thumb{position:relative;background:#e2e8f0;border-radius:8px;overflow:hidden;min-height:88px;}
+  .pr-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pr-num{position:absolute;left:6px;top:6px;background:#0b0b0c;color:#fff;font-size:12px;font-weight:700;padding:2px 6px;border-radius:4px;}
+  .pr-empty{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed var(--border-strong);border-radius:12px;padding:24px;color:var(--muted);}
+  .pr-empty b{color:var(--ink);font-size:16px;display:block;margin-bottom:6px;}
+  .pr-fields{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .pr-row{display:flex;gap:6px;align-items:center;}
+  .pr-row input[type=number]{width:64px;text-align:center;min-height:44px;}
+  .pr-row input[list]{flex:1;min-width:0;min-height:44px;}
+  .pr-fields textarea{min-height:52px;resize:vertical;padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;}
+  .pr-icon{width:44px;height:44px;border:1px solid var(--border-strong);border-radius:8px;background:#fff;font-size:16px;}
+  .pr-dock button:disabled{opacity:.4;}
+  @media(max-width:720px){
+    .pr-page .wrap{padding:0 0 0;max-width:none;}
+    .pr-page .aio-promo{display:none !important;}
+    .pr-app{border-radius:0;border-left:0;border-right:0;}
+    .pr-fields textarea{min-height:44px;}
+    .pr-icon{width:44px;height:44px;}
+  }
+  .pr-err{color:var(--danger);font-size:13px;padding:4px 2px;}
+  .pr-pdf{position:fixed;inset:0;z-index:100000;background:rgba(11,11,12,.7);display:none;flex-direction:column;}
+  .pr-pdf.open{display:flex;}
+  .pr-pdf-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--border);}
+  .pr-pdf iframe{flex:1;width:100%;background:#fff;border:0;}
+</style>
+</head>
+<body data-page-type="interior" class="pr-page">
+<div class="wrap">
+  <a class="back-link" href="/tools">← All Tools</a>
+  <h1>Photo Report</h1>
+  <div class="page-sub">Take photos on site. Set the room once, keep shooting, then PDF.</div>
+  <div class="pr-app">
+    <details class="pr-job" id="prJobBox">
+      <summary>Job details</summary>
+      <div class="pr-meta">
+        <div class="field"><label for="prJob">Job</label><input id="prJob" type="text" placeholder="Job or owner" autocomplete="off"></div>
+        <div class="field"><label for="prAddr">Address</label><input id="prAddr" type="text" placeholder="Street, city" autocomplete="off"></div>
+        <div class="field"><label for="prDate">Date</label><input id="prDate" type="date"></div>
+        <div class="field"><label for="prBy">Taken by</label><input id="prBy" type="text" placeholder="Name" autocomplete="off"></div>
+      </div>
+    </details>
+    <div class="pr-list" id="prList"></div>
+    <div class="pr-shoot">
+      <label class="pr-next-room">Next room
+        <input id="prRoomNext" list="prRooms" placeholder="Master Bedroom" autocomplete="off">
+      </label>
+      <label class="pr-keep"><input id="prKeep" type="checkbox" checked> Keep shooting</label>
+    </div>
+    <div class="pr-dock">
+      <button type="button" class="cam" id="prCam">Take photo</button>
+      <button type="button" id="prLib">Library</button>
+      <button type="button" class="primary" id="prPdf">PDF</button>
+    </div>
+  </div>
+</div>
+<input id="prCamInput" type="file" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" hidden>
+<input id="prCamInput2" type="file" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" hidden>
+<input id="prLibInput" type="file" accept="image/*,.heic,.heif,image/heic,image/heif" multiple hidden>
+<datalist id="prRooms">
+  <option value="Exterior Front"><option value="Exterior Rear"><option value="Exterior Left"><option value="Exterior Right">
+  <option value="Living"><option value="Kitchen"><option value="Dining"><option value="Family">
+  <option value="Master Bedroom"><option value="Bedroom 2"><option value="Bedroom 3">
+  <option value="Master Bath"><option value="Bath 2"><option value="Hall">
+  <option value="Garage"><option value="Patio / Lanai"><option value="Opening"><option value="Roof"><option value="Other">
+</datalist>
+<div class="pr-pdf" id="prOverlay">
+  <div class="pr-pdf-bar">
+    <strong style="flex:1;">Photo report</strong>
+    <button type="button" class="btn-primary" id="prPrint">Print</button>
+    <a class="btn-secondary" id="prSave" download="photo-report.pdf">Save PDF</a>
+    <button type="button" class="btn-secondary" id="prClose">Close</button>
+  </div>
+  <iframe id="prFrame" title="Photo report PDF"></iframe>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="./assets/photo-report.js?v=photos-3"></script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

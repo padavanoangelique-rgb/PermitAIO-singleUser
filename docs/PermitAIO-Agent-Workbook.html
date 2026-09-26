@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PermitAIO — Agent workbook</title>
+  <style>
+    :root {
+      --ink: #0f1c2e;
+      --muted: #5b6573;
+      --line: #d9dee7;
+      --paper: #f7f4ee;
+      --card: #fff;
+      --navy: #1e3a5f;
+      --gold: #c4a35a;
+      --blue: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    header.hero {
+      background: var(--navy);
+      color: #fff;
+      padding: 28px 20px 22px;
+    }
+    header.hero p.kicker {
+      margin: 0;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    header.hero h1 { margin: 6px 0 8px; font-size: 28px; }
+    header.hero .sub { margin: 0; color: #d7deea; }
+    nav.toc {
+      position: sticky; top: 0; z-index: 5;
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 10px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    nav.toc a {
+      display: inline-flex; align-items: center;
+      height: 34px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 999px;
+      color: var(--navy); text-decoration: none; font-size: 13px; font-weight: 600;
+      background: #fff;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+    section { scroll-margin-top: 64px; margin: 28px 0; }
+    h2 { font-size: 22px; margin: 0 0 10px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 10px 0;
+    }
+    .who { font-size: 12px; color: var(--muted); margin: 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+    th { background: #eef2f7; }
+    .map {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px; line-height: 1.8;
+      background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px;
+    }
+    label.note { display: block; margin-top: 10px; }
+    label.note span {
+      display: flex; justify-content: space-between;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    }
+    textarea {
+      width: 100%; margin-top: 6px; min-height: 96px;
+      border: 1px dashed #b7c0ce; border-radius: 14px;
+      padding: 10px 12px; font: 16px/1.5 inherit;
+      background: #fffcf6;
+    }
+    textarea.tall { min-height: 180px; }
+    .saved { color: #15803d; text-transform: none; letter-spacing: 0; }
+    ul.clean { margin: 8px 0 0; padding-left: 18px; }
+    footer { color: var(--muted); font-size: 13px; margin-top: 28px; }
+    @media print {
+      nav.toc, .no-print { display: none !important; }
+      body { background: #fff; }
+      textarea { border-style: solid; min-height: 120px; }
+      header.hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="kicker">PermitAIO</p>
+    <h1>Agent workbook</h1>
+    <p class="sub">How they are built · how you use them · how you teach them. Tap a pill. Write in the boxes — they save on this phone.</p>
+  </header>
+  <nav class="toc no-print">
+    <a href="#map">The map</a>
+    <a href="#daily">Every day</a>
+    <a href="#desks">Desks</a>
+    <a href="#research">Research</a>
+    <a href="#teach">Teach him</a>
+    <a href="#mail">Mail</a>
+    <a href="#loaded">What’s loaded</a>
+    <a href="#ideas">My ideas</a>
+  </nav>
+  <main>
+    <section id="map">
+      <h2>The map</h2>
+      <p>You do not run six chatbots. You run <strong>one Manager</strong>. Desks are who you talk to. Specialists are who he talks to. Mail agents do not chat — they match a job and ding the tech.</p>
+      <div class="map">
+        You<br>
+        → Ask PermitAIO (purple button)<br>
+        → Main · Permit · HOA · Support<br>
+        → Manager asks Investigator + Form Specialist when needed<br>
+        → Permit mail / HOA mail ding the right tech
+      </div>
+      <p>He only answers from facts on file: jobs, HOA, Libraries, correction lessons, research reports. If it is not there, he says so. He does not change status by himself.</p>
+    </section>
+
+    <section id="daily">
+      <h2>Every day</h2>
+      <table>
+        <thead><tr><th>When</th><th>Open</th><th>Say</th></tr></thead>
+        <tbody>
+          <tr><td>On the phone</td><td>Main</td><td>Job # or client name</td></tr>
+          <tr><td>Building a packet</td><td>Permit</td><td>City + trade. Step by step.</td></tr>
+          <tr><td>Association question</td><td>HOA</td><td>Association or job #</td></tr>
+          <tr><td>App broke</td><td>Support</td><td>What you clicked. Waits for you.</td></tr>
+        </tbody>
+      </table>
+      <p>Settings → their name → turn on Permit tech / HOA tech. Everyone sees Main.</p>
+    </section>
+
+    <section id="desks">
+      <h2>Desks — you talk here</h2>
+      <div class="card">
+        <strong>Main</strong>
+        <p class="who">Anyone in the company</p>
+        <p>On the phone. Full recap: permit, HOA, product, dates, cycle time.</p>
+        <p><em>Say:</em> What’s going on with job #____ / client ____?</p>
+        <label class="note">Notes for Main<textarea data-note="main"></textarea></label>
+      </div>
+      <div class="card">
+        <strong>Permit</strong>
+        <p class="who">Permit techs only</p>
+        <p>Packet, city, NOA, forms, cycle time. Step-by-step submittal.</p>
+        <p><em>Say:</em> City + trade. What do they want? Which forms? Step by step.</p>
+        <label class="note">Notes for Permit desk<textarea data-note="permit"></textarea></label>
+      </div>
+      <div class="card">
+        <strong>HOA</strong>
+        <p class="who">HOA techs only</p>
+        <p>Contacts, guidelines, meetings, turnaround, that job’s HOA status.</p>
+        <p><em>Say:</em> Association or job #.</p>
+        <label class="note">Notes for HOA desk<textarea data-note="hoa"></textarea></label>
+      </div>
+      <div class="card">
+        <strong>Support</strong>
+        <p class="who">Anyone — you approve the fix</p>
+        <p>App broke. It logs. Nothing goes live until you say so.</p>
+        <p><em>Say:</em> What I clicked. Job #. Error text.</p>
+        <label class="note">Notes for Support<textarea data-note="support"></textarea></label>
+      </div>
+    </section>
+
+    <section id="research">
+      <h2>Research — he talks here</h2>
+      <div class="card">
+        <strong>Investigator</strong>
+        <p class="who">You don’t open this. Manager consults it.</p>
+        <p>Code, checklists, how to submit, city asks.</p>
+        <label class="note">Notes for Investigator<textarea data-note="investigator"></textarea></label>
+      </div>
+      <div class="card">
+        <strong>Permit Form Specialist</strong>
+        <p class="who">You don’t open this. Manager consults it.</p>
+        <p>Which forms are actually on file for that city.</p>
+        <label class="note">Notes for Form Specialist<textarea data-note="forms"></textarea></label>
+      </div>
+    </section>
+
+    <section id="teach">
+      <h2>How you teach him</h2>
+      <div class="card"><strong>1. Libraries</strong><p>New form, NOA, building-dept note, HOA contact. Put it in Libraries. Don’t paste it into chat.</p></div>
+      <div class="card"><strong>2. Research report</strong><p>Ask PermitAIO → Feed a research report. Paste. Pick who wrote it. County / city. Load into him.</p></div>
+      <div class="card"><strong>3. Correction lesson</strong><p>Open the job → Feed a correction. Paste what they asked. Attach the letter. Optional: what cleared it.</p></div>
+      <div class="card"><strong>4. Change a rule</strong><p>Tell Manager in this Grok chat, or write it on Settings → Grok Manager.</p></div>
+      <label class="note">Reports I still need to load<textarea data-note="teach" class="tall"></textarea></label>
+      <label class="note">Correction lessons to feed<textarea data-note="corrections"></textarea></label>
+      <label class="note">Inspection info to teach him<textarea data-note="inspections" class="tall"></textarea></label>
+    </section>
+
+    <section id="mail">
+      <h2>Mail</h2>
+      <div class="card"><strong>agent@permitaio.com</strong><p>The real inbox. PermitAIO Email Agent is locked to this. Grok may look; do not auto-reply.</p></div>
+      <div class="card"><strong>client_permit_agent@permitaio.com</strong><p>Alias to create in Google. Permit mail → ding the permit tech.</p></div>
+      <div class="card"><strong>client_hoaagent@permitaio.com</strong><p>Alias to create in Google. HOA mail → stick to the job, ding the HOA tech.</p></div>
+      <div class="card"><strong>permitsagent@permitaio.com</strong><p>Alias. Building-dept mail with a permit number when there is no job # yet.</p></div>
+      <label class="note">Mail / alias notes<textarea data-note="mail"></textarea></label>
+    </section>
+
+    <section id="loaded">
+      <h2>What’s loaded</h2>
+      <div class="card">
+        <strong>He has</strong>
+        <ul class="clean">
+          <li>Miami-Dade / Broward / Palm Beach ZIP checklists</li>
+          <li>How to read Florida Building Code (method, not the code book)</li>
+          <li>Which form packs are on file</li>
+        </ul>
+      </div>
+      <div class="card">
+        <strong>He does not have yet</strong>
+        <ul class="clean">
+          <li>Inspections (rough / final / what the inspector wants / how each city schedules)</li>
+          <li>The three Google aliases — create them on agent@</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="ideas">
+      <h2>Room for you</h2>
+      <p>Write anything. These boxes save on this phone. Print if you want paper. Nothing here is taught to him until you use Feed a report / Feed a correction / Libraries.</p>
+      <label class="note">Ideas I want to add<textarea data-note="ideas" class="tall"></textarea></label>
+      <label class="note">My notes<textarea data-note="notes" class="tall"></textarea></label>
+    </section>
+    <footer>PermitAIO agent workbook · boxes save in this browser · print for a paper copy</footer>
+  </main>
+  <script>
+    const KEY = "permitaio.agent-workbook.v1";
+    function all() {
+      try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; }
+    }
+    function bind() {
+      const data = all();
+      document.querySelectorAll("textarea[data-note]").forEach((el) => {
+        const id = el.getAttribute("data-note");
+        el.value = data[id] || "";
+        el.addEventListener("input", () => {
+          const next = all();
+          next[id] = el.value;
+          localStorage.setItem(KEY, JSON.stringify(next));
+          const tag = el.closest("label").querySelector(".saved-flag");
+          if (tag) tag.textContent = "Saved";
+        });
+        const span = el.previousElementSibling;
+        if (span && !span.querySelector(".saved-flag")) {
+          const s = document.createElement("span");
+          s.className = "saved-flag saved";
+          s.textContent = "Autosaves here";
+          span.appendChild(s);
+        }
+      });
+    }
+    bind();
+  </script>
+</body>
+</html>

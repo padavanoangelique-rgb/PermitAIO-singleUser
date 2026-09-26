@@ -1,0 +1,432 @@
+/* Chrome skin only — do not change drawing tools, canvas, or mapping. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --paio-blue: #2563eb;
+  --paio-purple: #7c3aed;
+  --paio-green: #059669;
+  --paio-ink: #111827;
+  --paio-muted: #6b7280;
+  --paio-line: #e5e7eb;
+  --paio-pill: 999px;
+}
+
+html[data-theme="light"] {
+  --blue-950: #ffffff;
+  --blue-900: #ffffff;
+  --blue-800: #f8fafc;
+  --blue-700: #e5e7eb;
+  --line-cyan: #111827;
+  --line-cyan-dim: #6b7280;
+  --paper: #111827;
+  --ink: #111827;
+  --accent: #2563eb;
+  --accent-dim: #1d4ed8;
+}
+
+html, body, .app, header, .rail, .tab-btn, button, input, select, label {
+  font-family: Inter, Satoshi, system-ui, sans-serif !important;
+}
+
+.project-info,
+#view-floorplan .hint,
+#panel-collapse,
+#panel-collapse-btn,
+.panel-collapse-btn,
+#header-checklist-btn { display: none !important; }
+
+.label-palette {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  padding: 2px 8px 4px !important;
+  overflow-x: auto !important;
+}
+.label-palette .chip,
+.label-palette button {
+  height: 24px !important;
+  padding: 0 8px !important;
+  font-size: 11px !important;
+  border-radius: var(--paio-pill) !important;
+}
+header {
+  padding: 6px 10px !important;
+  gap: 6px !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+header .tab-btn,
+header .pdf-btn,
+#header-pdf-btn,
+#tab-dpreport,
+#tab-schedule-group,
+#tab-floorplan {
+  height: 32px !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--paio-pill) !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+#schedule-jurisdiction {
+  height: 32px !important;
+  font-size: 13px !important;
+  max-width: 180px !important;
+  border-radius: var(--paio-pill) !important;
+  padding: 0 12px !important;
+}
+
+html[data-theme="light"] header { background: #ffffff !important; border-bottom: 1px solid var(--paio-line) !important; }
+html[data-theme="light"] .rail { background: #ffffff !important; border-right: 1px solid var(--paio-line) !important; }
+html[data-theme="light"] .rail button,
+html[data-theme="light"] .rail .rail-chk {
+  background: #ffffff !important; color: var(--paio-ink) !important; border: 1px solid #d1d5db !important;
+  text-transform: none !important; letter-spacing: 0 !important; font-size: 11px !important;
+  border-radius: var(--paio-pill) !important;
+}
+html[data-theme="light"] .rail button.active {
+  background: var(--paio-blue) !important; border-color: var(--paio-blue) !important; color: #ffffff !important;
+}
+html[data-theme="light"] .tab-btn { background: #f3f4f6 !important; color: var(--paio-ink) !important; border-color: transparent !important; }
+html[data-theme="light"] #tab-floorplan.tab-btn.active,
+html[data-theme="light"] #tab-floorplan.tab-btn.tab-btn-primary {
+  background: var(--paio-blue) !important; color: #ffffff !important;
+}
+html[data-theme="light"] #tab-schedule-group.tab-btn.active {
+  background: var(--paio-purple) !important; color: #ffffff !important;
+}
+html[data-theme="light"] #tab-dpreport.tab-btn.active {
+  background: var(--paio-green) !important; color: #ffffff !important;
+}
+html[data-theme="light"] .tab-btn.tab-btn-primary,
+html[data-theme="light"] .pdf-btn,
+html[data-theme="light"] #header-pdf-btn {
+  background: var(--paio-blue) !important; border-color: var(--paio-blue) !important; color: #ffffff !important;
+}
+html[data-theme="light"] input,
+html[data-theme="light"] select {
+  background: #ffffff !important; color: var(--paio-ink) !important; border-color: #d1d5db !important;
+  border-radius: var(--paio-pill) !important;
+}
+
+html[data-theme="dark"] header { background: #141414 !important; border-bottom: 1px solid #2c2c2c !important; }
+html[data-theme="dark"] .rail { background: #141414 !important; border-right: 1px solid #2c2c2c !important; }
+html[data-theme="dark"] .rail button,
+html[data-theme="dark"] .rail .rail-chk {
+  background: #1f1f1f !important; color: #f5f5f5 !important; border: 1px solid #3f3f3f !important;
+  text-transform: none !important; letter-spacing: 0 !important; font-size: 11px !important;
+  border-radius: var(--paio-pill) !important;
+}
+html[data-theme="dark"] .rail button.active,
+html[data-theme="dark"] .tab-btn.tab-btn-primary,
+html[data-theme="dark"] .pdf-btn,
+html[data-theme="dark"] button.active {
+  background: #c8f04d !important; border-color: #c8f04d !important; color: #111827 !important;
+}
+html[data-theme="dark"] .tab-btn { background: #1f1f1f !important; color: #f5f5f5 !important; border-color: #3f3f3f !important; }
+html[data-theme="dark"] .tab-btn.active { background: #f5f5f5 !important; color: #111827 !important; }
+html[data-theme="dark"] input,
+html[data-theme="dark"] select { background: #1f1f1f !important; color: #f5f5f5 !important; border-color: #3f3f3f !important; }
+
+#view-floorplan { min-height: 0 !important; }
+.canvas-col { min-height: 0 !important; flex: 1 1 auto !important; }
+.canvas-wrap {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  background: #0a0a0a !important;
+}
+html[data-theme="light"] .canvas-wrap { background: #dfe3e8 !important; }
+
+.panel,
+#floorplan-panel,
+#floorplan-panel.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+#floorplan-panel .panel-tabs,
+#floorplan-panel .panel-head,
+#floorplan-panel .panel-foot,
+#floorplan-panel #mullion-table-scroll,
+#floorplan-panel #table-scroll { display: none !important; }
+
+#paio-size-grid {
+  /* Sits well clear of the top-right corner now that the Pan / Export /
+     Import / Save pills have moved to the top-left -- pushed down a bit
+     further and given a heavier shadow so it reads as a floating card. */
+  position: absolute !important;
+  top: 74px;
+  right: 76px; /* clear of the right-hand button stack; drag the card to move it */
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 126px);
+  height: auto;
+  background: #141414;
+  color: #f5f5f5;
+  border-radius: 20px;
+  box-shadow: 0 14px 34px rgba(0,0,0,.34);
+  padding: 8px 8px 10px;
+  pointer-events: auto;
+}
+html[data-theme="light"] #paio-size-grid { background: #fff; color: #111827; }
+.paio-size-head { font-size: 11px; color: #6b7280; padding: 4px 8px 6px; }
+.paio-spreadsheet-btn {
+  display: block; width: calc(100% - 8px); margin: 0 4px 8px;
+  border: none; background: var(--paio-purple); color: #fff; border-radius: var(--paio-pill);
+  height: 32px; font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 0.2px;
+}
+html[data-theme="dark"] .paio-spreadsheet-btn { background: #c8f04d; color: #111827; }
+.paio-spreadsheet-btn:hover { filter: brightness(1.06); }
+.paio-size-scroll { overflow: auto; flex: 1; min-height: 0; }
+.paio-size-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.paio-size-table th, .paio-size-table td {
+  padding: 4px 5px; border-bottom: 1px solid #2c2c2c; text-align: left; white-space: nowrap;
+}
+html[data-theme="light"] .paio-size-table th,
+html[data-theme="light"] .paio-size-table td { border-bottom-color: #e5e7eb; }
+.paio-size-table th { font-size: 10px; color: #6b7280; font-weight: 600; position: sticky; top: 0; background: inherit; }
+.paio-size-table tr.is-selected td { background: rgba(37, 99, 235, 0.10); }
+.paio-num { cursor: pointer; font-weight: 600; color: #c8f04d; }
+html[data-theme="light"] .paio-num { color: var(--paio-blue); }
+.paio-size-input {
+  width: 44px; height: 24px; border: 1px solid #d1d5db; border-radius: var(--paio-pill); padding: 0 6px; font-size: 12px;
+}
+.paio-type-select {
+  max-width: 118px; height: 24px; border: none; border-radius: var(--paio-pill);
+  padding: 0 8px; font-size: 11px; font-weight: 600; cursor: pointer;
+  background: #f3f4f6; color: inherit;
+}
+html[data-theme="dark"] .paio-type-select { background: #1f1f1f; }
+.paio-zone-cell { display: flex; gap: 4px; align-items: center; }
+.paio-zone-btn {
+  width: 24px; height: 24px; border: none; border-radius: 999px;
+  background: #f3f4f6; color: #111827; font-size: 11px; font-weight: 700; cursor: pointer;
+}
+html[data-theme="dark"] .paio-zone-btn { background: #1f1f1f; color: #f5f5f5; }
+.paio-zone-btn.on { background: var(--paio-blue); color: #fff; }
+html[data-theme="dark"] .paio-zone-btn.on { background: #c8f04d; color: #111827; }
+
+#paio-opening-card {
+  position: fixed !important;
+  z-index: 99999 !important;
+  width: 228px;
+  background: #1a1a1a;
+  color: #f5f5f5;
+  border: 2px solid #c8f04d;
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+html[data-theme="light"] #paio-opening-card {
+  background: #fff; color: #111827; border-color: var(--paio-blue);
+}
+#paio-opening-card[hidden] { display: none !important; }
+.paio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.paio-card-close { border: 0; background: transparent; font-size: 18px; cursor: pointer; color: inherit; line-height: 1; }
+#paio-opening-card label { font-size: 11px; color: #9ca3af; }
+#paio-opening-card select {
+  width: 100%; height: 28px; border: 1px solid #3f3f3f; border-radius: var(--paio-pill); padding: 0 8px;
+}
+.paio-card-row { display: flex; gap: 6px; }
+.paio-card-row button {
+  flex: 1; height: 28px; border: 1px solid #3f3f3f; border-radius: var(--paio-pill);
+  background: #141414; color: inherit; cursor: pointer;
+}
+.paio-card-row button.on { background: var(--paio-blue); color: #fff; border-color: var(--paio-blue); }
+html[data-theme="dark"] .paio-card-row button.on { background: #c8f04d; color: #111827; border-color: #c8f04d; }
+.paio-card-check { display: flex; align-items: center; gap: 6px; }
+.paio-card-check input { width: auto; height: auto; }
+.paio-card-fl { font-size: 11px; color: var(--paio-blue); }
+html[data-theme="dark"] .paio-card-fl { color: #c8f04d; }
+
+/* —— Schedule + Design Pressure chrome —— */
+#view-schedule,
+#view-pbc,
+#view-irc,
+#view-miami,
+#view-martin,
+#view-boca,
+#view-dpreport {
+  background: #f8fafc !important;
+  padding: 16px 20px !important;
+}
+html[data-theme="dark"] #view-schedule,
+html[data-theme="dark"] #view-pbc,
+html[data-theme="dark"] #view-irc,
+html[data-theme="dark"] #view-miami,
+html[data-theme="dark"] #view-martin,
+html[data-theme="dark"] #view-boca,
+html[data-theme="dark"] #view-dpreport {
+  background: #0a0a0a !important;
+}
+
+.schedule-wrap {
+  border: none !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+table.schedule-table th,
+table.schedule-table td {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0 !important;
+}
+html[data-theme="dark"] table.schedule-table th,
+html[data-theme="dark"] table.schedule-table td { border-color: #2c2c2c !important; }
+table.schedule-table thead th {
+  background: var(--paio-blue) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+table.schedule-table thead tr.sub th {
+  background: #3b82f6 !important;
+  color: #eff6ff !important;
+}
+table.schedule-table td.id-cell {
+  background: #dbeafe !important;
+  color: var(--paio-blue) !important;
+  font-weight: 700 !important;
+}
+table.schedule-table td input,
+table.schedule-table td select {
+  border: 1px solid #d1d5db !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+}
+
+.schedule-toolbar .egress-btn,
+button.egress-btn,
+.quick-add-btn,
+.opening-modal-done,
+.pdf-btn,
+#schedule-pdf-btn,
+[id^="windchart-btn"] {
+  height: 32px !important;
+  border-radius: var(--paio-pill) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  padding: 0 14px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+.schedule-toolbar .egress-btn,
+button.egress-btn,
+[id^="windchart-btn"] {
+  background: var(--paio-purple) !important;
+  color: #ffffff !important;
+}
+.pdf-btn,
+#schedule-pdf-btn,
+[id$="-pdf-btn"] {
+  background: var(--paio-green) !important;
+  color: #ffffff !important;
+}
+.quick-add-btn { background: var(--paio-blue) !important; color: #ffffff !important; }
+.opening-modal-done { background: var(--paio-blue) !important; color: #ffffff !important; }
+
+.dp-source-select,
+#schedule-jurisdiction,
+.tab-with-picker select {
+  height: 32px !important;
+  border-radius: var(--paio-pill) !important;
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.opening-modal {
+  border-radius: 20px !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28) !important;
+  background: #ffffff !important;
+}
+.opening-modal-table thead th {
+  background: var(--paio-blue) !important;
+  color: #ffffff !important;
+}
+.opening-modal-table .om-num {
+  background: var(--paio-blue) !important;
+  color: #ffffff !important;
+}
+.opening-modal-table input,
+.opening-modal-table select {
+  border-radius: 999px !important;
+}
+.opening-modal-table .om-zone-btn.on {
+  background: var(--paio-blue) !important;
+  color: #ffffff !important;
+}
+
+.modal-box {
+  border-radius: 20px !important;
+  border: none !important;
+  background: #ffffff !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28) !important;
+}
+html[data-theme="dark"] .modal-box,
+html[data-theme="dark"] .opening-modal {
+  background: #141414 !important;
+}
+
+#view-dpreport .dpr-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  padding: 12px 4px !important;
+}
+#view-dpreport .dpr-field input,
+#view-dpreport .dpr-field select {
+  border-radius: 999px !important;
+  border: 1px solid #d1d5db !important;
+  box-shadow: none !important;
+  height: 36px !important;
+}
+#view-dpreport button,
+#view-dpreport .pdf-btn {
+  border-radius: var(--paio-pill) !important;
+  height: 32px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+}
+
+.tab-with-picker .tab-btn { border-radius: var(--paio-pill) 0 0 var(--paio-pill) !important; }
+.tab-with-picker select { border-radius: 0 var(--paio-pill) var(--paio-pill) 0 !important; }
+#tab-dpreport { border-radius: var(--paio-pill) !important; margin-left: 6px !important; }
+
+body { background: #ffffff !important; }
+html[data-theme="dark"] body { background: #0a0a0a !important; }
+
+/* One size for every button on the floor plan tool: the same as the bottom drawing dock. */
+.rail button, .rail .rail-chk { min-width: 46px; min-height: 46px; }
+.rail button .icon, .rail .rail-chk .icon { font-size: 22px; }
+.rail button .icon svg, .rail .rail-chk .icon svg { width: 22px; height: 22px; display: block; }
+/* Standard spot for the download / open / cloud pill is the bottom-left corner. Still draggable (drag grip); a dragged spot is remembered and wins. */
+.rail.rail-corner { top: auto; bottom: 80px; left: 14px; }
+/* The room-label chips keep their own compact size. */
+.label-palette button, .label-palette .chip { min-width: 36px; min-height: 36px; }
+/* Broward window & door schedule: bigger type, and the four pressure columns (product approval +/- and required design +/-) sit closer together. */
+#view-schedule table.schedule-table { width: auto; min-width: 0; font-size: 13px; }
+#view-schedule table.schedule-table thead th { font-size: 12px !important; }
+#view-schedule table.schedule-table thead tr.sub th { font-size: 11.5px !important; }
+#view-schedule table.schedule-table td, #view-schedule table.schedule-table td input, #view-schedule table.schedule-table td select { font-size: 13px; }
+#view-schedule table.schedule-table tbody td:nth-child(n+9):nth-child(-n+12) { width: 6.5rem; }
+#view-schedule table.schedule-table tbody td:nth-child(n+9):nth-child(-n+12) input { width: 5.75rem; min-width: 0; padding-left: 8px; padding-right: 8px; text-align: center; }
+#view-schedule table.schedule-table thead tr.sub th:nth-child(n+7):nth-child(-n+10) { width: 6.5rem; }

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egress Opening Calculator — Single Hung, Casement &amp; Horizontal Roller</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body data-page-type="interior">
+<div class="wrap">
+  <h1>Egress Opening Calculator</h1>
+  <div class="sub">Single Hung vs. Casement vs. Horizontal Roller — FBC/IRC R310 emergency escape &amp; rescue openings </div>
+
+  <div class="warn">
+    <b>Estimation tool only — not for permit submission.</b> Net clear opening dimensions vary by manufacturer, frame material, and hardware. This uses simplified, generalized deductions to compare how operating type affects egress — always confirm actual net clear opening against the specific product's tested egress chart or NOA/FPA documentation before specifying a window for a required egress opening.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Opening Inputs</div>
+    <div class="inputs-grid">
+      <div class="field">
+        <label for="unitW">Nominal Unit Width (in)</label>
+        <input type="number" id="unitW" value="36" step="1">
+      </div>
+      <div class="field">
+        <label for="unitH">Nominal Unit Height (in)</label>
+        <input type="number" id="unitH" value="60" step="1">
+      </div>
+      <div class="field">
+        <label for="sill">Sill Height Above Floor (in)</label>
+        <input type="number" id="sill" value="30" step="1">
+        <div class="hint">Max allowed is 44 in.</div>
+      </div>
+      <div class="field">
+        <label for="floorType">Floor Level</label>
+        <select id="floorType">
+          <option value="above" selected>Above Grade (min 5.7 sq ft)</option>
+          <option value="grade">Grade Floor Opening (min 5.0 sq ft)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-grid" id="compare-grid"></div>
+
+  <div class="legend">
+    <h2>How Net Clear Opening Is Estimated</h2>
+    <p><b>Single Hung:</b> width − 4", height ÷ 2.</p>
+    <p><b>Casement:</b> width − 4", full height.</p>
+    <p><b>Horizontal Roller:</b> (width − 4") ÷ 2, full height.</p>
+  </div>
+
+  <div class="legend">
+    <h2>Code Minimums Being Checked (FBC/IRC R310)</h2>
+    <p><b>Net clear opening height:</b> 24 in minimum.</p>
+    <p><b>Net clear opening width:</b> 20 in minimum.</p>
+    <p><b>Net clear opening area:</b> 5.7 sq ft minimum (5.0 sq ft for grade-floor openings).</p>
+    <p><b>Sill height above floor:</b> 44 in maximum.</p>
+    <p>All four must pass for an opening to qualify as code-compliant egress.</p>
+  </div>
+
+  
+</div>
+
+<script>
+  // Simplified, user-friendly net-clear-opening formulas by operating type — approximate, for comparison only.
+  // Actual values vary by manufacturer/frame material and must come from the product's tested egress chart.
+  var types = [
+    {
+      key: 'singlehung',
+      name: 'Single Hung',
+      desc: 'Only the bottom sash slides up — width less 4", height cut in half.',
+      clear: function(w, h){
+        return { width: w - 4, height: h / 2 };
+      }
+    },
+    {
+      key: 'casement',
+      name: 'Casement',
+      desc: 'Hinged sash swings fully open — width less 4", full height.',
+      clear: function(w, h){
+        return { width: w - 4, height: h };
+      }
+    },
+    {
+      key: 'roller',
+      name: 'Horizontal Roller',
+      desc: 'One panel slides past the other — width less 4", then cut in half.',
+      clear: function(w, h){
+        return { width: (w - 4) / 2, height: h };
+      }
+    }
+  ];
+
+  function fmt(n, d){ d = d || 1; return isFinite(n) ? n.toFixed(d) : '—'; }
+
+  function render(){
+    var unitW = parseFloat(document.getElementById('unitW').value) || 0;
+    var unitH = parseFloat(document.getElementById('unitH').value) || 0;
+    var sill = parseFloat(document.getElementById('sill').value) || 0;
+    var floorType = document.getElementById('floorType').value;
+    var minArea = floorType === 'grade' ? 5.0 : 5.7;
+
+    var grid = document.getElementById('compare-grid');
+    grid.innerHTML = '';
+
+    for (var i=0; i<types.length; i++){
+      var t = types[i];
+      var c = t.clear(unitW, unitH);
+      var cw = Math.max(c.width, 0);
+      var ch = Math.max(c.height, 0);
+      var area = (cw * ch) / 144;
+
+      var heightPass = ch >= 24;
+      var widthPass = cw >= 20;
+      var areaPass = area >= minArea;
+      var sillPass = sill <= 44;
+      var overallPass = heightPass && widthPass && areaPass && sillPass;
+
+      var card = document.createElement('div');
+      card.className = 'type-card ' + (overallPass ? 'pass' : 'fail');
+
+      var html = '';
+      html += '<div class="status-badge ' + (overallPass ? 'pass' : 'fail') + '">' + (overallPass ? 'Meets Egress' : 'Fails Egress') + '</div>';
+      html += '<h3>' + t.name + '</h3>';
+      html += '<div class="desc">' + t.desc + '</div>';
+      html += '<div class="dim-row">';
+      html += '<div class="dim-box"><div class="l">Net Clear W</div><div class="v">' + fmt(cw) + '</div><div class="u">in</div></div>';
+      html += '<div class="dim-box"><div class="l">Net Clear H</div><div class="v">' + fmt(ch) + '</div><div class="u">in</div></div>';
+      html += '<div class="dim-box"><div class="l">Net Area</div><div class="v">' + fmt(area,2) + '</div><div class="u">sq ft</div></div>';
+      html += '</div>';
+      html += '<div class="check-list">';
+      html += '<div class="check-row"><span>Height &ge; 24 in</span><span class="mk ' + (heightPass?'pass':'fail') + '">' + (heightPass?'PASS':'FAIL') + '</span></div>';
+      html += '<div class="check-row"><span>Width &ge; 20 in</span><span class="mk ' + (widthPass?'pass':'fail') + '">' + (widthPass?'PASS':'FAIL') + '</span></div>';
+      html += '<div class="check-row"><span>Area &ge; ' + minArea.toFixed(1) + ' sq ft</span><span class="mk ' + (areaPass?'pass':'fail') + '">' + (areaPass?'PASS':'FAIL') + '</span></div>';
+      html += '<div class="check-row"><span>Sill &le; 44 in</span><span class="mk ' + (sillPass?'pass':'fail') + '">' + (sillPass?'PASS':'FAIL') + '</span></div>';
+      html += '</div>';
+
+      card.innerHTML = html;
+      grid.appendChild(card);
+    }
+  }
+
+  var inputs = document.querySelectorAll('input, select');
+  for (var j=0; j<inputs.length; j++){
+    inputs[j].addEventListener('input', render);
+  }
+  render();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

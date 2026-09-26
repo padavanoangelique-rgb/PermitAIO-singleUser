@@ -1,0 +1,251 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-paper: #f7f9fc;
+  --color-paper-2: #e8eef5;
+  --color-ink: #0f172a;
+  --color-ink-soft: #334155;
+  --color-faint: #94a3b8;
+  --color-grid: #d5dce6;
+  --color-grid-strong: #c5ced9;
+  --color-gold: #c4a35a;
+  --color-danger: #dc2626;
+  --color-chrome: #ffffff;
+  --color-chrome-fg: #0f172a;
+  --color-chrome-muted: #64748b;
+  --color-room: #64748b;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: #e8f1fc;
+  --font-display: var(--font-heading);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* PermitAIO palette — light mode: white chrome + blue accent.
+   Dark mode: near-black chrome + lime-green accent. */
+:root {
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-outfit), var(--font-plus-jakarta), ui-sans-serif, sans-serif;
+
+  --background: oklch(0.99 0.01 255);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.52 0.23 255);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.03 255);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.96 0.02 255);
+  --muted-foreground: oklch(0.46 0.02 255);
+  --accent: oklch(0.94 0.05 255);
+  --accent-foreground: oklch(0.40 0.18 255);
+  --destructive: oklch(0.58 0.22 25);
+  --border: oklch(0.90 0.04 255);
+  --input: oklch(0.90 0.04 255);
+  --ring: oklch(0.52 0.23 255);
+  --chart-1: oklch(0.52 0.23 255);
+  --chart-2: oklch(0.62 0.14 205);
+  --chart-3: oklch(0.42 0.16 260);
+  --chart-4: oklch(0.55 0 0);
+  --chart-5: oklch(0.7 0 0);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.99 0.01 255);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.52 0.23 255);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.93 0.06 255);
+  --sidebar-accent-foreground: oklch(0.40 0.20 255);
+  --sidebar-border: oklch(0.90 0.04 255);
+  --sidebar-ring: oklch(0.52 0.23 255);
+}
+
+.dark {
+  --background: oklch(0.13 0 0);
+  --foreground: oklch(0.99 0 0);
+  --card: oklch(0.18 0 0);
+  --card-foreground: oklch(0.99 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.99 0 0);
+  --primary: oklch(0.92 0.28 127);
+  --primary-foreground: oklch(0.16 0.06 130);
+  --secondary: oklch(0.24 0.08 312);
+  --secondary-foreground: oklch(0.92 0.12 312);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.78 0 0);
+  --accent: oklch(0.30 0.16 312);
+  --accent-foreground: oklch(0.92 0.22 312);
+  --destructive: oklch(0.70 0.2 25);
+  --border: oklch(0.86 0.24 127 / 48%);
+  --input: oklch(0.86 0.20 127 / 38%);
+  --ring: oklch(0.92 0.28 127);
+  --chart-1: oklch(0.92 0.28 127);
+  --chart-2: oklch(0.80 0.24 312);
+  --chart-3: oklch(0.80 0.16 115);
+  --chart-4: oklch(0.78 0.22 128);
+  --chart-5: oklch(0.82 0.28 312);
+  --sidebar: oklch(0.10 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.92 0.28 127);
+  --sidebar-primary-foreground: oklch(0.16 0.06 130);
+  --sidebar-accent: oklch(0.26 0.14 312);
+  --sidebar-accent-foreground: oklch(0.92 0.22 312);
+  --sidebar-border: oklch(0.86 0.22 127 / 40%);
+  --sidebar-ring: oklch(0.92 0.28 127);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
+    font-weight: 600;
+  }
+  html {
+    @apply font-sans;
+    /* Light mode only: a bit larger + a touch heavier than the browser
+       default so body copy reads clearly at a glance instead of thin and
+       small. Pure size/weight bump on the root — no layout or component
+       changes, so it scales every rem-based size uniformly. */
+    font-size: 18px;
+    font-weight: 500;
+    color-scheme: light;
+  }
+  html ::selection {
+    background: oklch(0.52 0.23 255 / 28%);
+    color: oklch(0.145 0 0);
+  }
+  html.dark {
+    color-scheme: dark;
+    /* Dark mode keeps its original scale/weight — this pass is light-mode only. */
+    font-size: 17px;
+    font-weight: 400;
+  }
+  html.dark ::selection {
+    background: oklch(0.92 0.28 127 / 48%);
+    color: oklch(0.16 0.06 130);
+  }
+  html.dark a {
+    text-underline-offset: 2px;
+  }
+  /* Native <select> menus often paint a white list while inheriting page text.
+     Dark mode then shows white-on-white. Force ink on white for the option list. */
+  select {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  select option,
+  select optgroup {
+    color: #171717 !important;
+    background-color: #ffffff !important;
+  }
+}
+
+@media print {
+  .print-fill {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 0.4in;
+  }
+
+  html.print-landscape {
+    /* orientation is set by the injected @page rule in printPage() */
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+.measure-app {
+  --shadow-border:
+    0px 0px 0px 1px rgba(15, 23, 42, 0.08),
+    0px 1px 2px -1px rgba(15, 23, 42, 0.08),
+    0px 2px 6px 0px rgba(15, 23, 42, 0.06);
+  --shadow-chrome:
+    0px 0px 0px 1px rgba(15, 23, 42, 0.08),
+    0px 1px 2px -1px rgba(15, 23, 42, 0.08),
+    0px 2px 6px 0px rgba(15, 23, 42, 0.06);
+  --shadow-sheet:
+    0px 0px 0px 1px rgba(15, 23, 42, 0.08),
+    0px -12px 40px rgba(15, 23, 42, 0.18);
+}
+
+.safe-top {
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+.safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+.safe-bottom-sheet {
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+.welcome-card {
+  animation: measure-welcome-in 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes measure-welcome-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,774 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>PermitAIO Live Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f7fcff; --panel:#ffffff; --panel2:#e9f3ff; --line:#cde0f9; --ink:#0a0a0a; --mute:#515963;
+  --brand:#005fe8; --brand-ink:#fcfcfc; --brand-soft:#d5eeff; --blue:#0040a4; --blue-soft:#e1f0ff;
+  --ok:#15803d; --ok-soft:#dcf5e4; --warn:#b45309; --warn-soft:#fdeccb; --bad:#df202e; --bad-soft:#fde3e5;
+  --shadow:0 1px 2px rgba(10,30,70,.06),0 8px 24px rgba(10,30,70,.08); --dim:rgba(6,16,40,.52);
+  --font:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif; --head:"Outfit","Plus Jakarta Sans",ui-sans-serif,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1220; --panel:#121a2b; --panel2:#1a2740; --line:#2a3a52; --ink:#f4f7fb; --mute:#9aa8bd;
+  --brand:#3b82f6; --brand-ink:#ffffff; --brand-soft:#1e3a5f; --blue:#93c5fd; --blue-soft:#1e3a5f;
+  --ok:#34d399; --ok-soft:#12352a; --warn:#fbbf24; --warn-soft:#3d2d0c; --bad:#fb7185; --bad-soft:#3d1717;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4); --dim:rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1220; --panel:#121a2b; --panel2:#1a2740; --line:#2a3a52; --ink:#f4f7fb; --mute:#9aa8bd;
+  --brand:#3b82f6; --brand-ink:#ffffff; --brand-soft:#1e3a5f; --blue:#93c5fd; --blue-soft:#1e3a5f;
+  --ok:#34d399; --ok-soft:#12352a; --warn:#fbbf24; --warn-soft:#3d2d0c; --bad:#fb7185; --bad-soft:#3d1717;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4); --dim:rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+#app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:auto auto 1fr;height:100%}
+.rolebar{grid-column:1/-1;display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--line);scrollbar-width:thin}
+.rolebar button{flex:none;border:1px solid var(--line);background:var(--panel2);color:var(--mute);border-radius:999px;padding:6px 13px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.rolebar button:hover{border-color:var(--brand);color:var(--ink)}
+.rolebar button.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+#app.nosb{grid-template-columns:1fr}#app.nosb aside{display:none}
+.ribbon{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 16px;background:var(--brand);color:var(--brand-ink);font-weight:600;font-size:13px}
+.ribbon .sp{flex:1}
+.ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);color:inherit;border-radius:999px;padding:4px 12px;font-weight:600}
+aside{background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;padding:4px 8px 4px;letter-spacing:-.02em}
+.brand i{width:26px;height:26px;border-radius:8px;background:var(--brand);display:grid;place-items:center;color:var(--brand-ink);font-style:normal;font-size:13px}
+.whoami{margin:0 8px 10px;font-size:12px;color:var(--mute)}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:0;background:none;text-align:left;font-weight:600;color:var(--mute);width:100%}
+.nav:hover{background:var(--panel2);color:var(--ink)}
+.nav.on{background:var(--brand-soft);color:var(--brand)}
+.nav b{width:22px;height:22px;border-radius:7px;background:var(--panel2);display:grid;place-items:center;font-size:11px;color:var(--mute);flex:none}
+.nav.on b{background:var(--brand);color:var(--brand-ink)}
+main{overflow:auto;padding:20px 24px 60px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.top h1{margin:0;font-size:22px;letter-spacing:-.02em;flex:1;min-width:160px}
+h1,h2,h3,.brand,.modal h2,#coach h3{font-family:var(--head)}
+.about{border:1px dashed var(--brand);background:var(--brand-soft);border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;font-size:13px}
+.about strong{color:var(--brand);white-space:nowrap}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.pad{padding:16px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.kpi{padding:14px 16px}.kpi small{color:var(--mute);font-weight:600}.kpi div{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 11px;font-size:12px;font-weight:700;background:var(--panel2);color:var(--mute);white-space:nowrap}
+.p-brand{background:var(--brand);color:var(--brand-ink)}.p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-blue{background:var(--blue-soft);color:var(--blue)}.p-bad{background:var(--bad-soft);color:var(--bad)}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 14px;font-weight:700}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}.btn.pri:hover{filter:brightness(1.08);color:var(--brand-ink)}
+.btn.sm{padding:4px 10px;font-size:12px}
+input,select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+textarea{min-height:170px;resize:vertical}
+label{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700;margin:10px 0 4px}
+label.chk{text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--ink);font-weight:500;display:flex;gap:8px;margin:6px 0;align-items:center}
+label.chk input{width:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--panel2)}
+.scroll{overflow-x:auto}
+.mono{font-family:var(--mono);font-size:12.5px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:12px 0 16px}
+.tab{border:0;background:none;padding:7px 12px;border-radius:9px;font-weight:700;color:var(--mute)}
+.tab:hover{background:var(--panel2)}.tab.on{background:var(--brand);color:var(--brand-ink)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.sp1{flex:1}
+.mut{color:var(--mute)}
+.inbox-h{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:12px 16px;text-align:left;font-weight:700}
+.inbox-item{display:flex;gap:10px;align-items:flex-start;padding:9px 16px;border-top:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--brand);margin-top:7px;flex:none}
+.x{border:0;background:none;color:var(--mute);font-size:16px;line-height:1;padding:2px 6px;border-radius:6px}.x:hover{background:var(--panel2);color:var(--ink)}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.stp{flex:1;min-width:110px;border-radius:10px;padding:8px 10px;background:var(--panel2);font-size:12px;font-weight:700;color:var(--mute)}
+.stp.done{background:var(--ok-soft);color:var(--ok)}.stp.now{background:var(--brand);color:var(--brand-ink)}
+.canvas{position:relative;background:repeating-linear-gradient(0deg,transparent 0 23px,var(--line) 23px 24px),repeating-linear-gradient(90deg,transparent 0 23px,var(--line) 23px 24px),var(--panel);border:1px solid var(--line);border-radius:14px;height:340px;overflow:hidden;cursor:crosshair}
+.room{position:absolute;border:3px solid var(--ink);border-radius:2px}
+.win{position:absolute;width:44px;height:8px;background:var(--blue);border-radius:2px;transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--blue-soft)}
+.rail{display:flex;flex-direction:column;gap:6px}
+.lane{background:var(--panel2);border-radius:14px;padding:10px;min-height:120px}
+.lane h4{margin:2px 4px 8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.lane .card{padding:10px;margin-bottom:8px}
+.phone{max-width:380px;margin:0 auto;border:8px solid var(--ink);border-radius:32px;background:var(--panel);padding:14px;box-shadow:var(--shadow)}
+.cal{display:grid;grid-template-columns:repeat(5,minmax(80px,1fr));gap:6px}
+.cal div{background:var(--panel2);border-radius:10px;padding:8px;min-height:90px;font-size:12px}
+.cal b{display:block;margin-bottom:4px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;z-index:80;box-shadow:var(--shadow);max-width:90vw}
+.modal-back{position:fixed;inset:0;background:var(--dim);z-index:70;display:grid;place-items:center;padding:16px}
+.modal{background:var(--panel);border-radius:18px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:22px;box-shadow:var(--shadow)}
+.modal h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}
+.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}
+.role{text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px}
+.role:hover{border-color:var(--brand);background:var(--brand-soft)}
+.role b{display:block;font-size:15px}.role span{color:var(--mute);font-size:12.5px;display:block;margin-top:2px}
+.role em{font-style:normal;font-size:11px;font-weight:700;color:var(--brand);letter-spacing:.04em;display:block;margin-top:6px}
+.tour-card{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px 14px;margin-top:8px}
+.tour-card:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tour-card b{display:block}
+.doc{border:1px solid var(--line);border-radius:12px;background:#fff;color:#111;padding:14px;font-family:var(--mono);font-size:11.5px;overflow-x:auto}
+#ring{position:fixed;z-index:60;pointer-events:none;border-radius:12px;box-shadow:0 0 0 9999px var(--dim),0 0 0 3px var(--brand),0 0 0 7px color-mix(in srgb,var(--brand) 35%,transparent);transition:all .25s ease;display:none}
+#ptr{position:fixed;z-index:62;pointer-events:none;display:none;color:var(--brand);filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+#ptr svg{display:block}
+#ptr.b{animation:bob 1s ease-in-out infinite}
+@keyframes bob{50%{transform:translate(var(--bx,0),var(--by,0))}}
+#coach{position:fixed;z-index:65;width:min(330px,calc(100vw - 24px));background:var(--panel);border:2px solid var(--brand);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:none}
+#coach h3{margin:0 0 4px;font-size:15px;letter-spacing:-.01em}
+#coach p{margin:0 0 10px;font-size:13.5px}
+#coach .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);flex-wrap:wrap}
+.hint{display:inline-block;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:2px 8px;font-weight:700;font-size:12px;margin-bottom:8px}
+@media (max-width:820px){
+  #app{grid-template-columns:1fr;grid-template-rows:auto auto auto 1fr}
+  aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px;align-items:center}
+  .brand,.whoami{display:none}.nav{width:auto;white-space:nowrap}
+  main{padding:14px 16px 60px}
+}
+@media (prefers-reduced-motion:reduce){#ring{transition:none}#ptr.b{animation:none}}
+/* ---- Match permitaio.com pills, cards and details (FILL_* colors: purple #7f22fe, blue primary, green #009966, amber #fe9a00) ---- */
+:root{--purple:#7f22fe;--green:#009966;--amber:#fe9a00}
+.pill{display:inline-flex;align-items:center;height:auto;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:var(--brand);color:var(--brand-ink);box-shadow:0 1px 2px rgba(10,20,50,.12)}
+.pill.p-brand,.pill.p-blue{background:var(--brand);color:var(--brand-ink)}
+.pill.p-ok{background:var(--green);color:#fff}.pill.p-warn,.pill.p-bad{background:var(--amber);color:#fff}
+.pill.p-purple{background:var(--purple);color:#fff}
+.about{border:none;background:color-mix(in srgb,var(--panel2) 55%,var(--panel));border-radius:16px;padding:14px 18px}
+.about strong{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;background:var(--purple);color:#fff;font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(10,20,50,.12)}
+.card{border-radius:16px}
+.card.kpi{background:color-mix(in srgb,var(--panel2) 55%,var(--panel));border-color:transparent;text-align:center;padding:18px 16px}
+.kpi small{font-size:12px;letter-spacing:.06em;text-transform:uppercase}.kpi div{font-family:var(--head)}
+.btn{border-radius:999px;padding:8px 16px}.btn.pri{box-shadow:0 1px 2px rgba(10,20,50,.12)}.btn.sm{padding:5px 12px}
+.stp{border-radius:999px;padding:8px 14px;text-align:center}.stp.done{background:var(--green);color:#fff}.stp.now{background:var(--brand);color:var(--brand-ink)}
+.tab{border-radius:999px}.top h1{font-family:var(--head)}
+.inbox-item .pill{font-size:12px;padding:3px 10px}
+/* ---- Floor plan builder: matches the real builder chrome (floor-plan-theme.css) ---- */
+:root{--fp-blue:#2563eb;--fp-purple:#7c3aed;--fp-green:#059669;--fp-on:#ffffff;--fp-canvas:#dfe3e8;--fp-panel:#ffffff;--fp-line:#e5e7eb;--fp-field:#d1d5db;--fp-ink:#111827;--fp-mut:#6b7280;--fp-chip:#f3f4f6;--fp-grid:rgba(17,24,39,.10);--fp-wall:#111827}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--fp-blue:#3b82f6;--fp-purple:#a78bfa;--fp-green:#34d399;--fp-on:#ffffff;--fp-canvas:#0e1626;--fp-panel:#121a2b;--fp-line:#2a3a52;--fp-field:#3d4f6b;--fp-ink:#f4f7fb;--fp-mut:#9aa8bd;--fp-chip:#1a2740;--fp-grid:rgba(244,247,251,.10);--fp-wall:#f4f7fb}}
+:root[data-theme="dark"]{--fp-blue:#3b82f6;--fp-purple:#a78bfa;--fp-green:#34d399;--fp-on:#ffffff;--fp-canvas:#0e1626;--fp-panel:#121a2b;--fp-line:#2a3a52;--fp-field:#3d4f6b;--fp-ink:#f4f7fb;--fp-mut:#9aa8bd;--fp-chip:#1a2740;--fp-grid:rgba(244,247,251,.10);--fp-wall:#f4f7fb}
+.fpwrap{font-family:Inter,var(--font);border:1px solid var(--fp-line);border-radius:14px;overflow:hidden;background:var(--fp-panel);color:var(--fp-ink)}
+.fp-head{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:var(--fp-panel);border-bottom:1px solid var(--fp-line)}
+.fp-tab{height:32px;padding:0 14px;border:none;border-radius:999px;background:var(--fp-chip);color:var(--fp-ink);font:600 13px Inter,var(--font);box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.fp-tab.blue.on,.fp-tab.purple.on,.fp-tab.green.on,.fp-pdf{background:var(--fp-blue);color:var(--fp-on)}
+.fp-tab.purple.on{background:var(--fp-purple)}.fp-tab.green.on{background:var(--fp-green)}
+.fp-pick{display:inline-flex}.fp-pick .fp-tab{border-radius:999px 0 0 999px}
+.fp-pick select{height:32px;width:auto;max-width:180px;border-radius:0 999px 999px 0;border:1px solid var(--fp-field);background:var(--fp-panel);color:var(--fp-ink);padding:0 12px;font:13px Inter,var(--font)}
+.fp-pdf{height:32px;padding:0 16px;border:none;border-radius:999px;font:700 13px Inter,var(--font);background:var(--fp-green);color:var(--fp-on)}
+.fp-body{display:flex;min-height:470px}
+.fp-rail{display:flex;flex-direction:column;gap:6px;padding:8px;background:var(--fp-panel);border-right:1px solid var(--fp-line)}
+.fp-rb{min-width:46px;min-height:46px;border:1px solid var(--fp-field);border-radius:999px;background:var(--fp-panel);color:var(--fp-ink);font:500 11px Inter,var(--font);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0 4px}
+.fp-rb i{font-style:normal;font-size:17px;line-height:1}.fp-rb.on{background:var(--fp-blue);border-color:var(--fp-blue);color:var(--fp-on)}
+.fp-wrap{position:relative;flex:1;min-width:0;background:var(--fp-canvas)}
+.fp-chips{position:absolute;top:8px;left:10px;right:10px;z-index:3;display:flex;gap:4px;overflow-x:auto}
+.fp-chips span{flex:none;height:24px;padding:0 10px;border-radius:999px;font:600 11px/24px Inter,var(--font);background:var(--fp-panel);color:var(--fp-ink);border:1px solid var(--fp-line)}
+.fp-canvas{position:absolute;inset:0;cursor:crosshair;background:repeating-linear-gradient(0deg,transparent 0 23px,var(--fp-grid) 23px 24px),repeating-linear-gradient(90deg,transparent 0 23px,var(--fp-grid) 23px 24px)}
+.fp-room{position:absolute;border:3px solid var(--fp-wall)}
+.fp-rlabel{position:absolute;font:600 12px Inter,var(--font);color:var(--fp-wall);pointer-events:none}
+.fp-win{position:absolute;width:46px;height:9px;background:var(--fp-blue);border-radius:2px;transform:translate(-50%,-50%);box-shadow:0 0 0 3px color-mix(in srgb,var(--fp-blue) 25%,transparent);cursor:pointer}
+.fp-win b{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font:700 10px Inter,var(--font);color:var(--fp-blue);background:var(--fp-panel);border-radius:999px;padding:0 6px}
+.fp-win.sel{outline:2px solid var(--fp-ink);outline-offset:3px}
+.fp-hint{position:absolute;left:12px;bottom:10px;z-index:2;font:600 12px Inter,var(--font);background:var(--fp-panel);color:var(--fp-ink);padding:4px 12px;border-radius:999px;border:1px solid var(--fp-line)}
+.fp-card{position:absolute;top:44px;right:14px;z-index:6;width:340px;max-width:calc(100% - 28px);max-height:calc(100% - 60px);display:flex;flex-direction:column;background:var(--fp-panel);color:var(--fp-ink);border-radius:20px;box-shadow:0 14px 34px rgba(0,0,0,.28);padding:8px 8px 10px}
+.fp-card .head{font:11px Inter,var(--font);color:var(--fp-mut);padding:4px 8px 6px}
+.fp-card .sheet{display:block;width:calc(100% - 8px);margin:0 4px 8px;border:none;background:var(--fp-purple);color:var(--fp-on);border-radius:999px;height:32px;font:700 12px Inter,var(--font)}
+.fp-card .scr{overflow:auto;flex:1;min-height:0}
+.fp-card table{font-size:11px}.fp-card th,.fp-card td{padding:4px 5px;border-bottom:1px solid var(--fp-line);text-align:left;white-space:nowrap}
+.fp-card th{font-size:10px;color:var(--fp-mut);font-weight:600;letter-spacing:0;text-transform:none}
+.fp-card tr.is-selected td{background:rgba(37,99,235,.10)}
+.fp-num{cursor:pointer;font-weight:700;color:var(--fp-blue)}
+.fp-in{width:44px;height:24px;border:1px solid var(--fp-field);border-radius:999px;padding:0 6px;font-size:12px;background:var(--fp-panel);color:var(--fp-ink)}
+.fp-type{max-width:118px;height:24px;border:none;border-radius:999px;padding:0 8px;font:600 11px Inter,var(--font);background:var(--fp-chip);color:var(--fp-ink)}
+.fp-zc{display:flex;gap:4px}.fp-z{width:24px;height:24px;border:none;border-radius:999px;background:var(--fp-chip);color:var(--fp-ink);font:700 11px Inter,var(--font)}.fp-z.on{background:var(--fp-blue);color:var(--fp-on)}
+.fp-calc{margin:8px 4px 0;height:30px;border:none;border-radius:999px;background:var(--fp-blue);color:var(--fp-on);font:700 12px Inter,var(--font)}
+.fp-view{padding:16px 20px;background:#f8fafc;min-height:470px;color:#111827}
+:root[data-theme="dark"] .fp-view{background:#0a0a0a;color:#f5f5f5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fp-view{background:#0a0a0a;color:#f5f5f5}}
+.fp-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.fp-bar b{font:700 15px Outfit,Inter,sans-serif;flex:1;min-width:200px}
+.fp-pill{height:32px;padding:0 14px;border:none;border-radius:999px;font:700 13px Inter,var(--font);color:var(--fp-on)}
+.fp-pill.pu{background:var(--fp-purple)}.fp-pill.bl{background:var(--fp-blue)}.fp-pill.gr{background:var(--fp-green)}
+table.sched{width:auto;font-size:13px}
+table.sched th,table.sched td{border:1px solid #e5e7eb;padding:6px 10px;text-align:center}
+:root[data-theme="dark"] table.sched th,:root[data-theme="dark"] table.sched td{border-color:#2c2c2c}
+table.sched thead th{background:#2563eb;color:#fff;font:700 12px Inter,var(--font);letter-spacing:0;text-transform:none}
+table.sched thead tr.sub th{background:#3b82f6;color:#eff6ff;font-size:11.5px}
+table.sched td.idc{background:#dbeafe;color:#2563eb;font-weight:700}
+.fp-dp{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:760px}
+.fp-dp label{font:600 11px Inter,var(--font);text-transform:none;letter-spacing:0;color:var(--fp-mut)}
+.fp-dp input,.fp-dp select{height:36px;border-radius:999px;border:1px solid var(--fp-field);background:var(--fp-panel);color:var(--fp-ink);padding:0 14px}
+@media (max-width:820px){.fp-body{flex-direction:column}.fp-rail{flex-direction:row;border-right:0;border-bottom:1px solid var(--fp-line);overflow-x:auto}.fp-wrap{min-height:520px}.fp-card{position:static;width:auto;max-width:none;margin:60px 10px 10px;max-height:none}.fp-canvas{bottom:auto;height:340px}}
+/* ---- Larger type: the site's base text is 18px, so the demo reads at 16px+ instead of 14px ---- */
+body{font-size:16px}
+.ribbon{font-size:14.5px}.ribbon button{font-size:14px;padding:5px 14px}
+.rolebar button{font-size:14.5px;padding:8px 16px}
+.nav{font-size:15.5px;padding:9px 11px}.nav b{width:24px;height:24px;font-size:12px}
+.brand{font-size:19px}.whoami{font-size:13px}
+.top h1{font-size:28px}
+.about{font-size:15.5px}.about [style*="font-size"]{font-size:15px!important}
+.pill{font-size:14px}.inbox-item .pill{font-size:13px}.inbox-item{font-size:15px}
+.btn{font-size:15px}.btn.sm{font-size:14px}
+.tab{font-size:15.5px}
+.stp{font-size:14px}
+.kpi small{font-size:13px}.kpi div{font-size:32px}
+th{font-size:12.5px}td{font-size:15px}
+label{font-size:12.5px}label.chk{font-size:15px}
+input,select,textarea{font-size:15px}
+#coach{width:min(380px,calc(100vw - 24px))}#coach h3{font-size:17px}#coach p{font-size:15px}#coach .meta{font-size:13px}.hint{font-size:13px}
+.modal h2{font-size:24px}.role b{font-size:16px}.role span{font-size:13.5px}.tour-card{font-size:15px}
+@media (min-width:821px){#app{grid-template-columns:250px 1fr}main{padding:24px 32px 70px}}
+/* ---- Cleaner interface: calmer surfaces, more air, bigger explanations ---- */
+main>*{max-width:1180px;margin-left:auto;margin-right:auto}
+:root{--soft:color-mix(in srgb,var(--panel2) 45%,var(--panel))}
+body{letter-spacing:-.003em}
+aside{padding:16px 12px;gap:4px}
+.nav{border-radius:12px;font-weight:600}
+.nav.on{box-shadow:inset 3px 0 0 var(--brand)}
+.card{border-color:color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 1px 2px rgba(10,30,70,.04)}
+.pad{padding:20px}
+.grid{gap:18px}
+.top{margin-bottom:18px}.top h1{font-size:30px;font-weight:700;letter-spacing:-.025em}
+.kpi small{font-size:13.5px}
+th{padding:10px 14px}td{padding:13px 14px;font-size:15.5px}
+tr:last-child td{border-bottom:0}
+.btn{transition:background .15s,border-color .15s,color .15s}
+.about2{background:var(--soft);border-radius:18px;margin:0 auto 22px;overflow:hidden}
+.about2>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:14px;padding:18px 22px}
+.about2>summary::-webkit-details-marker{display:none}
+.ab-tag{flex:none;display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:999px;background:var(--purple);color:#fff;font-size:14px;font-weight:600;white-space:nowrap}
+.ab-lead{flex:1;font-size:17.5px;line-height:1.55;color:var(--ink)}
+.ab-tog{flex:none;width:28px;height:28px;border-radius:999px;background:var(--panel);border:1px solid var(--line);position:relative}
+.ab-tog:before,.ab-tog:after{content:"";position:absolute;left:50%;top:50%;width:10px;height:2px;background:var(--mute);transform:translate(-50%,-50%)}
+.ab-tog:after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .15s}
+.about2[open] .ab-tog:after{transform:translate(-50%,-50%) rotate(0)}
+.ab-body{padding:0 22px 20px}
+.ab-who{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ab-k{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-right:4px}
+.ab-chip{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:14.5px;font-weight:600}
+.ab-list{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px 26px}
+.ab-list li{position:relative;padding-left:26px;font-size:16px;line-height:1.5}
+.ab-list li:before{content:"";position:absolute;left:0;top:.42em;width:16px;height:16px;border-radius:999px;background:var(--brand-soft)}
+.ab-list li:after{content:"";position:absolute;left:5.5px;top:.62em;width:4px;height:8px;border:solid var(--brand);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ab-try{margin-top:16px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:12px 16px;border-radius:14px;background:var(--panel);border:1px dashed var(--brand);font-size:16px}
+.ab-try b{color:var(--brand)}
+.fp-pill.gh{background:var(--fp-chip);color:var(--fp-ink)}
+.eng-help{font:15px/1.55 Inter,var(--font);margin:0 0 10px;max-width:760px}
+.eng-pills{display:flex;gap:8px;flex-wrap:wrap}
+.eng-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(240px,1fr);gap:22px;margin-top:14px}
+.eng-draw{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:14px}
+.eng-side{background:var(--fp-panel);border:1px solid var(--fp-line);border-radius:16px;padding:6px 16px 16px}
+.eng-side h4{margin:16px 0 8px;font:700 12px Inter,var(--font);letter-spacing:.06em;text-transform:uppercase;color:#2563eb}
+.eng-line{font:15px Inter,var(--font);margin-bottom:4px}
+.eng-side table.sched{font-size:14px;width:100%}
+@media (max-width:900px){.eng-grid{grid-template-columns:1fr}.ab-lead{font-size:16px}.about2>summary{flex-wrap:wrap}}
+</style>
+
+<div id="app">
+  <div class="ribbon"><span>Interactive demo &middot; sample data only &middot; nothing is saved</span><span class="sp"></span>
+    <button id="btnTours">Guided tours</button><button id="btnTheme" aria-label="Toggle dark mode">Light / Dark</button></div>
+  <div class="rolebar" id="rolebar" role="tablist" aria-label="User types"></div>
+  <aside id="side"></aside>
+  <main id="main"></main>
+</div>
+<div id="ring"></div><div id="ptr"></div><div id="coach"></div><div id="layer"></div>
+
+<script>
+/* ---------- sample data (all fictional) ---------- */
+var JOBS=[
+ {id:'10001',client:'Sample, Alex',addr:'100 Sample Way, Margate',county:'Broward',status:'Need to Submit',tech:'Permit Tech 1',permit:'',trade:'Windows'},
+ {id:'10002',client:'Demo, Jordan',addr:'200 Example Ave, Coral Springs',county:'Broward',status:'Approved and Printed',tech:'Permit Tech 1',permit:'BLDR-000001-2026',trade:'Windows'},
+ {id:'10003-1',client:'Example, Taylor',addr:'300 Demo Lane, Boca Raton',county:'Palm Beach',status:'In Review',tech:'Permit Tech 2',permit:'EBP26-000002',trade:'Windows'},
+ {id:'10004-1',client:'Test, Morgan',addr:'400 Placeholder St, Miami',county:'Miami-Dade',status:'Corrections Needed',tech:'Permit Tech 2',permit:'RO26-00003',trade:'Roofing'},
+ {id:'10005-2',client:'Placeholder, Casey',addr:'500 Mock Blvd, Wellington',county:'Palm Beach',status:'Engineering Pending',tech:'Permit Tech 1',permit:'B26-00004',trade:'Windows'},
+ {id:'10006',client:'Mock, Riley',addr:'600 Test Drive, Fort Lauderdale',county:'Broward',status:'In Review',tech:'Permit Tech 2',permit:'BR-26-0005',trade:'Roofing'}
+];
+var TONE={'Need to Submit':'p-brand','In Review':'p-blue','Approved and Printed':'p-ok','Corrections Needed':'p-warn','Engineering Pending':'p-warn'};
+var INBOX={
+ 'Permit Tech 1':[{s:'Email',j:'10002',t:'Permit issuance detected on job 10002.',ago:'5m',u:1},{s:'Sheet',j:'10001',t:'Set sub_status to Need to Submit; city to Margate.',ago:'2h',u:1,n:3},{s:'Permits dept',j:'10005-2',t:'Job email update detected on job 10005-2.',ago:'1d',u:0}],
+ 'Permit Tech 2':[{s:'Email',j:'10004-1',t:'Permit corrections detected on job 10004-1.',ago:'22m',u:1},{s:'Email',j:'10003-1',t:'Client asked for a status update.',ago:'3h',u:1}],
+ 'HOA Tech 1':[{s:'Email',j:'10003-1',t:'HOA approval letter received for job 10003-1.',ago:'40m',u:1}],
+ 'Unassigned':[{s:'Bulk update',j:'10006',t:'Set sub_status to In Review.',ago:'1d',u:0}]
+};
+var INST=[{id:'10002',client:'Demo, Jordan',stage:0,inst:'Unassigned',date:'Oct 2'},{id:'10007',client:'Sample, Pat',stage:1,inst:'Crew A',date:'Sep 24'},{id:'10008',client:'Demo, Lee',stage:2,inst:'Crew B',date:'Sep 19'}];
+var STAGES=['Scheduled for install','Install in progress','Needs final inspection'];
+var WH=[{id:'10002',client:'Demo, Jordan',in:false,permit:true,hoa:true},{id:'10007',client:'Sample, Pat',in:true,permit:true,hoa:true},{id:'10008',client:'Demo, Lee',in:true,permit:true,hoa:false}];
+var SVC=[{id:1,who:'Example, Kim',what:'Window will not lock',day:'Mon 9:00'},{id:2,who:'Test, Oscar',what:'Leaking sliding door',day:'Wed 1:30'}];
+var RUN=[{id:'10004-1',client:'Test, Morgan',city:'City of Miami',st:0},{id:'10003-1',client:'Example, Taylor',city:'Boca Raton',st:0},{id:'10006',client:'Mock, Riley',city:'Fort Lauderdale',st:2}];
+var RST=['At the office','With the runner','Dropped at the city','Returned to the office'];
+var FEES=[{job:'10002',cat:'Permit fee',amt:412.5,d:'09/12'},{job:'10003-1',cat:'Engineering fee',amt:350,d:'09/14'},{job:'10004-1',cat:'NOC recording',amt:35,d:'09/15'}];
+var HOAS=[{n:'Sample Cove HOA',j:'10003-1',s:'Submitted'},{n:'Demo Palms Homeowners',j:'10002',s:'Approved'},{n:'Example Lakes Association',j:'10001',s:'Documents requested'}];
+var S={role:null,view:'dashboard',job:'10001',tab:'Overview',inboxOpen:true,viewAs:'Manager',emails:[],docs:[{n:'Signed contract.pdf',k:'212 KB'},{n:'Site photos.zip',k:'4.8 MB'}],notes:['Assigned to Permit Tech 1 on 09/01.','Ordered signed and sealed design pressures 9/3.'],windows:[{w:36,h:60,z:'4',pos:'',neg:''},{w:72,h:80,z:'5',pos:'',neg:''}],county:'Broward',pkg:0,q:'',measure:[{w:36,h:60},{w:48,h:72}],techId:'Permit Tech 1',sent:{},noaDL:{}};
+
+/* ---------- roles: every user type, its apps, its tours ---------- */
+var ALLNAV=[['home','My work','⌂'],['dashboard','Dashboard','D'],['jobs','Jobs','J'],['floorplan','Floor plans','F'],['inventory','Permit inventory','I'],['hoa','HOA tracker','H'],['noa','NOA library','N'],['forms','Forms library','L'],['sales','Sales','S'],['install','Install','T'],['warehouse','Warehouse','W'],['service','Service','V'],['measure','Measure','M'],['runner','Permit runner','R'],['accounting','Accounting','$'],['track','Homeowner status','O'],['tools','Free tools','?'],['settings','Settings','G']];
+var ROLES=[
+ {id:'owner',name:'Owner / Manager',who:'Runs the shop. Sees every job, every tech and every app.',apps:'All apps',home:'dashboard',as:'Manager',nav:['dashboard','jobs','floorplan','inventory','hoa','noa','forms','sales','install','warehouse','service','measure','runner','accounting','track','tools','settings'],tours:['tour-owner','tour-jobflow','tour-mail','tour-plan']},
+ {id:'permit',name:'Permit Tech',who:'Builds and submits permits. Sees only their own jobs and agent notifications.',apps:'Dashboard, Jobs, Floor plans, Inventory, NOA, Forms',home:'dashboard',as:'Permit Tech 1',nav:['dashboard','jobs','floorplan','inventory','noa','forms','hoa','runner','tools','settings'],tours:['tour-permit','tour-jobflow','tour-mail','tour-plan']},
+ {id:'hoa',name:'HOA Tech',who:'Gets HOA approvals. Sees only HOA jobs and HOA notifications.',apps:'Dashboard, HOA tracker, Jobs',home:'dashboard',as:'HOA Tech 1',nav:['dashboard','hoa','jobs','forms','noa','settings'],tours:['tour-hoa']},
+ {id:'sales',name:'Sales rep',who:'Tells homeowners where their permit stands, without bugging the permit desk.',apps:'Sales, Jobs (read-only), Homeowner status',home:'home',nav:['home','sales','jobs','track'],tours:['tour-sales']},
+ {id:'instmgr',name:'Install manager',who:'Schedules installs, assigns crews and watches final inspections.',apps:'Install, Warehouse, Service, Measure, Inventory, Jobs',home:'home',nav:['home','install','warehouse','service','measure','inventory','jobs'],tours:['tour-install']},
+ {id:'am',name:'Account manager',who:'Owns the customer relationship from sale to final inspection.',apps:'Jobs, Sales, Install, Service, Homeowner status',home:'home',nav:['home','jobs','sales','install','service','track'],tours:['tour-install']},
+ {id:'installer',name:'Project manager / Installer',who:'Sees the installs assigned to them and moves them along.',apps:'Install (my installs), Measure, Service, Jobs',home:'home',nav:['home','install','measure','service','jobs'],tours:['tour-install']},
+ {id:'warehouse',name:'Warehouse',who:'Checks materials in by scanning the job sticker and releases jobs to the schedule.',apps:'Warehouse, Permit inventory, Install',home:'home',nav:['home','warehouse','inventory','install'],tours:['tour-wh']},
+ {id:'service',name:'Service tech',who:'Works service requests, the calendar and the day’s route.',apps:'Service, Jobs',home:'home',nav:['home','service','jobs'],tours:['tour-service']},
+ {id:'measure',name:'Measure tech',who:'Measures openings on site from a phone and sends one sheet per job.',apps:'Measure, Floor plans, Jobs',home:'home',nav:['home','measure','floorplan','jobs'],tours:['tour-measure']},
+ {id:'runner',name:'Permit runner',who:'Carries permits between the office and the building departments.',apps:'Permit runner, Permit inventory, Jobs',home:'home',nav:['home','runner','inventory','jobs'],tours:['tour-runner']},
+ {id:'acct',name:'Accounting',who:'Tracks permit fees, receipts and job costs.',apps:'Accounting, Permit inventory, Jobs',home:'home',nav:['home','accounting','inventory','jobs'],tours:['tour-acct']},
+ {id:'home',name:'Homeowner',who:'The customer. Opens a private link to see their permit status. No login.',apps:'Homeowner status page',home:'track',nav:['track'],tours:['tour-home'],nosb:1},
+ {id:'visitor',name:'Website visitor',who:'Anyone on permitaio.com. Uses the free tools with no account.',apps:'Free tools',home:'tools',nav:['tools'],tours:['tour-tools'],nosb:1}
+];
+function role(){return ROLES.filter(function(r){return r.id===S.role})[0]}
+var ABOUT={
+ dashboard:'Your command center. Techs see only their own jobs and notifications; managers see everything split per tech. The Agent inbox collects what the email, sheet and permit agents found.',
+ jobs:'Every job in one searchable list. Click a job to open its workspace: forms, NOAs, floor plan, permit package, HOA, emails and notes all live on the job number.',
+ job:'One workspace per job. The tabs follow the permit from requirements to approval, so nothing lives in someone’s inbox or spreadsheet.',
+ floorplan:'Draw the floor plan once, place windows and doors, and PermitAIO builds the county window/door schedule with the right pressures and prints the official form.',
+ inventory:'The permit inventory board: status, permit number, dates and printed-permit tracking for every job, editable in place.',
+ hoa:'Track HOA approvals per job: community, status, and who is assigned. Change a status and the manager sees it right away.',
+ noa:'A library of Notice of Acceptance (product approval) documents with design pressures and expiry dates, matched to the windows you place.',
+ forms:'County and city permit forms, ready to auto-fill from the job so nobody retypes the same address five times.',
+ sales:'A homeowner-friendly permit status for every job. If a customer asks, request an update from the permit tech in one click.',
+ install:'The install board. Move each job through Scheduled, In progress and Final inspection, and assign a crew.',
+ warehouse:'Scan a job’s QR sticker to check materials in. A job is ready for the install schedule when the permit, the HOA and the materials are all in.',
+ service:'Service requests from anywhere with date and time scheduling, a weekly calendar and a route for the day.',
+ measure:'The field app. Add each opening with its width and height, then submit one measure sheet to the office. Built for a phone.',
+ runner:'Track each permit as it moves: at the office, with the runner, dropped at the city, returned. Scan the sticker at every handoff.',
+ accounting:'Permit, engineering and recording fees by job, with receipts, totals and a report you can hand to the owner.',
+ track:'What the homeowner sees from their private link: plain-language progress and a way to message the permit tech. No login.',
+ tools:'Free public tools such as the egress window check. No account needed.',
+ settings:'Choose which tech you are, invite teammates and set roles. Roles decide who sees what.'
+};
+/* ---------- helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function job(){return JOBS.filter(function(j){return j.id===S.job})[0]}
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2600)}
+var DETAIL={
+ dashboard:{who:'Owners, managers, permit techs, HOA techs',f:['Live counts of active, need-to-submit, in-review and approved jobs','Agent inbox: every email, sheet change and permit-department notice the agents processed, grouped by tech','Each tech sees only their own items; managers can view as any tech','Duplicate notices are merged into one line with a count (for example ×3)','Dismiss an item and it stays gone; collapse the whole bar when you do not need it'],tip:'Click a job number in any inbox line to jump straight to that job.'},
+ jobs:{who:'Owners, managers, permit techs, sales, accounting',f:['Search by job number, client name or address','Status pill on every row: Need to Submit, In Review, Corrections Needed, Engineering Pending, Approved and Printed','County shown so you know which requirements and pressure chart apply','Techs only see the jobs assigned to them; managers see all','Click any row to open the job workspace'],tip:'Try typing "Boca" or "10001" in the search box.'},
+ job:{who:'Everyone who touches a permit',f:['Overview: progress bar from Assigned to Printed, contact details and the latest activity','Requirements & Forms: the jurisdiction’s checklist, so nothing is missed at submittal','Forms Generator: auto-fills official forms from job data','NOA Downloader: product approvals with design pressures','Permit Package: one submittal PDF with the forms, schedule, NOAs (including mullion NOAs) and a checklist of anything still missing','Emails: send to an engineer or HOA, replies and files come back to the job','Activity & Notes: notes never change a job’s status by themselves'],tip:'Your role decides which tabs you see. HOA techs, sales and accounting get a focused set.'},
+ floorplan:{who:'Permit techs, owners, measure techs',f:['Draw walls and rooms, place windows, doors and room labels right on the plan','Type the width and height of every opening in inches, and mark egress bedroom windows','County picker: Broward, Palm Beach, Miami-Dade, Boca Raton, Wellington. Each county prints its own official schedule','Auto-calc fills the required positive and negative design pressures by zone from that county’s chart','Mullion tool: drop a vertical bar between side-by-side openings or a horizontal bar between stacked ones. Each mullion gets a mark (M1, M2), size, NOA and notes','The mullion schedule prints with the window schedule, and mullion NOAs go into the permit package','Engineer layout tab: draw one opening large with mullions and bucks, and print the sheet for the engineer','Design pressure report tab: the zone 4 and zone 5 pressures used on the schedule'],tip:'Pick the Window tool and click the plan three times, then Auto-calc. Then open Engineer layout.'},
+ inventory:{who:'Permit techs, warehouse, owners',f:['Every job’s permit number, status, assigned date and printed flag','Edit statuses in place','Filters keep printed and unprinted permits separate','Feeds the warehouse and install boards'],tip:'A job is not ready for install until its permit shows Printed.'},
+ hoa:{who:'HOA techs, owners',f:['One row per HOA request with community, job and status','Change status: Documents requested, Submitted, Approved, Corrections','The job’s HOA Tracker tab shows step-by-step progress and COI expiry','Approvals notify the manager and unlock the warehouse “ready” check'],tip:'Change a status here, then open the job to see the same status there.'},
+ noa:{who:'Permit techs, engineers',f:['Manufacturer, product, NOA number, design pressure and expiry','Matched automatically to windows placed on the floor plan','Expired approvals are flagged before they cause a correction','Mullion approvals are matched to the mullions drawn on the floor plan','Download the approval PDF straight into the permit package'],tip:'The design pressure on the NOA must meet or beat the required pressure on the schedule.'},
+ forms:{who:'Permit techs',f:['County and city forms ready to auto-fill','Fields come from the job: address, owner, contractor, license, folio','Window/door schedule fills from the floor plan','New jurisdictions are added by the research agent for review'],tip:'Click Preview auto-fill on any form.'},
+ sales:{who:'Sales reps, account managers',f:['Plain-language status per customer, no permit jargon','Request update sends a note to the permit tech’s Agent inbox','Read-only: sales cannot change permit data','Reduces interrupt calls to the permit desk'],tip:'Click Request update, then switch to Permit Tech to see it arrive.'},
+ install:{who:'Install managers, account managers, installers, project managers',f:['Three stages: Scheduled, Install in progress, Needs final inspection','Assign a crew to each job','Only jobs with permit, HOA and materials ready appear on the schedule','Installers see only their own installs'],tip:'Assign a crew, then move the card to the next stage.'},
+ warehouse:{who:'Warehouse staff, install managers',f:['Scan the job’s QR sticker to check materials in','Ready list requires permit approved, HOA approved and materials in','Mark ready releases the job to the install schedule','Permit inventory is one click away'],tip:'Scan once to check in, then Mark ready.'},
+ service:{who:'Service techs, office',f:['Search for an existing job by job number, name or address, or add a customer that is not on the board yet','Create a request with customer, problem and time','Weekly calendar shows every scheduled call','Share your location so the office can route the next call','Open requests list stays visible for the day'],tip:'Add a request and watch it land on the calendar.'},
+ measure:{who:'Measure techs (phone)',f:['Add each opening with width and height in inches','Whole-job measure sheet in one submission','The office sees the sheet in the floor plan builder','Built for one-hand use on a phone'],tip:'Add an opening, then Submit to office.'},
+ runner:{who:'Permit runners, front office',f:['Every permit’s location: office, with runner, dropped at city, returned','Scan the sticker at each handoff','Timestamped trail for accountability','City and job shown for route planning'],tip:'Click the action button three times to follow one permit all the way.'},
+ accounting:{who:'Accounting, owners',f:['Permit, engineering and recording fees by job','Running totals and receipt counts','Add a fee to any job','Export a fee report for the owner'],tip:'Add a $125 fee and watch the total update.'},
+ track:{who:'Homeowners (no login)',f:['Private link, no account or password','Five plain-language steps from contract to install','Message the permit tech directly','Texts go out at approval'],tip:'Send a message, then switch to Permit Tech to see it.'},
+ tools:{who:'Anyone, no account',f:['Free egress window check against code minimums','Clear opening area, width and height rules','Shareable, no sign-up','A taste of what the full platform does'],tip:'Try 24 × 30 inches, then 20 × 20.'},
+ settings:{who:'Owners, all users',f:['Pick which tech you are so your dashboard follows you','Team list with roles','Roles decide which apps and tabs each person sees','Seat counts for permit and HOA techs'],tip:'Switch tech, then open the Dashboard.'}
+};
+function about(k){var d=DETAIL[k]||{f:[],who:'',tip:''};
+ var open=S.aboutClosed&&S.aboutClosed[k]?'':' open';
+ return '<details class="about2"'+open+' data-about="'+k+'"><summary><span class="ab-tag">What this does</span><span class="ab-lead">'+ABOUT[k]+'</span><span class="ab-tog" aria-hidden="true"></span></summary>'
+  +'<div class="ab-body"><div class="ab-who"><span class="ab-k">Who uses it</span>'+d.who.split(', ').map(function(w){return '<span class="ab-chip">'+w+'</span>'}).join('')+'</div>'
+  +'<div class="ab-k" style="margin:14px 0 6px">What you can do here</div><ul class="ab-list">'+d.f.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'
+  +'<div class="ab-try"><b>Try it</b><span>'+d.tip+'</span></div></div></details>'}
+function pill(s){return '<span class="pill p-blue">'+esc(s)+'</span>'}
+function myJobs(){var r=role();if(r.id==='permit')return JOBS.filter(function(j){return j.tech===S.techId});return JOBS}
+function go(v){S.view=v;render();$('#main').scrollTop=0}
+function openJob(id,tab){S.job=id;S.tab=tab||'Overview';S.view='job';render()}
+function setRole(id){S.role=id;var r=role();S.viewAs=r.as||'Manager';S.view=r.home;S.tab='Overview';$('#app').className=r.nosb?'nosb':'';$('#layer').innerHTML='';render()}
+function drawSide(){
+ $('#rolebar').innerHTML=ROLES.map(function(x){return '<button role="tab" data-rolebar="'+x.id+'" data-t="rb-'+x.id+'" class="'+(x.id===S.role?'on':'')+'" aria-selected="'+(x.id===S.role)+'">'+x.name+'</button>'}).join('');
+ var r=role(),h='<div class="brand"><i>P</i>PermitAIO</div><div class="whoami">Viewing as <b>'+r.name+'</b></div>';
+ ALLNAV.filter(function(n){return r.nav.indexOf(n[0])>-1}).forEach(function(n){
+  var on=(S.view===n[0]||(S.view==='job'&&n[0]==='jobs'))?' on':'';
+  h+='<button class="nav'+on+'" data-t="nav-'+n[0]+'" data-go="'+n[0]+'"><b>'+n[2]+'</b>'+n[1]+'</button>'});
+ $('#side').innerHTML=h}
+/* ---------- views ---------- */
+function vDashboard(){
+ var r=role(),mgr=r.id==='owner';
+ var groups=Object.keys(INBOX).filter(function(k){return mgr?(S.viewAs==='Manager'||k===S.viewAs):k===S.viewAs});
+ var unread=0,total=0;groups.forEach(function(k){INBOX[k].forEach(function(i){total++;if(i.u)unread++})});
+ var h='<div class="top"><h1>Dashboard</h1>'+(mgr?'<span class="mut">View as</span><select id="viewas" data-t="viewas" style="width:auto">'+['Manager','Permit Tech 1','Permit Tech 2','HOA Tech 1'].map(function(o){return '<option'+(o===S.viewAs?' selected':'')+'>'+o+'</option>'}).join('')+'</select>':'<span class="pill p-brand">'+S.viewAs+'</span>')+'</div>'+about('dashboard');
+ var mj=myJobs();
+ h+='<div class="grid g4" style="margin-bottom:14px"><div class="card kpi"><small>'+(mgr?'Active jobs':'My jobs')+'</small><div>'+(mgr?47:mj.length)+'</div></div><div class="card kpi"><small>Need to submit</small><div>'+(mgr?12:mj.filter(function(j){return j.status==='Need to Submit'}).length)+'</div></div><div class="card kpi"><small>In review</small><div>'+(mgr?18:mj.filter(function(j){return j.status==='In Review'}).length)+'</div></div><div class="card kpi"><small>Approved</small><div>'+(mgr?9:mj.filter(function(j){return/Approved/.test(j.status)}).length)+'</div></div></div>';
+ h+='<div class="card" data-t="agent-inbox" style="margin-bottom:14px"><button class="inbox-h" data-t="inbox-toggle" id="inboxT"><span>Agent inbox</span>'+(unread?'<span class="pill p-bad">'+unread+' new</span>':'')+'<span class="mut" style="font-weight:500">'+total+' items</span><span class="sp1"></span><span>'+(S.inboxOpen?'▾':'▸')+'</span></button>';
+ if(S.inboxOpen){groups.forEach(function(k){
+   if(!INBOX[k].length)return;
+   if(mgr&&S.viewAs==='Manager')h+='<div style="border-top:1px solid var(--line);padding:8px 16px;font-weight:700;background:var(--panel2)">'+k+' <span class="mut" style="font-weight:500">'+INBOX[k].length+' item'+(INBOX[k].length>1?'s':'')+'</span></div>';
+   INBOX[k].forEach(function(it,ix){h+='<div class="inbox-item">'+(it.u?'<span class="dot"></span>':'<span style="width:8px"></span>')+'<div class="sp1"><div class="row" style="gap:8px"><span class="pill p-purple">'+it.s+'</span><a href="#" data-job="'+it.j+'" style="color:var(--brand);font-weight:700;font-size:12px">Job '+it.j+'</a>'+(it.n?'<span class="mut">×'+it.n+'</span>':'')+'<span class="mut" style="font-size:12px">'+it.ago+' ago</span></div><div>'+esc(it.t)+'</div></div><button class="x" data-dis="'+k+'|'+ix+'" aria-label="Dismiss">×</button></div>'})});
+   if(!total)h+='<div style="padding:14px 16px" class="mut">Nothing waiting.</div>'}
+ h+='</div><div class="card scroll">'+jobTable(mj.slice(0,4))+'</div>';
+ return h}
+function jobTable(list){
+ return '<table><thead><tr><th>Job #</th><th>Client</th><th>City / county</th><th>Status</th><th>Tech</th></tr></thead><tbody>'+list.map(function(j){
+  return '<tr class="click" data-t="job-row-'+j.id+'" data-job="'+j.id+'"><td class="mono">'+j.id+'</td><td>'+esc(j.client)+'</td><td>'+esc(j.county)+'</td><td>'+pill(j.status)+'</td><td>'+j.tech+'</td></tr>'}).join('')+'</tbody></table>'}
+function vJobs(){
+ var q=S.q.toLowerCase();var list=myJobs().filter(function(j){return !q||(j.id+j.client+j.addr).toLowerCase().indexOf(q)>-1});
+ return '<div class="top"><h1>Jobs</h1><input id="q" placeholder="Search job #, client, address" value="'+esc(S.q)+'" style="max-width:300px"></div>'+about('jobs')+'<div class="card scroll">'+jobTable(list)+(list.length?'':'<div class="pad mut">No jobs match.</div>')+'</div>'}
+var TABS=['Overview','Floor Plans','Requirements & Forms','Forms Generator','NOA Downloader','Permit Package','Permit Inventory','HOA Tracker','Documents','Emails','Activity & Notes'];
+var TID={'Overview':'overview','Floor Plans':'floor','Requirements & Forms':'reqs','Forms Generator':'forms','NOA Downloader':'noa','Permit Package':'package','Permit Inventory':'inv','HOA Tracker':'hoa','Documents':'docs','Emails':'emails','Activity & Notes':'notes'};
+var ROLETABS={hoa:['Overview','HOA Tracker','Documents','Emails','Activity & Notes'],sales:['Overview','Documents','Emails','Activity & Notes'],instmgr:['Overview','Floor Plans','Documents','Activity & Notes'],am:['Overview','Floor Plans','Documents','Emails','Activity & Notes'],installer:['Overview','Floor Plans','Documents','Activity & Notes'],service:['Overview','Documents','Activity & Notes'],measure:['Overview','Floor Plans','Documents','Activity & Notes'],warehouse:['Overview','Permit Inventory','Documents'],runner:['Overview','Permit Inventory','Documents'],acct:['Overview','Permit Inventory','Documents','Activity & Notes']};
+function vJob(){
+ var j=job(),tabs=ROLETABS[S.role]||TABS;if(tabs.indexOf(S.tab)<0)S.tab=tabs[0];
+ var h='<div class="top"><div><div class="mut mono">'+j.id+'</div><h1 style="font-size:24px">'+esc(j.client)+'</h1><div class="mut">'+esc(j.addr)+'</div></div><span class="sp1"></span><span class="pill p-purple">'+j.trade+'</span>'+pill(j.status)+'</div>'+about('job');
+ h+='<div class="tabs" data-t="tabs">'+tabs.map(function(t){return '<button class="tab'+(S.tab===t?' on':'')+'" data-t="tab-'+TID[t]+'" data-tab="'+esc(t)+'">'+t+'</button>'}).join('')+'</div>';
+ var TN={'Overview':'Where the permit stands right now, who owns it, and the last thing that happened.','Floor Plans':'The job’s floor plan lives here; the builder turns it into the county schedule.','Requirements & Forms':'The jurisdiction’s checklist. Items are pulled from the county library so nothing is missed.','Forms Generator':'Official forms filled from this job’s data. No retyping addresses or license numbers.','NOA Downloader':'Product approvals for the windows and doors on this job, with their design pressures.','Permit Package':'Merges every form, NOA, schedule and document into one ordered submittal PDF.','Permit Inventory':'Permit number, status and print tracking for this job.','HOA Tracker':'HOA approval steps for this job, with who is assigned and the insurance certificate expiry.','Documents':'Every file for the job. Emailed replies drop their attachments here automatically.','Emails':'Send from the shop’s address; replies and attachments are filed on the job. Nothing is lost in a personal inbox.','Activity & Notes':'A timeline of everything that happened. Notes are for people; they never change a status on their own.'};
+ h+='<div class="about" style="margin-bottom:12px"><strong>This tab</strong><span>'+TN[S.tab]+'</span></div>';
+ return h+'<div id="tabbody">'+tabBody(j)+'</div>'}
+function tabBody(j){
+ var t=S.tab,h='';
+ if(t==='Overview'){
+  var idx={'Need to Submit':1,'In Review':2,'Corrections Needed':2,'Engineering Pending':1,'Approved and Printed':4}[j.status]||1;
+  h='<div class="card pad"><b>Permit progress</b><div class="steps" style="margin-top:10px">'+['Assigned','Submitted','In review','Approved','Printed'].map(function(s,i){return '<div class="stp '+(i<idx?'done':i===idx?'now':'')+'">'+s+'</div>'}).join('')+'</div></div><div class="grid g2" style="margin-top:14px"><div class="card pad"><b>Details</b><div class="mut" style="margin-top:6px">Permit tech: '+j.tech+'<br>County: '+j.county+'<br>Permit #: '+(j.permit||'not yet issued')+'</div></div><div class="card pad"><b>Latest activity</b><div class="mut" style="margin-top:6px">'+esc(S.notes[S.notes.length-1])+'</div></div></div>'}
+ else if(t==='Floor Plans'){h='<div class="card pad"><b>Floor plan</b><p class="mut">One floor plan per job. Open the builder to place openings and generate the county schedule.</p><button class="btn pri" data-go="floorplan" data-t="open-fp">Open floor plan builder</button></div>'}
+ else if(t==='Requirements & Forms'){
+  h='<div class="card pad"><b>'+j.county+' requirements</b><p class="mut">Pulled from the jurisdiction library. Tick items as you gather them.</p>'+['Signed contract and notice of commencement','Product approvals (NOAs) for every opening','Window / door schedule with design pressures','Signed and sealed engineering (if required)','HOA approval letter'].map(function(r,i){return '<label class="chk"><input type="checkbox" '+(i<2?'checked':'')+'>'+r+'</label>'}).join('')+'</div>'}
+ else if(t==='Forms Generator'){
+  h='<div class="card pad"><b>Forms</b><p class="mut">Fill official forms from the job with one click.</p>'+['Permit application','Notice of commencement','Owner/builder affidavit','Window/door schedule'].map(function(f){return '<div class="row spread" style="padding:8px 0;border-top:1px solid var(--line)"><span>'+f+'</span><button class="btn sm" data-fill="'+f+'">Auto-fill</button></div>'}).join('')+'</div>'}
+ else if(t==='NOA Downloader'){
+  h='<div class="card scroll"><table><thead><tr><th>Product</th><th>NOA</th><th>Design pressure</th><th>Expires</th><th></th></tr></thead><tbody>'+[['PGT WinGuard single hung','24-0311.05','+55.0 / −65.0 psf','2029'],['Andersen 400 series slider','23-0714.08','+70.0 / −90.0 psf','2028'],['Impact entry door 36×80','25-0114.06','+90.0 / −110.0 psf','2030']].map(function(r,i){return '<tr><td>'+r[0]+'</td><td class="mono">'+r[1]+'</td><td class="mono">'+r[2]+'</td><td>'+r[3]+'</td><<td>'+(S.noaDL&&S.noaDL[r[1]]?'<span class="pill p-ok">Downloaded</span>':'<button class="btn sm pri" data-t="noa-dl'+(i?'-'+i:'')+'" data-dl="'+r[1]+'">Download NOA</button>')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+ else if(t==='Permit Package'){
+  var noaCount=Object.keys(S.noaDL||{}).length;var items=['Application','Notice of commencement','NOAs ('+noaCount+')','Window/door schedule','Engineering letter','Contract'];
+  h='<div class="card pad"><div class="row spread"><b>Permit package</b><button class="btn pri" data-t="pkg-gen" id="gen">Generate package</button></div><div style="height:10px;background:var(--panel2);border-radius:99px;margin:14px 0;overflow:hidden"><div style="height:100%;width:'+S.pkg+'%;background:var(--ok);transition:width .3s"></div></div><div class="mut">'+(S.pkg>=100?'Package ready: 48 pages, stamped and ordered for submittal.':S.pkg>0?'Building package… '+S.pkg+'%':'Combines every form, NOA, schedule and document into one submittal PDF.')+'</div><div class="row" style="margin-top:10px">'+items.map(function(i){return '<span class="pill '+(S.pkg>=100?'p-ok':'')+'">'+i+'</span>'}).join('')+'</div></div>'}
+ else if(t==='Permit Inventory'){
+  h='<div class="card scroll"><table><thead><tr><th>Job #</th><th>Permit #</th><th>Status</th><th>Assigned</th><th>Printed</th></tr></thead><tbody><tr><td class="mono">'+j.id+'</td><td class="mono">'+(j.permit||'—')+'</td><td><select style="width:auto">'+Object.keys(TONE).map(function(s){return '<option'+(s===j.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></td><td>09/01/26</td><td>Not printed yet</td></tr></tbody></table></div>'}
+ else if(t==='HOA Tracker'){
+  var hs=['Request sent','Docs received','Submitted','Approved'];var cur=S.hoaStep==null?2:S.hoaStep;
+  h='<div class="card pad"><b>Sample Cove HOA</b><div class="steps" style="margin:10px 0">'+hs.map(function(s,i){return '<div class="stp '+(i<cur?'done':i===cur?'now':'')+'">'+s+'</div>'}).join('')+'</div><div class="row spread"><span class="mut">Assigned to HOA Tech 1 · COI on file, expires 03/2027</span>'+(cur<3?'<button class="btn pri sm" data-t="hoa-adv" data-hoaadv="1">Mark next step done</button>':'<span class="pill p-ok">Approved</span>')+'</div></div>'}
+ else if(t==='Documents'){
+  h='<div class="card pad"><div class="row spread"><b>Documents</b><button class="btn pri" data-t="upload" id="upl">Upload file</button></div>'+S.docs.map(function(d){return '<div class="row spread" style="padding:9px 0;border-top:1px solid var(--line)"><span>'+esc(d.n)+'</span><span class="mut">'+d.k+'</span></div>'}).join('')+'</div>'}
+ else if(t==='Emails'){h=emailsTab(j)}
+ else if(t==='Activity & Notes'){
+  h='<div class="card pad"><div class="row"><input id="newnote" placeholder="Add a note…" style="flex:1"><button class="btn pri" id="addnote">Add note</button></div>'+S.notes.slice().reverse().map(function(n){return '<div style="padding:9px 0;border-top:1px solid var(--line);margin-top:8px">'+esc(n)+'<div class="mut" style="font-size:12px">just now</div></div>'}).join('')+'</div>'}
+ return h}
+var TPL={
+ 'Engineering request':function(j){return {s:'Engineering request - Job '+j.id+' - '+j.client+' - '+j.addr,b:'Hello,\n\nPlease provide signed and sealed engineering for the following project:\n\nJob #: '+j.id+'\nClient: '+j.client+'\nAddress: '+j.addr+'\n\nScope / details:\n- \n\nReply to this email with the signed and sealed documents attached. Your reply and its attachments are filed on the job automatically.\n\nThank you,\nSample Windows and Roofing'}},
+ 'HOA request':function(j){return {s:'HOA request - Job '+j.id+' - '+j.client,b:'Hello,\n\nWe are requesting HOA approval for '+j.addr+'.\n\nPlease reply with the approval or any items needed.\n\nThank you,\nSample Windows and Roofing'}},
+ 'Blank':function(j){return {s:'Job '+j.id+' - '+j.client,b:'\n\nThank you,\nSample Windows and Roofing'}}};
+function emailsTab(j){
+ var t=S.tpl||'Engineering request';var d=TPL[t](j);
+ var h='<div class="grid g2"><div class="card pad"><b>Send an email from this job</b><div class="mut" style="font-size:12px">Sends as <span class="mono">demo@permitaio.com</span>. Replies come back to the job.</div>';
+ h+='<label for="tpl">Template</label><select id="tpl" data-t="tpl">'+Object.keys(TPL).map(function(k){return '<option'+(k===t?' selected':'')+'>'+k+'</option>'}).join('')+'</select>';
+ h+='<label for="to">To</label><input id="to" data-t="to" value="'+esc(S.to||'engineer@example-eng.com')+'">';
+ h+='<label for="sub">Subject</label><input id="sub" value="'+esc(d.s)+'"><label for="body">Message</label><textarea id="body">'+esc(d.b)+'</textarea>';
+ h+='<label>Attach from this job’s Documents</label>'+S.docs.map(function(x,i){return '<label class="chk"><input type="checkbox" '+(i===0?'checked':'')+'>'+esc(x.n)+'</label>'}).join('');
+ h+='<div class="row spread" style="margin-top:12px"><label class="chk" style="margin:0"><input type="checkbox" checked>Send me a copy</label><button class="btn pri" data-t="send" id="send">Send email</button></div></div>';
+ h+='<div class="card pad"><div class="row spread"><b>Email history</b>'+(S.emails.length&&!S.replied?'<button class="btn sm" data-t="sim-reply" id="sim">Simulate the engineer’s reply</button>':'')+'</div>';
+ if(!S.emails.length)h+='<p class="mut">No emails on this job yet.</p>';
+ S.emails.slice().reverse().forEach(function(e){h+='<div class="card pad" style="margin-top:10px;background:var(--panel2)"><div class="row spread"><span class="pill '+(e.in?'p-brand':'')+'">'+(e.in?'↙ Reply':'↗ Sent')+'</span><span class="mut" style="font-size:12px">just now</span></div><div style="font-weight:700;margin-top:6px">'+esc(e.s)+'</div><div class="mut" style="font-size:12px">'+(e.in?'From '+esc(e.f):'To '+esc(e.t))+'</div><div style="margin-top:6px">'+esc(e.sum)+'</div>'+(e.att?'<div class="mut" style="font-size:12px;margin-top:6px">Attachment: '+esc(e.att)+' — saved to Documents</div>':'')+'</div>'});
+ return h+'</div></div>'}
+function vFloor(){
+ var rows=S.windows.map(function(w,i){return '<tr><td>'+(i+1)+'</td><td class="mono">'+w.w+'″ × '+w.h+'″</td><td>Zone '+w.z+'</td><td class="mono">'+(w.pos||'—')+'</td><td class="mono">'+(w.neg||'—')+'</td></tr>'}).join('');
+ return '<div class="top"><h1>Floor plan builder</h1><label for="cty" style="margin:0">County</label><select id="cty" data-t="county" style="width:auto">'+['Broward','Palm Beach','Miami-Dade','Boca Raton','Wellington'].map(function(c){return '<option'+(c===S.county?' selected':'')+'>'+c+'</option>'}).join('')+'</select></div>'+about('floorplan')+
+ '<div class="grid" style="grid-template-columns:auto minmax(0,1fr);gap:14px"><div class="rail card pad" style="padding:10px"><button class="btn" data-tool="wall">Wall</button><button class="btn '+(S.tool==='window'?'pri':'')+'" data-t="tool-window" data-tool="window">Window</button><button class="btn" data-tool="door">Door</button><button class="btn" data-tool="label">Room label</button></div>'+
+ '<div><div class="canvas" id="canvas" data-t="canvas"><div class="room" style="left:60px;top:40px;width:300px;height:190px"></div><div class="room" style="left:360px;top:40px;width:190px;height:120px"></div><span style="position:absolute;left:150px;top:120px;font-weight:700">Living room</span><span style="position:absolute;left:410px;top:90px;font-weight:700">Bedroom</span>'+
+ S.windows.map(function(w,i){var p=[[60,110],[210,40],[360,100],[455,160],[300,230]][i%5];return '<div class="win" style="left:'+p[0]+'px;top:'+p[1]+'px" title="Opening '+(i+1)+'"></div>'}).join('')+'</div>'+
+ '<div class="mut" style="font-size:12.5px;margin-top:6px">'+(S.tool==='window'?'Window tool on: click anywhere on the plan to place an opening.':'Pick the Window tool, then click the plan.')+'</div></div></div>'+
+ '<div class="card scroll" style="margin-top:14px"><div class="row spread pad" style="padding-bottom:0"><b>Openings</b><div class="row"><button class="btn" data-t="autocalc" id="autocalc">Auto-calc pressures</button><button class="btn pri" data-t="sched-dl" id="schedbtn">Download '+S.county+' schedule</button></div></div><table><thead><tr><th>#</th><th>Size</th><th>Zone</th><th>Design +</th><th>Design −</th></tr></thead><tbody>'+rows+'</tbody></table></div>'}
+function vInventory(){return '<div class="top"><h1>Permit inventory</h1></div>'+about('inventory')+'<div class="card scroll"><table><thead><tr><th>Job #</th><th>Client</th><th>Permit #</th><th>Status</th><th>Assigned</th><th>Printed</th></tr></thead><tbody>'+JOBS.map(function(j){return '<tr><td class="mono">'+j.id+'</td><td>'+esc(j.client)+'</td><td class="mono">'+(j.permit||'—')+'</td><td>'+pill(j.status)+'</td><td>09/01/26</td><td>'+(j.status==='Approved and Printed'?'Printed':'Not yet')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function vNoa(){return '<div class="top"><h1>NOA library</h1></div>'+about('noa')+'<div class="card scroll"><table><thead><tr><th>Manufacturer</th><th>Product</th><th>NOA</th><th>Pressure</th><th>Expires</th></tr></thead><tbody>'+[['PGT','WinGuard single hung','24-0311.05','+55 / −65','2029'],['Andersen','400 series slider','23-0714.08','+70 / −90','2028'],['CGI','Sentinel fixed','25-0728.07','+80 / −90','2028'],['ProVia','Impact entry door','25-0114.06','+90 / −110','2030']].map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td class="mono">'+r[2]+'</td><td class="mono">'+r[3]+' psf</td><td>'+r[4]+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function vForms(){return '<div class="top"><h1>Forms library</h1></div>'+about('forms')+'<div class="grid g2">'+[['Broward permit application','Auto-fills from the job'],['Palm Beach window/door schedule','Official BORA form, filled from the floor plan'],['Miami-Dade product approval sheet','Matched to the NOAs on the job'],['Notice of commencement','Includes owner and contractor details']].map(function(c){return '<div class="card pad"><b>'+c[0]+'</b><p class="mut" style="margin:6px 0 10px">'+c[1]+'</p><button class="btn sm" data-fill="'+c[0]+'">Preview auto-fill</button></div>'}).join('')+'</div>'}
+function vHoa(){return '<div class="top"><h1>HOA tracker</h1></div>'+about('hoa')+'<div class="card scroll"><table><thead><tr><th>HOA</th><th>Job</th><th>Status</th><th></th></tr></thead><tbody>'+HOAS.map(function(x,i){return '<tr><td>'+x.n+'</td><td class="mono">'+x.j+'</td><td><select data-hoa="'+i+'" data-t="hoa-sel-'+i+'" style="width:auto">'+['Documents requested','Submitted','Approved','Corrections'].map(function(o){return '<option'+(o===x.s?' selected':'')+'>'+o+'</option>'}).join('')+'</select></td><td><a href="#" data-job="'+x.j+'" style="color:var(--brand);font-weight:700">Open job</a></td></tr>'}).join('')+'</tbody></table></div>'}
+function vSales(){return '<div class="top"><h1>Sales</h1></div>'+about('sales')+'<div class="card scroll"><table><thead><tr><th>Job</th><th>Customer</th><th>What to tell them</th><th></th></tr></thead><tbody>'+JOBS.slice(0,4).map(function(j,i){var say={'Need to Submit':'We are preparing your permit paperwork.','In Review':'Your permit is with the city. Typical approval takes 5 to 7 days.','Approved and Printed':'Your permit is approved. We are scheduling your install.','Corrections Needed':'The city asked for one small fix. We are handling it.','Engineering Pending':'Waiting on the engineer’s signed drawings.'}[j.status];return '<tr><td class="mono">'+j.id+'</td><td>'+esc(j.client)+'</td><td>'+say+'</td><td>'+(S.sent[j.id]?'<span class="pill p-ok">Requested</span>':'<button class="btn sm" data-t="req-'+i+'" data-req="'+j.id+'">Request update</button>')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function vInstall(){
+ var lanes=STAGES.map(function(sg,si){var items=INST.filter(function(x){return x.stage===si});return '<div class="lane"><h4>'+sg+'</h4>'+(items.map(function(x,i){return '<div class="card"><b>'+esc(x.client)+'</b> <span class="mono mut">'+x.id+'</span><div class="mut" style="font-size:12px;margin:4px 0">'+x.date+'</div><select data-crew="'+x.id+'" data-t="crew-'+x.id+'" style="margin-bottom:6px"><option'+(x.inst==='Unassigned'?' selected':'')+'>Unassigned</option><option'+(x.inst==='Crew A'?' selected':'')+'>Crew A</option><option'+(x.inst==='Crew B'?' selected':'')+'>Crew B</option></select><button class="btn sm pri" data-t="adv-'+x.id+'" data-adv="'+x.id+'">Move to next stage</button></div>'}).join('')||'<div class="mut" style="font-size:12px;padding:6px">Nothing here</div>')+'</div>'}).join('');
+ var done=INST.filter(function(x){return x.stage>2}).length;
+ return '<div class="top"><h1>Install</h1>'+(done?'<span class="pill p-ok">'+done+' completed</span>':'')+'</div>'+about('install')+'<div class="grid g3">'+lanes+'</div>'}
+function vWarehouse(){
+ var ready=WH.filter(function(x){return x.in&&x.permit&&x.hoa&&!x.rdy});
+ return '<div class="top"><h1>Warehouse</h1></div>'+about('warehouse')+'<div class="grid g2"><div class="card pad"><b>Check in materials</b><p class="mut">Scan the QR sticker printed from the job.</p><button class="btn pri" data-t="scan" id="scan">Scan a job sticker</button><table style="margin-top:10px"><tbody>'+WH.map(function(x){return '<tr><td class="mono">'+x.id+'</td><td>'+esc(x.client)+'</td><td>'+(x.in?'<span class="pill p-ok">Materials in</span>':'<span class="pill">Waiting</span>')+'</td></tr>'}).join('')+'</tbody></table></div><div class="card pad"><b>Ready for the install schedule</b><p class="mut">Permit approved, HOA approved and materials in.</p>'+(ready.length?ready.map(function(x){return '<div class="row spread" style="padding:8px 0;border-top:1px solid var(--line)"><span>'+esc(x.client)+' <span class="mono mut">'+x.id+'</span></span><button class="btn sm pri" data-t="rdy" data-rdy="'+x.id+'">Mark ready</button></div>'}).join(''):'<div class="mut">Nothing ready yet. Scan a sticker to check materials in.</div>')+WH.filter(function(x){return x.rdy}).map(function(x){return '<div class="row spread" style="padding:8px 0;border-top:1px solid var(--line)"><span>'+esc(x.client)+'</span><span class="pill p-ok">Released to install</span></div>'}).join('')+'</div></div>'}
+function vService(){
+ return '<div class="top"><h1>Service</h1></div>'+about('service')+'<div class="grid g2"><div class="card pad"><b>New service request</b><label for="svw">Customer</label><input id="svw" value="Sample, Tom"><label for="svt">Problem</label><input id="svt" value="Screen door off track"><button class="btn pri" style="margin-top:12px" data-t="svc-add" id="svcadd">Schedule request</button></div><div class="card pad"><b>Open requests</b>'+SVC.map(function(x){return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>'+esc(x.who)+'</b> <span class="mut">'+x.day+'</span><div class="mut">'+esc(x.what)+'</div></div>'}).join('')+'</div></div><div class="card pad" style="margin-top:14px"><div class="row spread"><b>This week</b><button class="btn sm" data-t="route" id="route">Update my location</button></div><div class="cal" style="margin-top:10px">'+['Mon','Tue','Wed','Thu','Fri'].map(function(d){return '<div><b>'+d+'</b>'+SVC.filter(function(x){return x.day.indexOf(d)===0}).map(function(x){return '<span class="pill p-blue" style="white-space:normal">'+esc(x.who)+'</span>'}).join('')+'</div>'}).join('')+'</div></div>'}
+function vMeasure(){
+ return '<div class="top"><h1>Measure</h1></div>'+about('measure')+'<div class="phone"><b>Job 10001 — Sample</b><div class="mut" style="font-size:12px">100 Sample Way</div>'+S.measure.map(function(m,i){return '<div class="row spread" style="padding:9px 0;border-top:1px solid var(--line)"><span>Opening '+(i+1)+'</span><span class="mono">'+m.w+'″ × '+m.h+'″</span></div>'}).join('')+'<div class="row" style="margin-top:10px"><input id="mw" type="number" value="40" aria-label="Width in inches" style="width:80px"><span>×</span><input id="mh" type="number" value="60" aria-label="Height in inches" style="width:80px"><button class="btn sm" data-t="m-add" id="madd">Add opening</button></div><button class="btn pri" style="width:100%;margin-top:14px" data-t="m-submit" id="msub">Submit to office</button>'+(S.msub?'<div class="pill p-ok" style="margin-top:10px">Sent: the office can see it in the floor plan builder</div>':'')+'</div>'}
+function vRunner(){
+ return '<div class="top"><h1>Permit runner</h1></div>'+about('runner')+'<div class="card scroll"><table><thead><tr><th>Job</th><th>Customer</th><th>City</th><th>Where is it?</th><th></th></tr></thead><tbody>'+RUN.map(function(x,i){return '<tr><td class="mono">'+x.id+'</td><td>'+esc(x.client)+'</td><td>'+x.city+'</td><td><span class="pill '+(x.st===0?'':x.st===3?'p-ok':'p-blue')+'">'+RST[x.st]+'</span></td><td>'+(x.st<3?'<button class="btn sm pri" data-t="run-'+i+'" data-run="'+i+'">'+['Scan and pick up','Scan and drop at city','Scan and return to office'][x.st]+'</button>':'')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function vAcct(){
+ var tot=FEES.reduce(function(a,f){return a+f.amt},0);
+ return '<div class="top"><h1>Accounting</h1><button class="btn" data-t="rep" id="rep">Download fee report</button></div>'+about('accounting')+'<div class="grid g4" style="margin-bottom:14px"><div class="card kpi"><small>Total fees</small><div>$'+tot.toFixed(2)+'</div></div><div class="card kpi"><small>Receipts on file</small><div>'+FEES.length+'</div></div></div><div class="card scroll"><table><thead><tr><th>Job</th><th>Category</th><th>Date</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+FEES.map(function(f){return '<tr><td class="mono">'+f.job+'</td><td>'+f.cat+'</td><td>'+f.d+'</td><td style="text-align:right" class="mono">$'+f.amt.toFixed(2)+'</td></tr>'}).join('')+'</tbody></table></div><div class="card pad" style="margin-top:14px"><b>Add a fee</b><div class="row" style="margin-top:8px"><select id="fjob" style="width:auto">'+JOBS.map(function(j){return '<option>'+j.id+'</option>'}).join('')+'</select><select id="fcat" style="width:auto"><option>Permit fee</option><option>Engineering fee</option><option>NOC recording</option></select><input id="famt" type="number" value="125" style="width:110px" aria-label="Amount"><button class="btn pri" data-t="fee-add" id="feeadd">Add fee</button></div></div>'}
+function vTrack(){
+ var steps=['Contract signed','Permit submitted','Under city review','Permit approved','Install scheduled'],cur=2;
+ return '<div class="top"><h1>Your permit status</h1></div>'+about('track')+'<div class="card pad"><b>Sample home — 100 Sample Way</b><div class="steps" style="margin:12px 0" data-t="track-steps">'+steps.map(function(s,i){return '<div class="stp '+(i<cur?'done':i===cur?'now':'')+'">'+s+'</div>'}).join('')+'</div><p style="margin:0">Your permit is with the city. Cities usually approve within 5 to 7 business days. We will text you the day it is approved.</p></div><div class="card pad" style="margin-top:14px"><b>Ask your permit tech</b><textarea id="hm" style="min-height:90px;margin-top:8px">Hi! Do you know when my windows will be installed?</textarea><button class="btn pri" style="margin-top:10px" data-t="h-send" id="hsend">Send message</button></div><div class="grid g2" style="margin-top:14px"><div class="card pad"><b>Your documents</b>'+['Signed contract.pdf','Notice of commencement.pdf','Product approvals (NOAs).pdf','Permit receipt.pdf'].map(function(d){return '<div class="row spread" style="padding:8px 0;border-top:1px solid var(--line);margin-top:6px"><span>'+d+'</span><span class="pill p-ok">Available</span></div>'}).join('')+'</div><div class="card pad"><b>What happens next</b><ol style="margin:8px 0 0;padding-left:18px"><li>The city finishes its review.</li><li>You get a text when the permit is approved.</li><li>We schedule your install and confirm the date.</li><li>The city inspects the finished work.</li><li>You receive your final approval.</li></ol></div></div>'}
+function vTools(){
+ return '<div class="top"><h1>Egress window check</h1></div>'+about('tools')+'<div class="card pad" style="max-width:520px"><div class="row"><div class="sp1"><label for="ew">Clear opening width (in)</label><input id="ew" type="number" value="24" data-t="ew"></div><div class="sp1"><label for="eh">Clear opening height (in)</label><input id="eh" type="number" value="30"></div></div><button class="btn pri" style="margin-top:12px" data-t="egress" id="egress">Check egress</button><div id="eres" style="margin-top:12px"></div></div><div class="grid g2" style="margin-top:14px;max-width:1040px"><div class="card pad"><b>Do I need a permit?</b><p class="mut" style="margin:6px 0 0">Replacing windows, doors, roofs and garage doors almost always does in South Florida. Painting and flooring usually do not. The full platform files it for you.</p></div><div class="card pad"><b>What is an NOA?</b><p class="mut" style="margin:6px 0 0">A Notice of Acceptance proves an impact product passed testing. Each opening needs one whose design pressure meets the county requirement.</p></div></div>'}
+function vSettings(){return '<div class="top"><h1>Settings</h1></div>'+about('settings')+'<div class="grid g2"><div class="card pad"><b>Which tech are you?</b><select id="tech" style="margin-top:8px">'+['Permit Tech 1','Permit Tech 2','HOA Tech 1','I am not a tech'].map(function(o){return '<option'+(o===S.techId?' selected':'')+'>'+o+'</option>'}).join('')+'</select><p class="mut">Your dashboard and notifications follow this choice.</p></div><div class="card pad"><b>Team</b>'+[['Demo Owner','Owner'],['Demo Tech A','Permit Tech 1'],['Demo Tech B','Permit Tech 2'],['Demo Installer','Installer']].map(function(t){return '<div class="row spread" style="padding:7px 0;border-top:1px solid var(--line)"><span>'+t[0]+'</span><span class="pill">'+t[1]+'</span></div>'}).join('')+'</div></div>'}
+var HOME={
+ sales:{kpi:[['My customers','14'],['Permits approved','6'],['Waiting on city','5'],['Updates requested','2']],todo:[['Ask for an update on job 10001','sales'],['Tell Demo, Jordan her permit is approved','sales'],['Check a customer’s status page','track']],blurb:'Everything you need to keep customers informed without calling the permit desk.'},
+ instmgr:{kpi:[['Installs this week','9'],['Ready to schedule','3'],['Need final inspection','2'],['Open service calls','2']],todo:[['Release ready jobs from the warehouse','warehouse'],['Assign crews to this week’s installs','install'],['Review open service calls','service'],['Check measure sheets that came in','measure']],blurb:'Schedule crews, watch materials and track every install to final inspection.'},
+ am:{kpi:[['My accounts','11'],['Waiting on permit','4'],['Installs scheduled','5'],['Service open','1']],todo:[['Update a customer on their permit','sales'],['Check the install board','install'],['Book a service call','service'],['Open a customer’s status page','track']],blurb:'Follow each customer from the signed contract to the passed final inspection.'},
+ installer:{kpi:[['My installs this week','4'],['In progress','1'],['Need final inspection','1'],['Measure sheets','2']],todo:[['Move an install to the next stage','install'],['Look at a measure sheet','measure'],['Log a service visit','service']],blurb:'Only the installs assigned to you, with everything the crew needs.'},
+ warehouse:{kpi:[['Jobs waiting on materials','1'],['Materials in','2'],['Ready to release','1'],['Printed permits on file','9']],todo:[['Scan a job sticker to check in materials','warehouse'],['Check the permit inventory board','inventory'],['See what the install board expects','install']],blurb:'Check materials in and release jobs to the install schedule the moment everything is ready.'},
+ service:{kpi:[['Open requests','2'],['This week','2'],['Completed this month','17'],['Avg. response','1.4 days']],todo:[['Schedule a new service request','service'],['Look up a customer’s job','jobs']],blurb:'Requests, the weekly calendar and your route for the day.'},
+ measure:{kpi:[['Jobs to measure','3'],['Sheets sent this week','5'],['Openings measured','38'],['Re-measures','0']],todo:[['Measure job 10001 on site','measure'],['See where the sheet lands in the floor plan','floorplan'],['Open a job for site notes','jobs']],blurb:'The field side: measure openings on a phone and hand the office a clean sheet.'},
+ runner:{kpi:[['At the office','2'],['With me','0'],['Dropped at the city','1'],['Returned today','3']],todo:[['Pick up permits for the next trip','runner'],['Check which permits are printed','inventory'],['Look up a job','jobs']],blurb:'Move permits between the office and the building departments with a scan at every handoff.'},
+ acct:{kpi:[['Fees this month','$797.50'],['Receipts on file','3'],['Jobs with fees','3'],['Unbilled','$0.00']],todo:[['Add a fee to a job','accounting'],['Download the fee report','accounting'],['Check permits by job','inventory']],blurb:'Permit, engineering and recording costs by job, with receipts and totals.'}
+};
+function vHome(){
+ var r=role(),c=HOME[r.id];
+ var h='<div class="top"><h1>My work: '+r.name+'</h1></div><div class="about" style="display:block"><div><strong>Your workspace</strong> <span>'+c.blurb+'</span></div><div style="margin-top:6px;font-size:12.5px"><b>Apps in your view:</b> '+r.apps+'</div></div>';
+ h+='<div class="grid g4" style="margin-bottom:14px">'+c.kpi.map(function(k){return '<div class="card kpi"><small>'+k[0]+'</small><div>'+k[1]+'</div></div>'}).join('')+'</div>';
+ h+='<div class="grid g2"><div class="card pad" data-t="home-todo"><b>Today</b>'+c.todo.map(function(t,i){return '<div class="row spread" style="padding:9px 0;border-top:1px solid var(--line);margin-top:'+(i?0:8)+'px"><span>'+t[0]+'</span><button class="btn sm pri" data-go="'+t[1]+'">Open</button></div>'}).join('')+'</div>';
+ h+='<div class="card pad"><b>Your apps</b><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:10px">'+ALLNAV.filter(function(n){return r.nav.indexOf(n[0])>-1&&n[0]!=='home'}).map(function(n){return '<button class="role" data-go="'+n[0]+'"><b>'+n[1]+'</b><span>'+ABOUT[n[0]].split('. ')[0]+'.</span></button>'}).join('')+'</div></div></div>';
+ return h}
+/* ---- Floor plan builder (looks like the real one) ---- */
+var FP_CH={'Broward':{'4':['+42.60','−46.20'],'5':['+42.60','−57.10']},'Palm Beach':{'4':['+41.50','−45.20'],'5':['+41.50','−55.80']},'Miami-Dade':{'4':['+45.30','−49.10'],'5':['+45.30','−60.40']},'Boca Raton':{'4':['+41.50','−45.20'],'5':['+41.50','−55.80']},'Wellington':{'4':['+43.68','−47.32'],'5':['+43.68','−58.52']}};
+var FP_TYPES=['Single hung','Fixed','Sliding door','Entry door','French door','Horizontal roller'];
+var FP_TOOLS=[['select','↖','Select'],['wall','▬','Wall'],['door','⌷','Door'],['window','▭','Window'],['label','Aa','Label'],['mull','┃','Mullion'],['measure','↔','Measure']];
+function fpNorm(){var d=[[18,52],[46,22],[70,44],[82,76],[40,88]];S.windows.forEach(function(w,i){if(w.x==null){w.x=d[i%5][0];w.y=d[i%5][1]}if(!w.type)w.type='Single hung';if(w.sel==null)w.sel=0});if(!S.tool)S.tool='window';if(!S.fpTab)S.fpTab='plan'}
+function fpHead(){var t=S.fpTab;return '<div class="fp-head"><button class="fp-tab blue'+(t==='plan'?' on':'')+'" data-fptab="plan" data-t="fp-tab-plan">Floor plan</button><span class="fp-pick"><button class="fp-tab purple'+(t==='schedule'?' on':'')+'" data-fptab="schedule" data-t="fp-tab-sched">Schedule</button><select id="cty" data-t="county" aria-label="Jurisdiction">'+Object.keys(FP_CH).map(function(c){return '<option'+(c===S.county?' selected':'')+'>'+c+'</option>'}).join('')+'</select></span><button class="fp-tab green'+(t==='dp'?' on':'')+'" data-fptab="dp" data-t="fp-tab-dp">Design pressure report</button><button class="fp-tab blue'+(t==='eng'?' on':'')+'" data-fptab="eng" data-t="fp-tab-eng">Engineer layout</button><span class="sp1"></span><button class="fp-pdf" data-t="sched-dl" id="schedbtn">PDF</button></div>'}
+/* Engineer layout: one opening drawn large, with mullions and bucks, and a schedule the engineer can read. */
+var ENG_LAYOUTS={
+ sbs:{name:'Side by side',note:'One vertical mullion between two units',cols:[1,1],rows:[1]},
+ stack:{name:'Stacked',note:'One horizontal mullion between two units',cols:[1],rows:[1,1]},
+ three:{name:'Three across',note:'Two vertical mullions',cols:[1,1,1],rows:[1]},
+ grid:{name:'Grid',note:'One vertical and one horizontal mullion',cols:[1,1],rows:[1,1]}
+};
+function vEng(){
+ var L=S.engLayout||'grid',Ly=ENG_LAYOUTS[L],OW=96,OH=60,BK=0.75,MU=1.5;
+ var pw=OW-2*BK,ph=OH-2*BK,nc=Ly.cols.length,nr=Ly.rows.length;
+ var uw=(pw-(nc-1)*MU)/nc,uh=(ph-(nr-1)*MU)/nr;
+ var sc=4.6,ox=64,oy=46,types=['Horizontal roller','Fixed','Single hung','Fixed','Casement','Fixed'];
+ var s='<svg viewBox="0 0 590 360" role="img" aria-label="Elevation of one opening with mullions and bucks" style="width:100%;height:auto;display:block">';
+ s+='<rect x="'+ox+'" y="'+oy+'" width="'+OW*sc+'" height="'+OH*sc+'" fill="#cbd5e1" stroke="#1e3a8a" stroke-width="2"/>';
+ var units=[],k=0,r,c;
+ for(r=0;r<nr;r++)for(c=0;c<nc;c++){
+  var x=ox+(BK+c*(uw+MU))*sc,y=oy+(BK+r*(uh+MU))*sc;k++;
+  units.push({n:k,t:types[(k-1)%types.length],w:uw,h:uh});
+  s+='<rect x="'+x+'" y="'+y+'" width="'+uw*sc+'" height="'+uh*sc+'" fill="#eaf2ff" stroke="#1e3a8a" stroke-width="1.5"/>';
+  s+='<rect x="'+(x+6)+'" y="'+(y+6)+'" width="'+(uw*sc-12)+'" height="'+(uh*sc-12)+'" fill="none" stroke="#93b4e6"/>';
+  s+='<text x="'+(x+uw*sc/2)+'" y="'+(y+uh*sc/2)+'" text-anchor="middle" font-size="15" font-weight="700" fill="#1e3a8a">#'+k+'</text><text x="'+(x+uw*sc/2)+'" y="'+(y+uh*sc/2+16)+'" text-anchor="middle" font-size="11.5" fill="#1e3a8a">'+t2(types[(k-1)%types.length])+'</text>';
+  s+='<text x="'+(x+uw*sc/2)+'" y="'+(y+15)+'" text-anchor="middle" font-size="11" fill="#2563eb">'+fmt(uw)+'"</text>';
+  s+='<text x="'+(x+12)+'" y="'+(y+uh*sc/2+4)+'" font-size="11" fill="#2563eb" transform="rotate(-90 '+(x+12)+' '+(y+uh*sc/2+4)+')" text-anchor="middle">'+fmt(uh)+'"</text>';
+ }
+ var mulls=[],m=0;
+ for(c=1;c<nc;c++){m++;var mx=ox+(BK+c*uw+(c-1)*MU)*sc;mulls.push({n:m,d:'Vertical'});
+  s+='<rect x="'+mx+'" y="'+(oy+BK*sc)+'" width="'+MU*sc+'" height="'+ph*sc+'" fill="#0f172a"/>';
+  s+='<rect x="'+(mx+MU*sc/2-27)+'" y="'+(oy+OH*sc*0.5-9-(nr>1?OH*sc*0.25:0))+'" width="54" height="18" rx="9" fill="#fff" stroke="#1e3a8a"/><text x="'+(mx+MU*sc/2)+'" y="'+(oy+OH*sc*0.5+4-(nr>1?OH*sc*0.25:0))+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">M-'+m+' 2x4</text>';}
+ for(r=1;r<nr;r++){m++;var my=oy+(BK+r*uh+(r-1)*MU)*sc;mulls.push({n:m,d:'Horizontal'});
+  s+='<rect x="'+(ox+BK*sc)+'" y="'+my+'" width="'+pw*sc+'" height="'+MU*sc+'" fill="#0f172a"/>';
+  s+='<rect x="'+(ox+OW*sc*0.22-27)+'" y="'+(my+MU*sc/2-9)+'" width="54" height="18" rx="9" fill="#fff" stroke="#1e3a8a"/><text x="'+(ox+OW*sc*0.22)+'" y="'+(my+MU*sc/2+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">M-'+m+' 1x4</text>';}
+ s+='<rect x="'+(ox+OW*sc*0.5-33)+'" y="'+(oy+BK*sc/2-9)+'" width="66" height="18" rx="9" fill="#fff" stroke="#1e3a8a"/><text x="'+(ox+OW*sc*0.5)+'" y="'+(oy+BK*sc/2+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">B-1 1x4 3/4"</text>';
+ s+='<line x1="'+ox+'" x2="'+(ox+OW*sc)+'" y1="'+(oy-20)+'" y2="'+(oy-20)+'" stroke="#2563eb"/><text x="'+(ox+OW*sc/2)+'" y="'+(oy-26)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">'+OW+'"</text>';
+ s+='<line y1="'+oy+'" y2="'+(oy+OH*sc)+'" x1="'+(ox-22)+'" x2="'+(ox-22)+'" stroke="#2563eb"/><text x="'+(ox-30)+'" y="'+(oy+OH*sc/2)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb" transform="rotate(-90 '+(ox-30)+' '+(oy+OH*sc/2)+')">'+OH+'"</text></svg>';
+ var pills=Object.keys(ENG_LAYOUTS).map(function(id){return '<button class="fp-pill '+(id===L?'pu':'gh')+'" data-engl="'+id+'" data-t="eng-'+id+'">'+ENG_LAYOUTS[id].name+'</button>'}).join('');
+ var ur=units.map(function(u){return '<tr><td class="idc">#'+u.n+'</td><td>'+u.t+'</td><td>'+fmt(u.w)+'</td><td>'+fmt(u.h)+'</td></tr>'}).join('');
+ var mr=mulls.length?mulls.map(function(q){return '<tr><td class="idc">M-'+q.n+'</td><td>'+q.d+'</td><td>'+(q.d==='Vertical'?'2x4':'1x4')+'</td></tr>'}).join(''):'<tr><td colspan="3">None</td></tr>';
+ return '<div class="fp-view"><div class="fp-bar"><b>Engineer layout · Opening #1 · '+OW+' x '+OH+' in</b><button class="fp-pill gr" data-fptoast="The full app prints this as an engineer sheet: the elevation, the schedules, the house plan and the floor plan window schedule.">Print engineer sheet</button></div>'
+  +'<p class="eng-help">Pick a layout below. In the full app you drag windows, doors and mullions onto the opening, type only the width and height, and the sheet prints the sizes you typed.</p><div class="eng-pills">'+pills+'</div><p class="eng-help" style="margin-top:6px"><b>'+Ly.name+':</b> '+Ly.note+'.</p>'
+  +'<div class="eng-grid"><div class="eng-draw">'+s+'</div><div class="eng-side"><h4>Opening</h4><div class="eng-line"><b>'+OW+' x '+OH+' in</b></div><div class="eng-line">B-1 bucks 1x4 3/4" all around</div><h4>Unit schedule</h4><table class="sched"><thead><tr><th>#</th><th>Type</th><th>W in</th><th>H in</th></tr></thead><tbody>'+ur+'</tbody></table><h4>Mullion schedule</h4><table class="sched"><thead><tr><th>Mark</th><th>Direction</th><th>Stock</th></tr></thead><tbody>'+mr+'</tbody></table></div></div>'
+  +'<p style="font:13px Inter,sans-serif;opacity:.75;margin:12px 0 0">Planning aid, not for construction. Verify with the manufacturer and the building department.</p></div>'}
+function fmt(n){var r=Math.round(n*100)/100;return String(r)}
+function t2(s){return s}
+function vFloor2(){
+ fpNorm();var t=S.fpTab,ch=FP_CH[S.county]||FP_CH.Broward;
+ var h='<div class="top"><h1>Floor plan builder</h1><span class="pill">Job 10001 · Sample, Alex</span></div>'+about('floorplan')+'<div class="fpwrap">'+fpHead();
+ if(t==='plan'){
+  var rail=FP_TOOLS.map(function(k){return '<button class="fp-rb'+(S.tool===k[0]?' on':'')+'" data-tool="'+k[0]+'" data-t="tool-'+k[0]+'" aria-label="'+k[2]+'"><i>'+k[1]+'</i>'+k[2]+'</button>'}).join('');
+  var chips=['Living','Kitchen','Master bed','Bed 2','Bath','Garage','Lanai','Laundry'].map(function(c){return '<span>'+c+'</span>'}).join('');
+  var wins=S.windows.map(function(w,i){return '<div class="fp-win'+(w.sel?' sel':'')+'" style="left:'+w.x+'%;top:'+w.y+'%" data-fpsel="'+i+'" title="Opening '+(i+1)+'"><b>'+(i+1)+'</b></div>'}).join('');
+  var rows=S.windows.length?S.windows.map(function(w,i){return '<tr class="'+(w.sel?'is-selected':'')+'"><td class="fp-num" data-fpsel="'+i+'">'+(i+1)+'</td><td><input class="fp-in" value="'+w.w+'" data-fpw="'+i+'" inputmode="numeric" aria-label="Width"></td><td><input class="fp-in" value="'+w.h+'" data-fph="'+i+'" inputmode="numeric" aria-label="Height"></td><td><select class="fp-type" data-fptype="'+i+'" aria-label="Type">'+FP_TYPES.map(function(o){return '<option'+(o===w.type?' selected':'')+'>'+o+'</option>'}).join('')+'</select></td><td class="fp-zc"><button class="fp-z'+(w.z==='4'?' on':'')+'" data-fpz="'+i+'|4">4</button><button class="fp-z'+(w.z==='5'?' on':'')+'" data-fpz="'+i+'|5">5</button></td></tr>'}).join(''):'<tr><td colspan="5" style="padding:10px;color:var(--fp-mut)">Drop windows on the plan.</td></tr>';
+  h+='<div class="fp-body"><div class="fp-rail" data-t="fp-rail">'+rail+'</div><div class="fp-wrap"><div class="fp-chips">'+chips+'</div><div class="fp-canvas" id="canvas" data-t="canvas"><div class="fp-room" style="left:8%;top:22%;width:48%;height:52%"></div><div class="fp-room" style="left:56%;top:22%;width:22%;height:32%"></div><div class="fp-room" style="left:56%;top:54%;width:22%;height:20%"></div><span class="fp-rlabel" style="left:22%;top:44%">Living room</span><span class="fp-rlabel" style="left:60%;top:34%">Master bed</span><span class="fp-rlabel" style="left:61%;top:62%">Bath</span>'+wins+'</div><div class="fp-hint">'+(S.tool==='window'?'Window tool: click the plan to place an opening':'Pick the Window tool, then click the plan')+'</div><div class="fp-card" data-t="fp-openings"><div class="head">Openings — click type or 4 / 5</div><button class="sheet" data-fptab="schedule">Open all as spreadsheet</button><div class="scr"><table><thead><tr><th>#</th><th>W</th><th>H</th><th>Type</th><th>Zn</th></tr></thead><tbody>'+rows+'</tbody></table></div><button class="fp-calc" data-t="autocalc" id="autocalc">Auto-calc pressures</button></div></div></div>';
+ }else if(t==='schedule'){
+  var zc=FP_CH[S.county]||FP_CH.Broward;
+  var tr=S.windows.map(function(w,i){return '<tr><td class="idc">'+(i+1)+'</td><td>'+(i<1?'Living room':i<2?'Master bed':'Opening '+(i+1))+'</td><td>'+w.type+'</td><td>'+w.w+'</td><td>'+w.h+'</td><td>'+w.z+'</td><td>+55.00</td><td>−65.00</td><td>'+(w.pos||'—')+'</td><td>'+(w.neg||'—')+'</td></tr>'}).join('');
+  h+='<div class="fp-view"><div class="fp-bar"><b>'+S.county+' window &amp; door schedule</b><button class="fp-pill pu" data-fptoast="Egress check runs on each bedroom opening in the full app.">Egress</button><button class="fp-pill pu" data-fptoast="The county wind chart opens as a PDF in the full app.">Wind chart</button><button class="fp-pill bl" data-fpadd="1">Quick add</button></div><div class="scroll"><table class="sched"><thead><tr><th rowspan="2">#</th><th rowspan="2">Location</th><th rowspan="2">Type</th><th rowspan="2">W</th><th rowspan="2">H</th><th rowspan="2">Zone</th><th colspan="2">Product approval</th><th colspan="2">Required design</th></tr><tr class="sub"><th>+</th><th>−</th><th>+</th><th>−</th></tr></thead><tbody>'+tr+'</tbody></table></div><p style="font:12px Inter,sans-serif;opacity:.7;margin:10px 0 0">Required design pressures come from the '+S.county+' chart for each opening’s zone. Go back to Floor plan and click Auto-calc pressures to fill them.</p></div>';
+ }else if(t==='eng'){
+  h+=vEng();
+ }else{
+  h+='<div class="fp-view"><div class="fp-bar"><b>Design pressure report</b></div><div class="fp-dp"><div><label>Jurisdiction</label><input value="'+S.county+'" readonly></div><div><label>Mean roof height (ft)</label><input value="20" readonly></div><div><label>Zone 4 (interior)</label><input value="'+ch['4'][0]+' / '+ch['4'][1]+' psf" readonly></div><div><label>Zone 5 (corner)</label><input value="'+ch['5'][0]+' / '+ch['5'][1]+' psf" readonly></div></div><p style="font:12px Inter,sans-serif;opacity:.7;margin:14px 0 0;max-width:640px">Windows, doors and shutters excluding overhead and garage doors, for a building with mean roof height up to 30 ft. Sample values shown; the full app reads the official chart for each county.</p></div>';
+ }
+ return h+'</div>'}
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.getAttribute&&d.getAttribute('data-about')){S.aboutClosed=S.aboutClosed||{};S.aboutClosed[d.getAttribute('data-about')]=!d.open}},true);
+document.addEventListener('click',function(e){
+ var t=e.target,a=t.closest('[data-fptab]');if(a){S.fpTab=a.getAttribute('data-fptab');render();return}
+ var el=t.closest('[data-engl]');if(el){S.engLayout=el.getAttribute('data-engl');render();return}
+ var em=t.closest('[data-engdir]');if(em){S.engDir=em.getAttribute('data-engdir');render();toast(S.engDir==='h'?'Horizontal mullion: for stacked windows':'Vertical mullion: for windows side by side');return}
+ var s=t.closest('[data-fpsel]');if(s){var i=+s.getAttribute('data-fpsel');S.windows.forEach(function(w,j){w.sel=(j===i)?1:0});render();return}
+ var z=t.closest('[data-fpz]');if(z){var p=z.getAttribute('data-fpz').split('|');S.windows[+p[0]].z=p[1];S.windows[+p[0]].pos='';S.windows[+p[0]].neg='';render();return}
+ var ts=t.closest('[data-fptoast]');if(ts){toast(ts.getAttribute('data-fptoast'));return}
+ if(t.closest('[data-fpadd]')){S.windows.push({w:36,h:60,z:'4',pos:'',neg:'',type:'Single hung',x:50,y:50,sel:0});render();toast('Opening added');return}
+});
+document.addEventListener('change',function(e){
+ var t=e.target;if(!t.getAttribute)return;
+ var w=t.getAttribute('data-fpw'),h=t.getAttribute('data-fph'),ty=t.getAttribute('data-fptype');
+ if(w!==null){S.windows[+w].w=+t.value||S.windows[+w].w;return}
+ if(h!==null){S.windows[+h].h=+t.value||S.windows[+h].h;return}
+ if(ty!==null){S.windows[+ty].type=t.value;return}
+});
+var VIEWS={home:vHome,dashboard:vDashboard,jobs:vJobs,job:vJob,floorplan:vFloor2,inventory:vInventory,hoa:vHoa,noa:vNoa,forms:vForms,sales:vSales,install:vInstall,warehouse:vWarehouse,service:vService,measure:vMeasure,runner:vRunner,accounting:vAcct,track:vTrack,tools:vTools,settings:vSettings};
+function render(){
+ if(!S.role){$('#main').innerHTML='';return}
+ drawSide();$('#main').innerHTML=VIEWS[S.view]();
+ if(tourOn)schedulePlace()}
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+ var t=e.target;
+ var g=t.closest('[data-go]');if(g){go(g.getAttribute('data-go'));return}
+ var jr=t.closest('[data-job]');if(jr){e.preventDefault();openJob(jr.getAttribute('data-job'),'Overview');return}
+ var tb=t.closest('[data-tab]');if(tb){S.tab=tb.getAttribute('data-tab');render();return}
+ if(t.closest('#inboxT')){S.inboxOpen=!S.inboxOpen;render();return}
+ var d=t.closest('[data-dis]');if(d){var p=d.getAttribute('data-dis').split('|');INBOX[p[0]].splice(+p[1],1);render();toast('Dismissed for good');return}
+ var f=t.closest('[data-fill]');if(f){toast(f.getAttribute('data-fill')+' filled from job data');return}
+ var dl=t.closest('[data-dl]');if(dl){var noa=dl.getAttribute('data-dl');S.noaDL=S.noaDL||{};S.noaDL[noa]=1;render();toast('Added '+noa+' to the permit package');return}
+ var tool=t.closest('[data-tool]');if(tool){S.tool=tool.getAttribute('data-tool');render();return}
+ if(t.closest('#canvas')&&!t.closest('[data-fpsel]')){var cv=$('#canvas'),cr=cv.getBoundingClientRect();if(S.tool==='window'){S.windows.forEach(function(w){w.sel=0});S.windows.push({w:48,h:60,z:'4',pos:'',neg:'',type:'Single hung',x:Math.max(4,Math.min(96,(e.clientX-cr.left)/cr.width*100)),y:Math.max(8,Math.min(96,(e.clientY-cr.top)/cr.height*100)),sel:1});render();toast('Opening '+S.windows.length+' placed. Size and zone are in the Openings card.')}else if(S.tool==='mull'){toast('Mullion tool: in the full app, click a wall to drop a mullion, then choose Vert or Horiz. Try the Engineer layout tab.')}else{toast('Pick the Window tool on the left, then click the plan. Walls, doors and labels work in the full app.')}return}
+ if(t.closest('#autocalc')){var zc=(FP_CH[S.county]||FP_CH.Broward);S.windows.forEach(function(w){var v=zc[w.z]||zc['4'];w.pos=v[0];w.neg=v[1]});render();toast('Required design pressures filled from the '+S.county+' chart');return}
+ if(t.closest('#schedbtn')){showSchedule();return}
+ if(t.closest('#gen')){genPkg();return}
+ if(t.closest('#upl')){S.docs.push({n:'New upload '+(S.docs.length+1)+'.pdf',k:'96 KB'});render();toast('File added to Documents');return}
+ if(t.closest('#addnote')){var v=$('#newnote').value.trim();if(v){S.notes.push(v);render()}return}
+ if(t.closest('#send')){sendMail();return}
+ if(t.closest('#sim')){simReply();return}
+ var ha=t.closest('[data-hoaadv]');if(ha){S.hoaStep=(S.hoaStep==null?2:S.hoaStep)+1;render();toast(S.hoaStep>=3?'HOA approved. The manager is notified.':'HOA step updated');return}
+ var rq=t.closest('[data-req]');if(rq){var id=rq.getAttribute('data-req');S.sent[id]=1;INBOX['Permit Tech 1'].unshift({s:'Request',j:id,t:'Sales asked for a status update on job '+id+'.',ago:'just now',u:1});render();toast('Request sent to the permit tech’s Agent inbox');return}
+ var ad=t.closest('[data-adv]');if(ad){var x=INST.filter(function(i){return i.id===ad.getAttribute('data-adv')})[0];x.stage++;if(x.stage>2)toast('Install complete and final inspection passed');else toast('Moved to '+STAGES[x.stage]);render();return}
+ if(t.closest('#scan')){var n=WH.filter(function(x){return !x.in})[0];if(n){n.in=true;toast('Checked in materials for job '+n.id)}else toast('Everything is already checked in');render();return}
+ var rd=t.closest('[data-rdy]');if(rd){WH.filter(function(x){return x.id===rd.getAttribute('data-rdy')})[0].rdy=1;render();toast('Released to the install schedule');return}
+ if(t.closest('#svcadd')){SVC.push({id:SVC.length+1,who:$('#svw').value||'New customer',what:$('#svt').value||'Service call',day:['Tue 10:00','Thu 2:00','Fri 9:00'][SVC.length%3]});render();toast('Scheduled and added to the calendar');return}
+ if(t.closest('#route')){toast('Location shared with the office (demo)');return}
+ if(t.closest('#madd')){S.measure.push({w:+$('#mw').value||36,h:+$('#mh').value||60});S.msub=0;render();return}
+ if(t.closest('#msub')){S.msub=1;render();toast('Measure sheet submitted for job 10001');return}
+ var rn=t.closest('[data-run]');if(rn){RUN[+rn.getAttribute('data-run')].st++;render();toast('Handoff scanned and logged');return}
+ if(t.closest('#feeadd')){FEES.push({job:$('#fjob').value,cat:$('#fcat').value,amt:+$('#famt').value||0,d:'09/24'});render();toast('Fee added');return}
+ if(t.closest('#rep')){toast('Fee report downloading (demo)');return}
+ if(t.closest('#hsend')){toast('Sent. Your permit tech will reply here and by text.');INBOX['Permit Tech 1'].unshift({s:'Request',j:'10001',t:'Homeowner message: When will my windows be installed?',ago:'just now',u:1});return}
+ if(t.closest('#egress')){var w=+$('#ew').value,h=+$('#eh').value,a=w*h/144,ok=a>=5.7&&w>=20&&h>=24;$('#eres').innerHTML='<span class="pill '+(ok?'p-ok':'p-bad')+'">'+(ok?'Meets egress':'Does not meet egress')+'</span> <span class="mono">'+a.toFixed(2)+' sq ft clear (min 5.7), width ≥ 20″, height ≥ 24″</span>';return}
+ var rb=t.closest('[data-rolebar]');if(rb){endTour();setRole(rb.getAttribute('data-rolebar'));return}
+ if(t.closest('#btnTours')){tourMenu();return}
+ if(t.closest('#btnTheme')){var r=document.documentElement;var dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);r.setAttribute('data-theme',dark?'light':'dark');return}
+ var rl=t.closest('[data-role]');if(rl){endTour();setRole(rl.getAttribute('data-role'));setTimeout(tourMenu,150);return}
+});
+document.addEventListener('change',function(e){
+ var t=e.target;
+ if(t.id==='viewas'){S.viewAs=t.value;render()}
+ if(t.id==='tpl'){S.tpl=t.value;S.to=$('#to').value;render()}
+ if(t.id==='cty'){S.county=t.value;render()}
+ if(t.id==='tech'){S.techId=t.value;toast('Dashboard now follows '+t.value)}
+ if(t.hasAttribute&&t.hasAttribute('data-hoa')){HOAS[+t.getAttribute('data-hoa')].s=t.value;toast('HOA status updated. The manager sees it right away.')}
+ if(t.hasAttribute&&t.hasAttribute('data-crew')){INST.filter(function(x){return x.id===t.getAttribute('data-crew')})[0].inst=t.value;toast('Assigned to '+t.value)}
+});
+document.addEventListener('input',function(e){if(e.target.id==='q'){S.q=e.target.value;var pos=e.target.selectionStart;render();var q=$('#q');q.focus();q.setSelectionRange(pos,pos)}});
+function genPkg(){S.pkg=5;render();var iv=setInterval(function(){S.pkg=Math.min(100,S.pkg+19);if(S.view==='job'&&S.tab==='Permit Package')render();if(S.pkg>=100){clearInterval(iv);toast('Package ready')}},350)}
+function sendMail(){S.emails.push({s:$('#sub').value,t:$('#to').value,sum:$('#body').value.replace(/\s+/g,' ').slice(0,160)+'…',in:0});S.replied=false;S.notes.push('Email sent to '+$('#to').value+': "'+$('#sub').value+'".');render();toast('Sent as demo@permitaio.com')}
+function simReply(){S.replied=true;S.emails.push({in:1,s:'Re: '+S.emails[0].s,f:'engineer@example-eng.com',sum:'Attached are the signed and sealed drawings for this job. Let me know if the city asks for anything else.',att:'Signed-sealed engineering.pdf'});S.docs.push({n:'Signed-sealed engineering.pdf',k:'1.2 MB'});S.notes.push('Email reply from engineer@example-eng.com: 1 attachment saved to Documents.');render();toast('Reply filed on the job, file saved to Documents')}
+function showSchedule(){
+ var rows=S.windows.map(function(w,i){return (i+1)+'   '+('Product approval '+(i?'23-0714.08':'24-0311.05')).padEnd(30)+' '+(w.pos||'--').padEnd(7)+(w.neg||'--').padEnd(8)+w.w+' x '+w.h+'   Zone '+w.z}).join('\n');
+ openModal('<h2>'+S.county+' window / door schedule</h2><p class="mut">Filled from the floor plan and printed on the county’s own form.</p><pre class="doc">JOB '+job().id+' — '+esc(job().client)+'\n'+esc(job().addr)+'\n\n#   PRODUCT APPROVAL                 DP+    DP−     SIZE      ZONE\n'+esc(rows)+'</pre><div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn pri" data-close="1">Close</button></div>')}
+function openModal(h){$('#layer').innerHTML='<div class="modal-back" data-backdrop="1"><div class="modal">'+h+'</div></div>'}
+document.addEventListener('click',function(e){var c=e.target.closest('[data-close]');if(c||(e.target.matches&&e.target.matches('[data-backdrop]')&&S.role)){$('#layer').innerHTML=''}});
+function chooser(){
+ endTour();
+ openModal('<h2>Who are you in PermitAIO?</h2><p class="mut" style="margin:0">Every user type sees a different set of apps. Pick one to open the demo as that person. You can switch any time from the purple bar.</p><div class="rolegrid">'+ROLES.map(function(r){return '<button class="role" data-role="'+r.id+'"><b>'+r.name+'</b><span>'+r.who+'</span><em>'+r.apps+'</em></button>'}).join('')+'</div>')}
+/* ---------- guided tours ---------- */
+var tourOn=false,TOUR=null,SI=0,placeT=0;
+var A=[
+ {go:function(){go('dashboard')},sel:'[data-t=agent-inbox]',side:'bottom',title:'The Agent inbox',text:'Everything the email, sheet and permit agents found lands here, so nobody hunts through a mailbox.'},
+ {sel:'[data-t=inbox-toggle]',side:'bottom',click:1,title:'Fold it away',text:'Click the header to collapse the whole bar.'},
+ {sel:'[data-t=inbox-toggle]',side:'bottom',click:1,title:'Open it again',text:'Click once more to reopen it.'}];
+var AM=A.concat([{sel:'[data-t=viewas]',side:'bottom',title:'Manager vs tech',text:'Managers see notifications split per tech. Use this menu to look at the dashboard as one tech, then switch back to Manager.'}]);
+var B=[
+ {go:function(){go('jobs')},sel:'[data-t=nav-jobs]',side:'right',click:1,title:'Open Jobs',text:'Click Jobs in the menu.'},
+ {sel:'[data-t=job-row-10001]',side:'bottom',click:1,title:'Pick a job',text:'Every job is one row. Click job 10001 to open its workspace.'},
+ {sel:'[data-t=tabs]',side:'bottom',title:'One workspace per job',text:'These tabs follow the permit from requirements to approval. Everything is filed under the job number.'},
+ {sel:'[data-t=tab-reqs]',side:'bottom',click:1,title:'Requirements & Forms',text:'Click here to see the city’s checklist for this job.'},
+ {sel:'[data-t=tab-noa]',side:'bottom',click:1,title:'NOA Downloader',text:'Click NOA Downloader for the product approvals on this job.'},
+ {sel:'[data-t=noa-dl]',side:'left',click:1,title:'Download a product approval',text:'Click Download NOA to grab the approval with its design pressure.'},
+ {sel:'[data-t=tab-package]',side:'bottom',click:1,title:'Permit Package',text:'Click Permit Package to assemble the submittal.'},
+ {sel:'[data-t=pkg-gen]',side:'left',click:1,title:'Generate the package',text:'One click merges forms, NOAs, schedule and documents into a single stamped PDF.'}];
+var C=[
+ {go:function(){openJob('10001','Emails')},sel:'[data-t=tpl]',side:'right',title:'Email from the job',text:'Pick a template: Engineering request, HOA request, or blank. The subject and message fill from the job.'},
+ {sel:'[data-t=to]',side:'right',title:'Who gets it',text:'Type the engineer’s address. It sends as your shop’s address, for example demo@permitaio.com.'},
+ {sel:'[data-t=send]',side:'top',click:1,title:'Send it',text:'Click Send email. It is logged on the job right away.'},
+ {sel:'[data-t=sim-reply]',side:'left',click:1,title:'The engineer replies',text:'In real life the engineer just hits reply. Click to see what happens when the reply arrives.'},
+ {sel:'[data-t=tab-docs]',side:'bottom',click:1,title:'Files land in Documents',text:'The attachment from the reply was saved on the job automatically. Click Documents to see it.'}];
+var D=[
+ {go:function(){go('floorplan')},sel:'[data-t=county]',side:'bottom',title:'Pick the county',text:'The schedule and pressure chart follow the jurisdiction: Broward, Palm Beach, Miami-Dade, Boca Raton or Wellington.'},
+ {sel:'[data-t=tool-window]',side:'right',click:1,title:'Window tool',text:'Click Window to start placing openings.'},
+ {sel:'[data-t=canvas]',side:'top',click:1,title:'Place an opening',text:'Click anywhere on the plan. A new row appears in the Openings table.'},
+ {sel:'[data-t=autocalc]',side:'top',click:1,title:'Design pressures',text:'Click Auto-calc to fill the required design pressures from the county wind chart for each opening’s zone.'},
+ {sel:'[data-t=sched-dl]',side:'top',click:1,title:'Print the county schedule',text:'Click to generate the county’s own window/door schedule, filled in.'}];
+var OTHER=[
+ {go:function(){go('inventory')},sel:'[data-t=nav-inventory]',side:'right',title:'Permit inventory',text:'The board every tech works from: status, permit number, printed permit.'},
+ {sel:'[data-t=nav-hoa]',side:'right',click:1,title:'HOA tracker',text:'Click HOA tracker for approvals per job.'},
+ {sel:'[data-t=nav-install]',side:'right',click:1,title:'Install',text:'Click Install to see the install board.'},
+ {sel:'[data-t=nav-accounting]',side:'right',click:1,title:'Accounting',text:'Click Accounting for fees and receipts. Every other menu item works too, and each screen has a “What this does” note.'},
+ {sel:'[data-t=nav-dashboard]',side:'right',click:1,title:'Back to the start',text:'That is the tour. Click Dashboard, then explore any menu item on your own. Use “Switch user type” to see the app as a tech, installer, homeowner and more.'}];
+var TD={
+ 'tour-owner':{name:'Full walkthrough (owner)',desc:'Dashboard, jobs, email, floor plan and the other apps.',steps:[].concat(AM,B,C,D,OTHER)},
+ 'tour-permit':{name:'Your day as a permit tech',desc:'Your own dashboard and Agent inbox, then a job from forms to package.',steps:[].concat(A,B)},
+ 'tour-jobflow':{name:'A job from forms to permit package',desc:'Requirements, NOAs and the one-click submittal package.',steps:B},
+ 'tour-mail':{name:'Email an engineer, get the reply filed',desc:'Send from the job; the reply and its files come back to it.',steps:C},
+ 'tour-plan':{name:'Floor plan to county schedule',desc:'Place windows, auto-calc pressures, print the schedule.',steps:D},
+ 'tour-hoa':{name:'Working an HOA approval',desc:'Update a status and see it flow to the manager.',steps:[
+  {go:function(){go('hoa')},sel:'[data-t=hoa-sel-0]',side:'bottom',title:'Change a status',text:'Every HOA has a status. Open this menu and pick Approved. The manager sees it right away.'},
+  {sel:'[data-t=nav-jobs]',side:'right',click:1,title:'Open Jobs',text:'Click Jobs.'},
+  {sel:'[data-t=job-row-10003-1]',side:'bottom',click:1,title:'Open the job',text:'Click the job with the HOA request.'},
+  {sel:'[data-t=tab-hoa]',side:'bottom',click:1,title:'HOA Tracker tab',text:'Click the HOA Tracker tab for this job.'},
+  {sel:'[data-t=hoa-adv]',side:'left',click:1,title:'Advance the step',text:'Click to mark the next step done: request sent, documents received, submitted, approved.'}]},
+ 'tour-sales':{name:'Answering a customer',desc:'See the plain-language status and ask the permit tech for an update.',steps:[
+  {go:function(){go('sales')},sel:'[data-t=req-0]',side:'left',click:1,title:'Request an update',text:'Click Request update. The permit tech gets it in their Agent inbox, no phone call needed.'}]},
+ 'tour-install':{name:'Running the install board',desc:'Assign a crew and move a job to the next stage.',steps:[
+  {go:function(){go('install')},sel:'[data-t=crew-10002]',side:'bottom',title:'Assign a crew',text:'Pick Crew A or Crew B for the job.'},
+  {sel:'[data-t=adv-10002]',side:'right',click:1,title:'Move it forward',text:'Click to move the job from Scheduled to Install in progress.'},
+  {sel:'[data-t=adv-10008]',side:'left',click:1,title:'Finish a job',text:'This one needs its final inspection. Click to complete it.'}]},
+ 'tour-wh':{name:'Checking materials in',desc:'Scan a sticker and release a job to the schedule.',steps:[
+  {go:function(){go('warehouse')},sel:'[data-t=scan]',side:'right',click:1,title:'Scan a job sticker',text:'Click Scan. Materials for the next job are checked in.'},
+  {sel:'[data-t=rdy]',side:'left',click:1,title:'Release to install',text:'Permit approved, HOA approved and materials in. Click Mark ready to release it.'}]},
+ 'tour-service':{name:'Scheduling a service call',desc:'Add a request and see it on the calendar.',steps:[
+  {go:function(){go('service')},sel:'[data-t=svc-add]',side:'top',click:1,title:'Schedule a request',text:'Click to schedule this request. It lands on the weekly calendar.'},
+  {sel:'[data-t=route]',side:'left',click:1,title:'Share your location',text:'Techs can share where they are so the office can route the next call.'}]},
+ 'tour-measure':{name:'Measuring on site',desc:'Add openings from your phone and submit the sheet.',steps:[
+  {go:function(){go('measure')},sel:'[data-t=m-add]',side:'top',click:1,title:'Add an opening',text:'Type the width and height, then click Add opening.'},
+  {sel:'[data-t=m-submit]',side:'top',click:1,title:'Send to the office',text:'One measure sheet per job goes straight to the floor plan builder.'}]},
+ 'tour-runner':{name:'Carrying a permit',desc:'Scan at every handoff so the office always knows where it is.',steps:[
+  {go:function(){go('runner')},sel:'[data-t=run-0]',side:'left',click:1,title:'Pick it up',text:'Click to scan the sticker and pick up the permit from the office.'},
+  {sel:'[data-t=run-0]',side:'left',click:1,title:'Drop it at the city',text:'Click again when you hand it to the building department.'}]},
+ 'tour-acct':{name:'Tracking fees',desc:'Add a fee and pull the report.',steps:[
+  {go:function(){go('accounting')},sel:'[data-t=fee-add]',side:'top',click:1,title:'Add a fee',text:'Pick the job and category, then click Add fee. Totals update instantly.'},
+  {sel:'[data-t=rep]',side:'left',click:1,title:'Download the report',text:'One click gives the owner a fee report.'}]},
+ 'tour-home':{name:'The homeowner view',desc:'See progress and message the permit tech.',steps:[
+  {go:function(){go('track')},sel:'[data-t=track-steps]',side:'bottom',title:'Where is my permit?',text:'Plain-language progress. No login, just a private link.'},
+  {sel:'[data-t=h-send]',side:'top',click:1,title:'Ask a question',text:'Click Send message. It reaches the permit tech’s Agent inbox.'}]},
+ 'tour-tools':{name:'Free egress check',desc:'Try the free tool.',steps:[
+  {go:function(){go('tools')},sel:'[data-t=egress]',side:'top',click:1,title:'Check egress',text:'Change the numbers, then click Check egress.'}]}
+};
+function tourMenu(){
+ endTour();if(!S.role){chooser();return}
+ openModal('<h2>Guided tours: '+role().name+'</h2><p class="mut" style="margin:0 0 6px">Follow the arrows, click the highlighted spot, and the tour moves on. Or close this and click around freely. Every screen explains what it does.</p>'+role().tours.map(function(id){var t=TD[id];return '<button class="tour-card" data-tour="'+id+'"><b>'+t.name+'</b><span class="mut">'+t.desc+'</span></button>'}).join('')+'<div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn" data-role-pick="1" id="pickRole">Choose another user type</button><button class="btn pri" data-close="1">Explore on my own</button></div>')}
+document.addEventListener('click',function(e){
+ var b=e.target.closest('[data-tour]');if(b){$('#layer').innerHTML='';startTour(b.getAttribute('data-tour'));return}
+ if(e.target.closest('[data-role-pick]'))chooser()});
+function startTour(id){TOUR=TD[id];SI=0;tourOn=true;showStep()}
+function endTour(){tourOn=false;TOUR=null;$('#ring').style.display='none';$('#ptr').style.display='none';$('#coach').style.display='none'}
+function showStep(){var s=TOUR.steps[SI];if(s.go)s.go();else render();schedulePlace()}
+function next(){if(!tourOn)return;if(SI>=TOUR.steps.length-1){endTour();toast('Tour finished. Keep exploring!');return}SI++;showStep()}
+function prev(){if(SI>0){SI--;showStep()}}
+function schedulePlace(){clearTimeout(placeT);placeT=setTimeout(place,90)}
+function place(){
+ if(!tourOn)return;var s=TOUR.steps[SI],el=$(s.sel);var ring=$('#ring'),ptr=$('#ptr'),c=$('#coach');
+ if(!el){c.style.display='block';c.innerHTML='<h3>'+s.title+'</h3><p>Go back to the screen this step needs, then continue.</p><div class="meta"><button class="btn sm" id="tPrev">Back</button><button class="btn sm" id="tNext">Skip</button><button class="btn sm" id="tExit">Exit tour</button></div>';c.style.left='12px';c.style.top='90px';wireCoach();ring.style.display='none';ptr.style.display='none';return}
+ el.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
+ var r=el.getBoundingClientRect(),pad=6;
+ ring.style.display='block';ring.style.left=(r.left-pad)+'px';ring.style.top=(r.top-pad)+'px';ring.style.width=(r.width+pad*2)+'px';ring.style.height=(r.height+pad*2)+'px';
+ c.style.display='block';
+ c.innerHTML=(s.click?'<span class="hint">Click the highlighted spot</span>':'')+'<h3>'+s.title+'</h3><p>'+s.text+'</p><div class="meta"><span>Step '+(SI+1)+' of '+TOUR.steps.length+'</span><span style="flex:1"></span>'+(SI>0?'<button class="btn sm" id="tPrev">Back</button>':'')+'<button class="btn sm '+(s.click?'':'pri')+'" id="tNext">'+(s.click?'Skip':(SI===TOUR.steps.length-1?'Finish':'Next'))+'</button><button class="btn sm" id="tExit">Exit</button></div>';
+ wireCoach();
+ var cw=c.offsetWidth,ch=c.offsetHeight,vw=innerWidth,vh=innerHeight,gap=46,side=s.side||'bottom';
+ function fits(sd){if(sd==='right')return r.right+gap+cw<vw;if(sd==='left')return r.left-gap-cw>0;if(sd==='bottom')return r.bottom+gap+ch<vh;return r.top-gap-ch>0}
+ [side,'bottom','top','right','left'].some(function(sd){if(fits(sd)){side=sd;return true}});
+ var x,y,ax,ay,rot;
+ if(side==='right'){x=r.right+gap;y=r.top+r.height/2-ch/2;ax=r.right+8;ay=r.top+r.height/2-16;rot=180}
+ else if(side==='left'){x=r.left-gap-cw;y=r.top+r.height/2-ch/2;ax=r.left-46;ay=r.top+r.height/2-16;rot=0}
+ else if(side==='bottom'){x=r.left+r.width/2-cw/2;y=r.bottom+gap;ax=r.left+r.width/2-16;ay=r.bottom+6;rot=270}
+ else{x=r.left+r.width/2-cw/2;y=r.top-gap-ch;ax=r.left+r.width/2-16;ay=r.top-44;rot=90}
+ x=Math.max(12,Math.min(vw-cw-12,x));y=Math.max(12,Math.min(vh-ch-12,y));
+ c.style.left=x+'px';c.style.top=y+'px';
+ ptr.innerHTML='<svg width="38" height="32" viewBox="0 0 38 32" style="transform:rotate('+rot+'deg)"><path d="M2 16 L20 2 V11 H36 V21 H20 V30 Z" fill="currentColor" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>';
+ ptr.style.display='block';ptr.style.left=ax+'px';ptr.style.top=ay+'px';
+ ptr.style.setProperty('--bx',side==='right'?'6px':side==='left'?'-6px':'0');ptr.style.setProperty('--by',side==='bottom'?'6px':side==='top'?'-6px':'0');ptr.className='b'}
+function wireCoach(){var n=$('#tNext'),p=$('#tPrev'),x=$('#tExit');if(n)n.onclick=next;if(p)p.onclick=prev;if(x)x.onclick=endTour}
+document.addEventListener('click',function(e){if(!tourOn)return;var s=TOUR.steps[SI];if(s&&s.click&&e.target.closest(s.sel)){setTimeout(next,320)}},true);
+addEventListener('resize',schedulePlace);$('#main').addEventListener('scroll',schedulePlace);
+/* ---------- boot: open on the user-type picker ---------- */
+setRole('owner');
+</script>
+
+</body></html>

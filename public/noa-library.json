@@ -1,0 +1,77 @@
+{
+  "_comment": "PermitAIO NOA Library — source of truth for every product approval on the app. Feeds the floor-plan Manufacturer/Series/NOA dropdowns, the mullion NOA picker, and the window/door schedule autofill. The `opening_type` string must exactly match one of WINDOW_TYPES in floor-plan-creator.html so the cascading dropdowns filter correctly (or 'Mullion' for mullion products). `standard_pos_psf` / `standard_neg_psf` are the DEFAULT design pressures — the user can override per opening on the schedule. `pdf` is a filename inside /public/NOA-Library/ (drop the file there and it becomes a clickable link).",
+  "entries": [
+    {
+      "noa_id": "CWS__7100_SH__FL46524-R4",
+      "category": "Window",
+      "manufacturer": "CWS",
+      "series": "7100",
+      "opening_type": "Single Hung",
+      "config": null,
+      "noa_number": "FL46524.4",
+      "standard_pos_psf": 80,
+      "standard_neg_psf": -80,
+      "pdf": "CWS__7100_SH__FL46524-R4.pdf"
+    },
+    {
+      "noa_id": "CWS__7200_HR__FL46525-R4__XO",
+      "category": "Window",
+      "manufacturer": "CWS",
+      "series": "7200",
+      "opening_type": "Horizontal Roller",
+      "config": "XO",
+      "noa_number": "FL46525.4",
+      "standard_pos_psf": 65,
+      "standard_neg_psf": -65,
+      "pdf": "CWS__7200_HR__FL46525-R4__XO.pdf"
+    },
+    {
+      "noa_id": "CWS__7200_HR__FL46525-R4__XOX",
+      "category": "Window",
+      "manufacturer": "CWS",
+      "series": "7200",
+      "opening_type": "Horizontal Roller",
+      "config": "XOX",
+      "noa_number": "FL46525.4",
+      "standard_pos_psf": 65,
+      "standard_neg_psf": -75,
+      "pdf": "CWS__7200_HR__FL46525-R4__XOX.pdf"
+    },
+    {
+      "noa_id": "CWS__7600_SWING__FL46976-R2",
+      "category": "Door",
+      "manufacturer": "CWS",
+      "series": "7600",
+      "opening_type": "Entry Door",
+      "config": null,
+      "noa_number": "FL46976.2",
+      "standard_pos_psf": 75,
+      "standard_neg_psf": -80,
+      "pdf": "CWS__7600_SWING__FL46976-R2.pdf"
+    },
+    {
+      "noa_id": "CWS__7900_SGD__FL46529-R4",
+      "category": "Door",
+      "manufacturer": "CWS",
+      "series": "7900",
+      "opening_type": "Sliding Glass Door",
+      "config": null,
+      "noa_number": "FL46529.4",
+      "standard_pos_psf": 56,
+      "standard_neg_psf": -65,
+      "pdf": "CWS__7900_SGD__FL46529-R4.pdf"
+    },
+    {
+      "noa_id": "CWS__7900_SGD__FL46529-R4__OX",
+      "category": "Door",
+      "manufacturer": "CWS",
+      "series": "7900",
+      "opening_type": "Sliding Glass Door",
+      "config": "OX",
+      "noa_number": "FL46529.4",
+      "standard_pos_psf": 56,
+      "standard_neg_psf": -65,
+      "pdf": "CWS__7900_SGD__FL46529-R4__OX.pdf"
+    }
+  ]
+}

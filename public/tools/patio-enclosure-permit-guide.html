@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sunroom & Patio Enclosure Permit Guide — Categories I–V | Permit Toolkit</title>
+<meta name="description" content="Florida Building Code sunroom classifications (AAMA/NPEA/NSA/SRAA 2100) — Categories I through V, what permit documents each triggers, and Palm Beach County notes.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  .cl-card{margin-top:24px;padding:24px;border-radius:14px;border:1px solid var(--line);background:var(--bg);}
+  .cl-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+  .cl-titleblk{flex:1;min-width:240px;}
+  .cl-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:4px;}
+  .cl-h{font-family:'General Sans',system-ui,sans-serif;font-size:19px;font-weight:600;color:var(--ink);margin:0 0 4px;line-height:1.3;}
+  .cl-sub{font-size:13px;color:var(--muted);}
+  .cl-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+  .cl-btn{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;transition:background .15s;}
+  .cl-btn:hover{background:var(--line);}
+  .cl-progress{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .cl-bar-wrap{flex:1;height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;}
+  .cl-bar{height:100%;background:var(--primary);border-radius:3px;transition:width .25s ease;width:0;}
+  .cl-count{font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
+  .cl-group{margin-bottom:18px;}
+  .cl-group:last-child{margin-bottom:0;}
+  .cl-group-title{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .cl-item{display:flex;align-items:flex-start;gap:10px;padding:8px 4px;cursor:pointer;font-size:14px;line-height:1.5;color:var(--ink);border-radius:6px;transition:background .12s;}
+  .cl-item:hover{background:var(--surface-2);}
+  .cl-item input[type=checkbox]{margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
+  .cl-item input[type=checkbox]:checked + .cl-text{color:var(--muted);text-decoration:line-through;}
+  .cl-text{flex:1;}
+  @media print{
+    body > header, body > .promo-bar, body > footer, .back-link, .cl-actions{display:none !important;}
+    .cl-card{border-color:#000;}
+    .cl-item input[type=checkbox]{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body data-page-type="interior">
+<div class="wrap-narrow">
+  <a class="back-link" href="/tools">← All Tools</a>
+  <h1>Sunroom &amp; Patio Enclosure Permit Guide</h1>
+  <div class="page-sub">Under the Florida Building Code (based on AAMA/NPEA/NSA/SRAA 2100), sunrooms fall into five categories distinguished by enclosure type and whether they're conditioned or habitable. The category drives what permit documentation is required — structural, energy, mechanical, egress — and whether the room counts toward habitable square footage.</div>
+
+  <div class="warn"><b>Reference only, not a permitting determination.</b> Requirements vary by municipality and, for condos, by the individual association's governing documents. Confirm specifics with the local building department (and for condos, the association) before starting design. Palm Beach County adopts the Florida Building Code with local amendments — always check the county's current amendments and any city sub-jurisdictions.</div>
+
+  <div class="card">
+    <div class="card-label">Configure Your Project</div>
+    <div class="inputs-grid-2">
+      <div>
+        <label for="cat">Sunroom / Enclosure Category</label>
+        <select id="cat">
+          <option value="I">Category I — Screen enclosure or thin film (max 20 mil)</option>
+          <option value="II">Category II — Roof + glazed walls (basic)</option>
+          <option value="III">Category III — Glazed walls, air/water rated</option>
+          <option value="IV" selected>Category IV — Thermally isolated, conditioned</option>
+          <option value="V">Category V — Habitable, conditioned, open to house</option>
+          <option value="cover">Open Patio Cover — Roof only, no walls</option>
+          <option value="poolcage">Screened Pool Enclosure — Cage over pool</option>
+        </select>
+      </div>
+      <div>
+        <label for="ptype">Property Type</label>
+        <select id="ptype">
+          <option value="sfh" selected>Single-Family Home</option>
+          <option value="condo">Condo / Attached Unit</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="result" id="typeResult"></div>
+  <div class="propnote" id="propResult"></div>
+
+  <div class="cl-card">
+    <div class="cl-head">
+      <div class="cl-titleblk">
+        <div class="cl-label">Permit Package Checklist</div>
+        <h2 class="cl-h" id="clTitle">Permit checklist</h2>
+        <div class="cl-sub">Every document, plan, and sub-permit typically required for the selected category and property type. Tick items as you gather them.</div>
+      </div>
+      <div class="cl-actions">
+        <button type="button" class="cl-btn" id="clCopy">Copy list</button>
+        <button type="button" class="cl-btn" id="clPrint">Print</button>
+      </div>
+    </div>
+    <div class="cl-progress">
+      <div class="cl-bar-wrap"><div class="cl-bar" id="clBar"></div></div>
+      <div class="cl-count" id="clCount">0 / 0</div>
+    </div>
+    <div id="docChecklist"></div>
+  </div>
+
+  <h2 style="font-size:18px; margin:32px 0 12px;">All Five FBC Sunroom Categories</h2>
+  <div class="page-sub" style="margin-bottom:16px; font-size:14px;">Reference table for the AAMA/NPEA/NSA/SRAA 2100 classifications adopted under Florida Building Code, Residential R301.2.1.1.1.</div>
+
+  <div class="cat-grid" id="catGrid">
+    <div class="cat-card" data-cat="I">
+      <div class="cat-head">
+        <span class="cat-chip">Category I</span>
+        <span class="cat-title">Screen / Thin-Film Enclosure</span>
+        <span class="cat-badges">
+          <span class="cat-badge unc">Non-habitable</span>
+          <span class="cat-badge unc">Unconditioned</span>
+        </span>
+      </div>
+      <div class="cat-body">Thermally isolated. Walls are open or enclosed only with insect screening or thin plastic film (max 20 mil). Not designed to be heated or cooled. Not habitable space, doesn't count toward living area.</div>
+      <div class="cat-code">FBC Residential R301.2.1.1.1 · AAMA/NPEA/NSA/SRAA 2100</div>
+    </div>
+
+    <div class="cat-card" data-cat="II">
+      <div class="cat-head">
+        <span class="cat-chip">Category II</span>
+        <span class="cat-title">Glazed Sunroom (Basic)</span>
+        <span class="cat-badges">
+          <span class="cat-badge unc">Non-habitable</span>
+          <span class="cat-badge unc">Unconditioned</span>
+        </span>
+      </div>
+      <div class="cat-body">Has a roof and enclosed walls, with openings glazed in transparent or translucent glass or plastic (often acrylic). Not tied into HVAC. No air-infiltration or water-penetration performance requirements on the fenestration beyond basic FBC minimums.</div>
+      <div class="cat-code">FBC Residential R301.2.1.1.1 · AAMA/NPEA/NSA/SRAA 2100</div>
+    </div>
+
+    <div class="cat-card" data-cat="III">
+      <div class="cat-head">
+        <span class="cat-chip">Category III</span>
+        <span class="cat-title">Glazed Sunroom (Rated Fenestration)</span>
+        <span class="cat-badges">
+          <span class="cat-badge unc">Non-habitable</span>
+          <span class="cat-badge unc">Unconditioned</span>
+        </span>
+      </div>
+      <div class="cat-body">Same as Category II, but the fenestration must meet air-infiltration and water-resistance requirements — typically built with glass, shutters, or impact glass. Still not conditioned or habitable. Common in HVHZ or Wind-Borne Debris Regions where product approval is required.</div>
+      <div class="cat-code">FBC Residential R301.2.1.1.1 · AAMA/NPEA/NSA/SRAA 2100</div>
+    </div>
+
+    <div class="cat-card active" data-cat="IV">
+      <div class="cat-head">
+        <span class="cat-chip">Category IV</span>
+        <span class="cat-title">Thermally Isolated, Conditioned Sunroom</span>
+        <span class="cat-badges">
+          <span class="cat-badge unc">Non-habitable</span>
+          <span class="cat-badge cond">Conditioned</span>
+        </span>
+      </div>
+      <div class="cat-body">Enclosed walls, designed to be heated or cooled by a separate temperature control system that is thermally isolated from the primary structure. Fenestration must meet added water-penetration, air-infiltration, and thermal performance requirements. Conditioned but not habitable — energy code and mechanical permits apply, egress usually doesn't.</div>
+      <div class="cat-code">FBC Residential R301.2.1.1.1 · AAMA/NPEA/NSA/SRAA 2100</div>
+    </div>
+
+    <div class="cat-card" data-cat="V">
+      <div class="cat-head">
+        <span class="cat-chip">Category V</span>
+        <span class="cat-title">Habitable Conditioned Sunroom</span>
+        <span class="cat-badges">
+          <span class="cat-badge hab">Habitable</span>
+          <span class="cat-badge cond">Conditioned</span>
+        </span>
+      </div>
+      <div class="cat-body">Enclosed walls, designed to be heated or cooled and <b>open to the main structure</b>, with fenestration meeting the same enhanced air, water, and thermal performance requirements as Category IV. Habitable and conditioned — functionally a full addition. Full energy code, mechanical, electrical, and egress requirements apply, and it counts toward the home's living square footage.</div>
+      <div class="cat-code">FBC Residential R301.2.1.1.1 · AAMA/NPEA/NSA/SRAA 2100</div>
+    </div>
+  </div>
+
+  <div class="always" style="margin-top:32px;">
+    <h2 style="font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-bottom:14px;">Applies to Every Category</h2>
+    <div class="always-item"><b>Wind &amp; Structural:</b>&nbsp;Any attached or freestanding structure needs an engineered wind-load design (footings, anchoring, uplift) sized to the site's design wind speed. This is not optional even for Category I screen rooms.</div>
+    <div class="always-item"><b>HVHZ / Impact Glazing:</b>&nbsp;In Miami-Dade, Broward, or any Wind-Borne Debris Region — including much of coastal Palm Beach County — every glazed opening (Cat II–V) needs product approval (NOA or Florida Product Approval) rated for the site.</div>
+    <div class="always-item"><b>Zoning &amp; Setbacks:</b>&nbsp;Enclosures still have to clear side and rear setback requirements and easements. A property survey showing the proposed footprint is commonly required with the application.</div>
+    <div class="always-item"><b>Notice of Commencement:</b>&nbsp;Most enclosure jobs exceed Florida's $2,500 NOC threshold. File a Notice of Commencement with the county clerk before pulling the permit.</div>
+    <div class="always-item"><b>Palm Beach County:</b>&nbsp;Follows the Florida Building Code with local amendments. Category IV and V trigger the most involved review — energy calcs, mechanical permit, and (for Cat V) egress on any bedroom-eligible windows.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var categories = {
+    'I': {
+      title: 'Category I — Screen / Thin-Film Enclosure',
+      tags: ['Non-habitable', 'Unconditioned', 'Structural Permit'],
+      body: [
+        'Aluminum frame with insect screening or thin plastic film (max 20 mil) — no solid walls, no weatherproofing, no heating or cooling.',
+        'Needs a <b>building permit</b> for the structure (footings, framing, wind anchoring) and a separate <b>electrical permit</b> only if lighting, fans, or outlets are being added.',
+        'Not conditioned space, so energy code and insulation requirements generally do not apply, and it does not count toward the home\'s living square footage.',
+        '<b>Code basis:</b> Florida Building Code, Residential R301.2.1.1.1 (AAMA/NPEA/NSA/SRAA 2100).'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application (owner + qualifier info, job value, scope)'},
+        {g:'Application', label:'Property survey showing proposed enclosure footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement recorded and posted if job value exceeds $2,500'},
+        {g:'Plans', label:'Site plan showing enclosure location, dimensions, and distance to property lines'},
+        {g:'Plans', label:'Framing / elevation drawings showing member sizes and screen panel layout'},
+        {g:'Plans', label:'Foundation / footing detail (concrete slab or footings) with anchoring schedule'},
+        {g:'Engineering', label:'Signed &amp; sealed engineering for the aluminum frame — site-specific wind speed, exposure, mean roof height'},
+        {g:'Engineering', label:'Anchor / uplift schedule tying frame to slab or footings'},
+        {g:'Product Approval', label:'Screen fabric or thin-film product data sheet (mesh size, tensile rating)'},
+        {g:'Trade Permits', label:'Electrical sub-permit — only if adding lighting, fans, or receptacles'},
+        {g:'Fees', label:'Permit fee paid at submittal (use the Permit Fee Estimator for a ballpark)'}
+      ]
+    },
+    'II': {
+      title: 'Category II — Glazed Sunroom (Basic)',
+      tags: ['Non-habitable', 'Unconditioned', 'Structural + Glazing Permit'],
+      body: [
+        'Roof plus enclosed walls with transparent or translucent glazing (glass or acrylic). Not connected to the home\'s HVAC — no permanent heating or cooling.',
+        'Needs a <b>building permit</b> for the structure and glazing. Any glazed panels in an HVHZ or Wind-Borne Debris Region need impact-rated product approval.',
+        'Still treated as unconditioned space for energy code purposes, but some jurisdictions look more carefully at how finished the space is — confirm locally before assuming it won\'t count toward living area.',
+        '<b>Code basis:</b> FBC Residential R301.2.1.1.1.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application'},
+        {g:'Application', label:'Property survey with proposed footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement (recorded &amp; posted) if over $2,500'},
+        {g:'Plans', label:'Site plan with dimensions and setback distances'},
+        {g:'Plans', label:'Floor plan and elevations showing wall &amp; roof framing'},
+        {g:'Plans', label:'Foundation / slab detail with anchor bolt schedule'},
+        {g:'Plans', label:'Roof framing plan with rafter / beam sizes and slope'},
+        {g:'Engineering', label:'Signed &amp; sealed structural calcs — wind loads for site wind speed &amp; exposure'},
+        {g:'Product Approval', label:'Window / door / glazing NOA or Florida Product Approval (FL#) sheets'},
+        {g:'Product Approval', label:'Roof panel product approval (insulated aluminum, acrylic, etc.)'},
+        {g:'Trade Permits', label:'Electrical sub-permit if adding lighting, fans, or receptacles'},
+        {g:'Fees', label:'Permit fee paid at submittal'}
+      ]
+    },
+    'III': {
+      title: 'Category III — Glazed Sunroom with Rated Fenestration',
+      tags: ['Non-habitable', 'Unconditioned', 'Structural + Rated Glazing'],
+      body: [
+        'Same envelope as Category II, but the fenestration must meet <b>air infiltration and water resistance</b> performance requirements — typically built with glass, shutters, or impact glass.',
+        'Common path in HVHZ / Wind-Borne Debris Regions because the rated fenestration is already required by product approval.',
+        'Still non-habitable and unconditioned — energy code does not apply, and it does not add to living square footage.',
+        '<b>Code basis:</b> FBC Residential R301.2.1.1.1.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application'},
+        {g:'Application', label:'Property survey with footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement if over $2,500'},
+        {g:'Plans', label:'Site plan with setback distances'},
+        {g:'Plans', label:'Floor plan and elevations showing wall / roof framing and glazing layout'},
+        {g:'Plans', label:'Foundation / slab detail with anchor schedule'},
+        {g:'Plans', label:'Window &amp; door schedule listing each opening size, type, and product FL#'},
+        {g:'Engineering', label:'Signed &amp; sealed structural calcs for site-specific wind loads'},
+        {g:'Product Approval', label:'Impact / rated glazing product approval (NOA or FL#) matched to the schedule'},
+        {g:'Product Approval', label:'Shutter product approval (if used instead of impact glass)'},
+        {g:'Product Approval', label:'Roof panel / cover product approval'},
+        {g:'Product Approval', label:'Air infiltration &amp; water resistance test data included in the NOA / FL#'},
+        {g:'Trade Permits', label:'Electrical sub-permit if adding lighting, fans, or receptacles'},
+        {g:'Fees', label:'Permit fee paid at submittal'}
+      ]
+    },
+    'IV': {
+      title: 'Category IV — Thermally Isolated, Conditioned Sunroom',
+      tags: ['Non-habitable', 'Conditioned', 'Full Review + Mechanical'],
+      body: [
+        'Thermally isolated sunroom with enclosed walls, designed to be heated or cooled by a <b>separate temperature control system</b>, isolated from the primary structure.',
+        'Fenestration must meet added <b>water penetration, air infiltration, and thermal performance</b> requirements.',
+        'Because it\'s conditioned, the <b>energy code applies</b> (U-factor / SHGC on windows, insulation R-values) and a <b>mechanical permit</b> is required for the standalone HVAC. Electrical permit for lighting, receptacles, and equipment.',
+        'Not habitable, so egress requirements generally don\'t apply and it typically does not count toward the home\'s habitable square footage — but some assessors treat conditioned enclosed area as adjustable value.',
+        '<b>Code basis:</b> FBC Residential R301.2.1.1.1.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application'},
+        {g:'Application', label:'Property survey with footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement (over $2,500 job value)'},
+        {g:'Plans', label:'Site plan with dimensions and setback distances'},
+        {g:'Plans', label:'Floor plan and elevations showing wall / roof / insulation details'},
+        {g:'Plans', label:'Foundation / slab detail with insulation and anchor schedule'},
+        {g:'Plans', label:'Wall &amp; roof section showing insulation R-values and thermal break'},
+        {g:'Plans', label:'Window &amp; door schedule with U-factor / SHGC for each opening'},
+        {g:'Engineering', label:'Signed &amp; sealed structural calcs for site wind loads'},
+        {g:'Energy Code', label:'Florida Energy Code compliance form (Form R405 or R402) sealed and signed'},
+        {g:'Energy Code', label:'Insulation R-value schedule for walls, ceiling, and floor / slab edge'},
+        {g:'Product Approval', label:'Rated fenestration NOA or FL# for each opening (thermal + air + water)'},
+        {g:'Product Approval', label:'Roof panel / insulated panel product approval'},
+        {g:'Trade Permits', label:'<b>Mechanical (HVAC) sub-permit</b> for the standalone heating / cooling system'},
+        {g:'Trade Permits', label:'HVAC equipment cut sheets and Manual J / S load calc'},
+        {g:'Trade Permits', label:'Electrical sub-permit for lighting, receptacles, and HVAC equipment circuits'},
+        {g:'Fees', label:'Permit fees paid (building + mechanical + electrical)'}
+      ]
+    },
+    'V': {
+      title: 'Category V — Habitable Conditioned Sunroom (Addition)',
+      tags: ['Habitable', 'Conditioned', 'Full Addition Review'],
+      body: [
+        'Enclosed walls, designed to be heated or cooled and <b>open to the main structure</b>. Fenestration meets the same enhanced air, water, and thermal performance requirements as Category IV.',
+        'Functionally a room addition — full permit review under the <b>energy code</b> (insulation R-values, window U-factor/SHGC), <b>mechanical permit</b> for the HVAC extension, and <b>electrical permit</b> for the added circuits.',
+        'Because it becomes conditioned, habitable space, <b>egress requirements</b> apply if it will ever function as a bedroom or similar — run the Egress Opening Calculator on any window being specified.',
+        '<b>This category counts toward the home\'s habitable square footage</b>, which can affect property tax assessment, appraisal, and any post-Surfside association reviews.',
+        '<b>Code basis:</b> FBC Residential R301.2.1.1.1.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application (addition scope)'},
+        {g:'Application', label:'Property survey with proposed addition footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement recorded and posted'},
+        {g:'Application', label:'Zoning approval / addition review sign-off (if required locally)'},
+        {g:'Plans', label:'Full site plan with dimensions, setbacks, and impervious area calc if triggered'},
+        {g:'Plans', label:'Floor plan showing the new room and opening into the existing house'},
+        {g:'Plans', label:'Elevations (all sides) showing the addition and existing house tie-in'},
+        {g:'Plans', label:'Foundation plan with footings, slab, and anchor bolts'},
+        {g:'Plans', label:'Framing plan — floor / wall / roof — with member sizes and connections'},
+        {g:'Plans', label:'Wall &amp; roof section with insulation R-values, air barrier, and vapor detail'},
+        {g:'Plans', label:'Window &amp; door schedule with sizes, U-factor, SHGC, and egress ratings where applicable'},
+        {g:'Plans', label:'Electrical plan showing new circuits, receptacles, lighting, and panel changes'},
+        {g:'Plans', label:'Mechanical plan showing HVAC extension, ducts, and returns'},
+        {g:'Engineering', label:'Signed &amp; sealed structural calcs for site-specific wind loads and gravity loads'},
+        {g:'Engineering', label:'Tie-in detail sealed by engineer showing connection to existing structure'},
+        {g:'Energy Code', label:'Florida Energy Code compliance form (Form R405) sealed and signed'},
+        {g:'Energy Code', label:'Whole-house or addition energy compliance path documented'},
+        {g:'Product Approval', label:'Fenestration NOA or FL# for every opening (impact if HVHZ / WBDR)'},
+        {g:'Product Approval', label:'Roofing / roof deck product approval if new roof section'},
+        {g:'Egress', label:'Egress compliance check on any window that could serve a sleeping room — R310'},
+        {g:'Trade Permits', label:'Electrical sub-permit'},
+        {g:'Trade Permits', label:'Mechanical (HVAC) sub-permit — Manual J / S load calc with equipment cut sheets'},
+        {g:'Trade Permits', label:'Plumbing sub-permit only if adding plumbing fixtures'},
+        {g:'Fees', label:'Permit fees paid (building + electrical + mechanical + any plumbing)'},
+        {g:'Post-Permit', label:'Property record / appraiser update after CO for the added habitable sq ft'}
+      ]
+    },
+    'cover': {
+      title: 'Open Patio Cover / Roof (No Walls)',
+      tags: ['Open Air', 'Structural Permit Only'],
+      body: [
+        'Just a roof structure over the patio — posts and framing, no screen or glass enclosing any side. Not classified under the AAMA 2100 sunroom categories because it isn\'t enclosed.',
+        'Simplest category from an envelope standpoint: no energy code or insulation concerns since nothing is being enclosed.',
+        'Still requires a <b>building permit</b> for the structural design — roof framing and posts need a proper wind uplift analysis. Electrical permit only if adding lighting or fans.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application'},
+        {g:'Application', label:'Property survey with proposed cover footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement if over $2,500'},
+        {g:'Plans', label:'Site plan showing cover location and setback distances'},
+        {g:'Plans', label:'Framing plan with post, beam, and rafter sizes'},
+        {g:'Plans', label:'Foundation / footing detail for each post'},
+        {g:'Engineering', label:'Signed &amp; sealed structural calcs — wind uplift on the roof, lateral loads on posts'},
+        {g:'Engineering', label:'Post-to-footing anchor schedule'},
+        {g:'Product Approval', label:'Roof panel / cover product approval (insulated aluminum, membrane, etc.)'},
+        {g:'Trade Permits', label:'Electrical sub-permit if adding lighting or fans'},
+        {g:'Fees', label:'Permit fee paid at submittal'}
+      ]
+    },
+    'poolcage': {
+      title: 'Screened Pool Enclosure (Cage)',
+      tags: ['Non-habitable', 'Unconditioned', 'Structural + Pool Coordination'],
+      body: [
+        'Same general treatment as a Category I screen enclosure, engineered for the larger span over a pool and surrounding deck.',
+        'Needs a <b>building permit</b> for the structure, engineered for wind, plus coordination with any pool permit already in progress.',
+        'A properly designed cage with a self-closing, self-latching gate can sometimes count toward the property\'s required pool safety barrier — verify FBC 454 pool barrier requirements with the county before finalizing the design.'
+      ],
+      checklist: [
+        {g:'Application', label:'Completed building permit application'},
+        {g:'Application', label:'Property survey with proposed cage footprint and setbacks'},
+        {g:'Application', label:'Notice of Commencement if over $2,500'},
+        {g:'Plans', label:'Site plan showing cage location relative to pool and property lines'},
+        {g:'Plans', label:'Framing / elevation drawings with member sizes and screen layout'},
+        {g:'Plans', label:'Slab or footing detail with anchor schedule'},
+        {g:'Plans', label:'Door / gate schedule showing self-closing, self-latching hardware'},
+        {g:'Engineering', label:'Signed &amp; sealed engineering — cage span, wind loads, uplift'},
+        {g:'Engineering', label:'Anchor schedule tying cage to deck / footings'},
+        {g:'Product Approval', label:'Screen fabric product data sheet'},
+        {g:'Pool Coordination', label:'Coordination with active pool permit (if pool is new / under construction)'},
+        {g:'Pool Safety', label:'Confirmation the cage + gate can serve as pool safety barrier — or separate barrier planned'},
+        {g:'Trade Permits', label:'Electrical sub-permit if adding lighting or fans'},
+        {g:'Fees', label:'Permit fee paid at submittal'}
+      ]
+    }
+  };
+
+  var properties = {
+    'sfh': {
+      title: 'Single-Family Home',
+      body: [
+        'The homeowner or a licensed contractor applies directly with the local building department — no third-party approval needed before filing.',
+        '<b>Setback compliance</b> is the main site-plan concern: confirm the enclosure footprint against the property\'s required side and rear setbacks before design is finalized.',
+        'A property survey showing the proposed enclosure location is commonly required with the application.',
+        'In <b>Palm Beach County</b>, submissions go through the county building division (or city sub-jurisdiction if incorporated) using the Florida Building Code plus current county amendments.'
+      ],
+      addOns: []
+    },
+    'condo': {
+      title: 'Condo / Attached Unit',
+      body: [
+        '<b>Start with the association, not the building department.</b> Under Florida\'s Condominium Act (Ch. 718, F.S.), altering a common element or limited common element — which a patio or balcony enclosure almost always is — generally requires the association\'s prior written consent before anything gets permitted.',
+        'The association\'s declaration and bylaws govern the approval process, and many buildings require a single uniform enclosure design / color for the whole property rather than allowing unit-by-unit variation.',
+        'The building department may require the association to be a co-applicant or to provide a formal letter of consent — confirm this with the association\'s management before assuming the unit owner can apply alone.',
+        'For mid- or high-rises, the association\'s structural engineer of record often needs to review the attachment to the building\'s exterior wall or balcony slab, since it affects the building\'s structural system, not just the unit.',
+        'Since the post-Surfside reforms (milestone inspections, SIRS), associations tend to scrutinize anything altering the building envelope more carefully — budget extra time for this step.'
+      ],
+      addOns: [
+        {g:'Condo Approval', label:'Written association approval (board or ARC letter) referencing declaration / bylaws'},
+        {g:'Condo Approval', label:'Uniform enclosure design / color specification matching the building standard'},
+        {g:'Condo Approval', label:'Association letter of consent or co-applicant sign-off for the building department'},
+        {g:'Condo Approval', label:'Association engineer of record review of attachment to exterior wall or balcony slab (mid / high-rise)'},
+        {g:'Condo Approval', label:'Confirmation the work does not conflict with milestone inspection / SIRS findings (post-Surfside)'}
+      ]
+    }
+  };
+
+  var GROUP_ORDER = ['Application', 'Condo Approval', 'Plans', 'Engineering', 'Energy Code', 'Egress', 'Product Approval', 'Pool Coordination', 'Pool Safety', 'Trade Permits', 'Fees', 'Post-Permit'];
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function buildChecklist(items){
+    // Group items by g while preserving order per GROUP_ORDER
+    var groups = {};
+    for (var i=0; i<items.length; i++){
+      var g = items[i].g || 'Other';
+      (groups[g] = groups[g] || []).push(items[i]);
+    }
+    var html = '';
+    for (var j=0; j<GROUP_ORDER.length; j++){
+      var name = GROUP_ORDER[j];
+      if (!groups[name]) continue;
+      html += '<div class="cl-group">';
+      html += '<div class="cl-group-title">' + name + '</div>';
+      for (var k=0; k<groups[name].length; k++){
+        var it = groups[name][k];
+        html += '<label class="cl-item"><input type="checkbox" data-item="' + escapeHtml(it.label) + '"><span class="cl-text">' + it.label + '</span></label>';
+      }
+      html += '</div>';
+    }
+    return html;
+  }
+
+  function updateChecklistProgress(){
+    var boxes = document.querySelectorAll('#docChecklist input[type=checkbox]');
+    var done = 0;
+    for (var i=0; i<boxes.length; i++){ if (boxes[i].checked) done++; }
+    var pct = boxes.length ? Math.round((done/boxes.length)*100) : 0;
+    var countEl = document.getElementById('clCount');
+    var barEl = document.getElementById('clBar');
+    if (countEl) countEl.textContent = done + ' / ' + boxes.length;
+    if (barEl) barEl.style.width = pct + '%';
+  }
+
+  function render(){
+    var cat = document.getElementById('cat').value;
+    var ptype = document.getElementById('ptype').value;
+    var t = categories[cat];
+    var p = properties[ptype];
+
+    var tagsHtml = '';
+    for (var i=0; i<t.tags.length; i++){ tagsHtml += '<div class="tag">' + t.tags[i] + '</div>'; }
+
+    var typeHtml = '<div class="l">Selection</div><h3>' + t.title + '</h3><div class="tags">' + tagsHtml + '</div>';
+    for (var j=0; j<t.body.length; j++){ typeHtml += '<p>' + t.body[j] + '</p>'; }
+    document.getElementById('typeResult').innerHTML = typeHtml;
+
+    var propHtml = '<div class="l">' + p.title + ' Notes</div>';
+    for (var k=0; k<p.body.length; k++){ propHtml += '<p>' + p.body[k] + '</p>'; }
+    document.getElementById('propResult').innerHTML = propHtml;
+
+    // Build the merged checklist (category + property add-ons)
+    var merged = (t.checklist || []).concat(p.addOns || []);
+    var titleEl = document.getElementById('clTitle');
+    if (titleEl) titleEl.textContent = 'Checklist — ' + t.title;
+    document.getElementById('docChecklist').innerHTML = buildChecklist(merged);
+    updateChecklistProgress();
+
+    // Highlight active category card in the reference grid
+    var cards = document.querySelectorAll('#catGrid .cat-card');
+    for (var m=0; m<cards.length; m++){
+      cards[m].classList.toggle('active', cards[m].getAttribute('data-cat') === cat);
+    }
+  }
+
+  document.getElementById('cat').addEventListener('input', render);
+  document.getElementById('ptype').addEventListener('input', render);
+
+  // Wire up progress-tracking + copy + print via delegation (once)
+  document.addEventListener('change', function(e){
+    if (e.target && e.target.matches('#docChecklist input[type=checkbox]')) {
+      updateChecklistProgress();
+    }
+  });
+
+  document.getElementById('clCopy').addEventListener('click', function(){
+    var cat = document.getElementById('cat').value;
+    var ptype = document.getElementById('ptype').value;
+    var t = categories[cat];
+    var p = properties[ptype];
+    var merged = (t.checklist || []).concat(p.addOns || []);
+    var lines = ['Permit Checklist — ' + t.title, 'Property type: ' + p.title, ''];
+    var groups = {};
+    for (var i=0; i<merged.length; i++){
+      var g = merged[i].g || 'Other';
+      (groups[g] = groups[g] || []).push(merged[i]);
+    }
+    for (var j=0; j<GROUP_ORDER.length; j++){
+      var name = GROUP_ORDER[j];
+      if (!groups[name]) continue;
+      lines.push(name.toUpperCase());
+      for (var k=0; k<groups[name].length; k++){
+        lines.push('  □ ' + groups[name][k].label.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&'));
+      }
+      lines.push('');
+    }
+    lines.push('Generated from permittoolkit.com — reference only, verify with local building department.');
+    var text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        var btn = document.getElementById('clCopy');
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(function(){ btn.textContent = orig; }, 1600);
+      });
+    }
+  });
+
+  document.getElementById('clPrint').addEventListener('click', function(){ window.print(); });
+
+  render();
+})();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

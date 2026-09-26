@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Pressure Estimator — Windows & Doors</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body data-page-type="interior">
+<div class="wrap">
+  <h1>Design Pressure Estimator</h1>
+  <div class="sub">Windows &amp; doors — ASCE 7 components &amp; cladding method </div>
+
+  <div class="warn">
+    <b>Estimation tool only — not for permit submission.</b> This uses simplified, approximate coefficient values to give a ballpark design pressure. Actual permit-ready calculations must be performed with the official ASCE 7 tables/figures (or engineering software) and sealed by a Florida-licensed engineer. For product selection, match against the window/door's tested DP rating on its Miami-Dade NOA, Broward BC approval, or Florida Product Approval — don't install based on this number alone.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Site &amp; Building Inputs</div>
+      <div class="field">
+        <label for="V">Basic Wind Speed, V (mph)</label>
+        <input type="number" id="V" value="170" step="1">
+        <div class="hint">From ASCE 7 wind speed map for the site — HVHZ (Miami-Dade/Broward) often 170–175 mph for Risk Category II.</div>
+      </div>
+      <div class="field">
+        <label for="exposure">Exposure Category</label>
+        <select id="exposure">
+          <option value="B">B — Suburban / wooded</option>
+          <option value="C" selected>C — Open terrain / most of coastal FL</option>
+          <option value="D">D — Flat, unobstructed, near large water body</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="height">Mean Roof / Building Height, h (ft)</label>
+        <input type="number" id="height" value="20" step="1">
+      </div>
+      <div class="field">
+        <label for="kzt">Topographic Factor, Kzt</label>
+        <input type="number" id="kzt" value="1.0" step="0.01">
+        <div class="hint">1.0 for typical flat sites; higher near hills/escarpments/ridges (rare in most of FL).</div>
+      </div>
+      <div class="field">
+        <label for="kd">Directionality Factor, Kd</label>
+        <input type="number" id="kd" value="0.85" step="0.01">
+        <div class="hint">0.85 is the standard ASCE 7 value for components &amp; cladding.</div>
+      </div>
+      <div class="field">
+        <label for="basis">Design Basis</label>
+        <select id="basis">
+          <option value="asd" selected>Allowable Stress Design (ASD) — matches product DP ratings</option>
+          <option value="strength">Strength / Ultimate (LRFD)</option>
+        </select>
+        <div class="hint">Product NOA/FPA "DP" ratings are conventionally stated at ASD level (≈0.6× strength-level pressure). Use ASD to compare against a product's rated DP.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Opening Inputs</div>
+      <div class="field">
+        <label for="enclosure">Enclosure Classification</label>
+        <select id="enclosure">
+          <option value="enclosed" selected>Enclosed (±0.18)</option>
+          <option value="partial">Partially Enclosed (±0.55)</option>
+          <option value="open">Open (0.00)</option>
+        </select>
+        <div class="hint">Most finished homes/buildings are "enclosed."</div>
+      </div>
+      <div class="field">
+        <label for="zone">Wall Zone</label>
+        <select id="zone">
+          <option value="4">Zone 4 — field of wall</option>
+          <option value="5">Zone 5 — corner zone (within ~a of a corner)</option>
+        </select>
+        <div class="hint">Corner-zone openings see higher suction than field-of-wall openings.</div>
+      </div>
+      <div class="field">
+        <label for="area">Effective Wind Area (sq ft)</label>
+        <input type="number" id="area" value="20" step="1">
+        <div class="hint">Roughly the opening's area — smaller openings see higher localized pressure.</div>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <div class="result-box">
+            <div class="l">Velocity Pressure qz</div>
+            <div class="v" id="out-qz">—</div>
+            <div class="u">psf</div>
+          </div>
+          <div class="result-box">
+            <div class="l">Kz (interpolated)</div>
+            <div class="v" id="out-kz">—</div>
+            <div class="u">unitless</div>
+          </div>
+        </div>
+        <div class="result-row">
+          <div class="result-box">
+            <div class="l">Positive DP (inward)</div>
+            <div class="v" id="out-pos">—</div>
+            <div class="u">psf</div>
+          </div>
+          <div class="result-box">
+            <div class="l">Negative DP (outward)</div>
+            <div class="v neg" id="out-neg">—</div>
+            <div class="u">psf</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="final">
+    <div class="l">Estimated Product Rating Needed</div>
+    <div class="v" id="out-final">— <span>psf, rounded up to nearest 5</span></div>
+  </div>
+
+  <div class="steps">
+    <h2>Calculation Trace</h2>
+    <div class="row"><span>qz = 0.00256 × Kz × Kzt × Kd × V²</span><span id="trace-qz">—</span></div>
+    <div class="row"><span>GCp (positive, this zone/area)</span><span id="trace-gcp-pos">—</span></div>
+    <div class="row"><span>GCp (negative, this zone/area)</span><span id="trace-gcp-neg">—</span></div>
+    <div class="row"><span>GCpi (enclosure)</span><span id="trace-gcpi">—</span></div>
+    <div class="row"><span>p(+) strength = qz × (GCp+ + |GCpi|)</span><span id="trace-p-pos">—</span></div>
+    <div class="row"><span>p(−) strength = qz × (GCp− − |GCpi|)</span><span id="trace-p-neg">—</span></div>
+    <div class="row"><span>ASD factor applied</span><span id="trace-asd">—</span></div>
+  </div>
+
+  
+</div>
+
+<script>
+  // Simplified Kz table (Case 2, C&C) by exposure and height — approximate, for estimation only
+  const kzTable = {
+    B: [[0,0.57],[15,0.57],[20,0.62],[25,0.66],[30,0.70],[40,0.76],[50,0.81],[60,0.85],[70,0.89],[80,0.93],[90,0.96],[100,0.99]],
+    C: [[0,0.85],[15,0.85],[20,0.90],[25,0.94],[30,0.98],[40,1.04],[50,1.09],[60,1.13],[70,1.17],[80,1.21],[90,1.24],[100,1.26]],
+    D: [[0,1.03],[15,1.03],[20,1.08],[25,1.12],[30,1.16],[40,1.22],[50,1.27],[60,1.31],[70,1.34],[80,1.38],[90,1.40],[100,1.43]]
+  };
+
+  function interpolateKz(exposure, h){
+    const table = kzTable[exposure];
+    if (h <= table[0][0]) return table[0][1];
+    if (h >= table[table.length-1][0]) return table[table.length-1][1];
+    for (let i=0; i<table.length-1; i++){
+      const [h1,k1] = table[i], [h2,k2] = table[i+1];
+      if (h >= h1 && h <= h2){
+        const frac = (h - h1) / (h2 - h1);
+        return k1 + frac * (k2 - k1);
+      }
+    }
+    return table[table.length-1][1];
+  }
+
+  // Simplified GCp bounds by zone, log-interpolated between 10 sqft and 500 sqft — approximate, for estimation only
+  const gcpBounds = {
+    4: { posLow: 1.00, posHigh: 0.70, negLow: -1.10, negHigh: -0.80 },
+    5: { posLow: 1.00, posHigh: 0.70, negLow: -1.40, negHigh: -0.80 }
+  };
+
+  function interpolateGCp(zone, area){
+    const b = gcpBounds[zone];
+    const a = Math.min(Math.max(area, 10), 500);
+    const frac = (Math.log(a) - Math.log(10)) / (Math.log(500) - Math.log(10));
+    const pos = b.posLow + frac * (b.posHigh - b.posLow);
+    const neg = b.negLow + frac * (b.negHigh - b.negLow);
+    return { pos, neg };
+  }
+
+  const gcpiTable = { enclosed: 0.18, partial: 0.55, open: 0.0 };
+
+  function fmt(n, d=2){ return isFinite(n) ? n.toFixed(d) : '—'; }
+
+  function calculate(){
+    const V = parseFloat(document.getElementById('V').value) || 0;
+    const exposure = document.getElementById('exposure').value;
+    const h = parseFloat(document.getElementById('height').value) || 0;
+    const kzt = parseFloat(document.getElementById('kzt').value) || 1.0;
+    const kd = parseFloat(document.getElementById('kd').value) || 0.85;
+    const basis = document.getElementById('basis').value;
+    const enclosure = document.getElementById('enclosure').value;
+    const zone = parseInt(document.getElementById('zone').value);
+    const area = parseFloat(document.getElementById('area').value) || 10;
+
+    const kz = interpolateKz(exposure, h);
+    const qz = 0.00256 * kz * kzt * kd * V * V;
+    const { pos: gcpPos, neg: gcpNeg } = interpolateGCp(zone, area);
+    const gcpi = gcpiTable[enclosure];
+
+    const pPosStrength = qz * (gcpPos + gcpi);
+    const pNegStrength = qz * (gcpNeg - gcpi);
+
+    const asdFactor = basis === 'asd' ? 0.6 : 1.0;
+    const pPos = pPosStrength * asdFactor;
+    const pNeg = pNegStrength * asdFactor;
+
+    const finalDP = Math.ceil(Math.max(Math.abs(pPos), Math.abs(pNeg)) / 5) * 5;
+
+    document.getElementById('out-kz').textContent = fmt(kz, 3);
+    document.getElementById('out-qz').textContent = fmt(qz, 1);
+    document.getElementById('out-pos').textContent = '+' + fmt(pPos, 1);
+    document.getElementById('out-neg').textContent = fmt(pNeg, 1);
+    document.getElementById('out-final').innerHTML = 'DP' + finalDP + ' <span>psf, rounded up to nearest 5 — ' + (basis === 'asd' ? 'ASD' : 'strength') + ' level</span>';
+
+    document.getElementById('trace-qz').textContent = fmt(qz,2) + ' psf';
+    document.getElementById('trace-gcp-pos').textContent = '+' + fmt(gcpPos,2);
+    document.getElementById('trace-gcp-neg').textContent = fmt(gcpNeg,2);
+    document.getElementById('trace-gcpi').textContent = '±' + fmt(gcpi,2);
+    document.getElementById('trace-p-pos').textContent = '+' + fmt(pPosStrength,2) + ' psf';
+    document.getElementById('trace-p-neg').textContent = fmt(pNegStrength,2) + ' psf';
+    document.getElementById('trace-asd').textContent = basis === 'asd' ? '×0.6 → ASD level' : '×1.0 → strength level (no conversion)';
+  }
+
+  document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
+  calculate();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>

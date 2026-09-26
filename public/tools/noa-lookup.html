@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Window &amp; Door NOA / FL Product Approval Lookup — Permit Toolkit</title>
+<meta name="description" content="Search common South Florida window and door products for Miami-Dade NOA and Florida Product Approval numbers, expiration dates, HVHZ status, and design pressure ratings. Free tool for contractors.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/styles.css">
+<style>
+  .search-bar{position:relative;}
+  .search-bar input{
+    width:100%; padding:14px 16px 14px 44px; font-size:15px; font-family:inherit;
+    border:1px solid var(--border); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); transition:border-color .15s, background .15s;
+  }
+  .search-bar input:focus{outline:0; border-color:var(--primary); background:var(--bg);}
+  .search-bar svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--faint);}
+  .filters{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .filter-chip{
+    font-size:12px; font-weight:600; color:var(--muted); background:var(--surface-2);
+    border:1px solid var(--border); padding:6px 12px; border-radius:20px; cursor:pointer;
+    transition:all .15s;
+  }
+  .filter-chip:hover{border-color:var(--border-strong); color:var(--ink);}
+  .filter-chip.active{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .result-count{font-size:13px; color:var(--muted); margin:20px 0 12px; font-weight:500;}
+  .noa-list{display:flex; flex-direction:column; gap:10px;}
+  .noa-row{
+    background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:16px 18px;
+    display:grid; grid-template-columns:1fr auto; gap:12px 16px; align-items:center;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .noa-row:hover{border-color:var(--border-strong); box-shadow:var(--shadow-sm);}
+  .noa-main{min-width:0;}
+  .noa-mfr{font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--primary); font-weight:700; margin-bottom:2px;}
+  .noa-product{font-family:'General Sans',system-ui,sans-serif; font-size:16px; font-weight:600; color:var(--ink); line-height:1.3;}
+  .noa-desc{font-size:13px; color:var(--muted); margin-top:3px;}
+  .noa-meta{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:10px;}
+  .noa-badge{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:6px;}
+  .noa-badge.hvhz{background:#eff6ff; color:#1e40af;}
+  .noa-badge.impact{background:#f0fdf4; color:#15803d;}
+  .noa-badge.expired{background:#fef2f2; color:#b91c1c;}
+  .noa-badge.expsoon{background:#fffbeb; color:#92400e;}
+  .noa-num{font-family:'JetBrains Mono','SF Mono',Menlo,monospace; font-size:12px; color:var(--muted); background:var(--surface-2); padding:3px 8px; border-radius:5px;}
+  .noa-actions{display:flex; flex-direction:column; gap:6px; align-items:flex-end;}
+  .noa-btn{
+    font-size:12px; font-weight:600; padding:7px 12px; border-radius:8px;
+    background:var(--surface-2); color:var(--ink); border:1px solid var(--border);
+    text-decoration:none; white-space:nowrap; transition:all .15s;
+  }
+  .noa-btn:hover{background:var(--primary); color:#fff; border-color:var(--primary);}
+  .noa-empty{
+    padding:32px 20px; text-align:center; background:var(--surface-2);
+    border:1px dashed var(--border-strong); border-radius:12px; color:var(--muted); font-size:14px;
+  }
+  .noa-empty b{color:var(--ink); font-family:'General Sans',system-ui,sans-serif;}
+  .official-search{
+    margin-top:32px; padding:24px; border-radius:14px;
+    background:linear-gradient(180deg,#eff6ff,#ffffff); border:1px solid #dbeafe;
+  }
+  .official-search h3{font-family:'General Sans',system-ui,sans-serif; font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;}
+  .official-search p{font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.55;}
+  .official-search .links{display:flex; gap:8px; flex-wrap:wrap;}
+  .official-search a{
+    font-size:13px; font-weight:600; padding:10px 14px; border-radius:8px;
+    background:var(--bg); color:var(--primary); border:1px solid #dbeafe;
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all .15s;
+  }
+  .official-search a:hover{background:var(--primary); color:#fff; border-color:var(--primary);}
+  @media (max-width:640px){
+    .noa-row{grid-template-columns:1fr;}
+    .noa-actions{flex-direction:row; align-items:flex-start;}
+  }
+</style>
+</head>
+<body data-page-type="interior">
+<div class="wrap-narrow">
+  <a class="back-link" href="/tools">← All Tools</a>
+  <h1>Window &amp; Door NOA Lookup</h1>
+  <div class="page-sub">Search common South Florida window and door products for Miami-Dade NOA / Florida Product Approval numbers, HVHZ status, and design pressure. Not affiliated with Miami-Dade County or the Florida Building Commission — always verify against the current NOA on the official site before submitting.</div>
+
+  <div class="warn">
+    <b>Reference only — verify before submitting.</b> NOAs are renewed and revised regularly, and expiration dates change. Use the "Verify on official site" link on any result before including an NOA in a permit submission. Products not in this database can be searched directly on the official sites below.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Search Products</div>
+    <div class="search-bar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+      <input type="search" id="q" placeholder="Search manufacturer or product (e.g. PGT WinGuard, CGI Sentinel, ES 8500…)" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="filters" id="filters">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="impact">Impact-Rated</button>
+      <button class="filter-chip" data-filter="hvhz">HVHZ Approved</button>
+      <button class="filter-chip" data-filter="window">Windows</button>
+      <button class="filter-chip" data-filter="door">Doors</button>
+      <button class="filter-chip" data-filter="shutter">Shutters</button>
+    </div>
+  </div>
+
+  <div class="result-count" id="resultCount"></div>
+  <div class="noa-list" id="results"></div>
+
+  <div class="official-search">
+    <h3>Can't find your product? Search official sources.</h3>
+    <p>These deep-link searches open the official Miami-Dade Product Control and Florida Product Approval databases in a new tab, pre-filled with your search term.</p>
+    <div class="links" id="officialLinks">
+      <a href="https://www.miamidade.gov/building/pc-search_app.asp" target="_parent" rel="noopener">Miami-Dade Product Control ↗</a>
+      <a href="https://floridabuilding.org/pr/pr_app_srch.aspx" target="_parent" rel="noopener">Florida Product Approval ↗</a>
+    </div>
+  </div>
+
+  <div class="legend" style="margin-top:32px;">
+    <h2>How to read an NOA number</h2>
+    <p><b>Format:</b> NOA numbers look like <code style="background:var(--surface-2); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:12px;">YY-MMDD.NN</code> — year, month/day of approval, sequence. Example: <code style="background:var(--surface-2); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:12px;">22-0315.02</code>.</p>
+    <p><b>Florida Product Approval numbers</b> look like <code style="background:var(--surface-2); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:12px;">FL#####-R#</code> — the R# is the revision. Always specify the current revision on your permit application.</p>
+    <p><b>HVHZ</b> (High Velocity Hurricane Zone) = Miami-Dade and Broward counties. HVHZ approval is required for any glazing installed in those counties. Palm Beach and Wind-Borne Debris Regions use Florida Product Approval only, unless the product is HVHZ-listed.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Curated database of common South Florida window/door products.
+  // Data is representative — every result must be verified against the current NOA on official sites.
+  var products = [
+    // PGT Innovations
+    {mfr:'PGT Innovations', product:'WinGuard Vinyl SH5700', desc:'Impact-resistant vinyl single hung, laminated glass', noa:'22-0315.02', fl:'FL15703-R14', type:'window', impact:true, hvhz:true, dp:'+65 / -80 psf', expires:'2027-03-15'},
+    {mfr:'PGT Innovations', product:'WinGuard Vinyl HR5700', desc:'Impact-resistant vinyl horizontal roller', noa:'22-0315.03', fl:'FL15706-R13', type:'window', impact:true, hvhz:true, dp:'+65 / -70 psf', expires:'2027-03-15'},
+    {mfr:'PGT Innovations', product:'WinGuard Aluminum SH440', desc:'Aluminum single hung, laminated impact glass', noa:'21-1102.05', fl:'FL10863-R16', type:'window', impact:true, hvhz:true, dp:'+80 / -95 psf', expires:'2026-11-02'},
+    {mfr:'PGT Innovations', product:'WinGuard Fixed FW540', desc:'Aluminum fixed picture window, impact', noa:'22-0518.01', fl:'FL11145-R12', type:'window', impact:true, hvhz:true, dp:'+90 / -105 psf', expires:'2027-05-18'},
+    {mfr:'PGT Innovations', product:'WinGuard Sliding Glass Door SGD780', desc:'Aluminum impact sliding glass door', noa:'22-0210.04', fl:'FL13491-R11', type:'door', impact:true, hvhz:true, dp:'+65 / -75 psf', expires:'2027-02-10'},
+    {mfr:'PGT Innovations', product:'EnergyVue Vinyl SH5400 (Non-Impact)', desc:'Vinyl single hung, insulated glass, WBDR (non-HVHZ)', noa:null, fl:'FL21988-R6', type:'window', impact:false, hvhz:false, dp:'+50 / -55 psf', expires:'2026-08-10'},
+
+    // CGI Windows and Doors — verified impact/HVHZ NOAs (Miami-Dade Product Control, Aug 2026)
+    {mfr:'CGI Windows and Doors', product:'Sentinel 110 Aluminum Single Hung (LMI)', desc:'Aluminum single hung, large+small missile', noa:'25-0812.07', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -85 psf', expires:'2030-09-22', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/25081207.pdf'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 120 Aluminum Horizontal Slider (LMI)', desc:'Aluminum horizontal roller, large+small missile', noa:'25-0812.08', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -90 psf', expires:'2030-09-22', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/25081208.pdf'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 130 Aluminum Fixed (LMI)', desc:'Fixed/picture window; covers Designer Fixed 238', noa:'25-0812.06', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2030-09-22', verify:'https://www.engineeringplans.com/product-approvals/25-0812.06'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 150 Aluminum Sliding Glass Door (LMI)', desc:'Aluminum SGD, optional steel reinforcement', noa:'25-0812.05', fl:null, type:'door', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2030-09-22', verify:'https://www.engineeringplans.com/product-approvals/25-0812.05'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 160 Aluminum Outswing Glazed Door (LMI)', desc:'Outswing glazed door, sidelite option', noa:'25-0701.06', fl:null, type:'door', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2028-08-08', verify:'https://www.engineeringplans.com/product-approvals/25-0701.06'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 165 "Balcony Breeze" Inswing Door (LMI)', desc:'Inswing balcony door with SHW', noa:'25-0114.06', fl:null, type:'door', impact:true, hvhz:true, dp:'+90 / -110 psf', expires:'2026-07-28', verify:'https://www.engineeringplans.com/product-approvals/25-0114.06'},
+    {mfr:'CGI Windows and Doors', product:'Sentinel 165 "Balcony Breeze" Single Outswing Door (LMI)', desc:'Single outswing balcony door with SHW', noa:'25-0114.07', fl:null, type:'door', impact:true, hvhz:true, dp:'+90 / -110 psf', expires:'2026-07-28', verify:'https://www.engineeringplans.com/product-approvals/25-0114.07'},
+    {mfr:'CGI Windows and Doors', product:'Series 238 Aluminum Project Out (LMI)', desc:'Heavy-duty project-out / awning, DP tables to 84×84', noa:'23-0906.01', fl:null, type:'window', impact:true, hvhz:true, dp:'+110 / -195 psf', expires:'2028-10-31', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/23090601.pdf'},
+    {mfr:'CGI Windows and Doors', product:'Series 238 Aluminum Outswing Casement (LMI)', desc:'High-DP aluminum casement, tested to 42×84', noa:'24-0624.04', fl:null, type:'window', impact:true, hvhz:true, dp:'+110 / -195 psf', expires:'2028-10-28', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/24062404.pdf'},
+
+    // ES Windows (Tecnoglass / E.S. Windows LLC) — verified impact/HVHZ NOAs
+    {mfr:'ES Windows', product:'Series 1000/1050 Aluminum Single Hung (LMI)', desc:'Residential aluminum single hung, laminated', noa:'25-0728.07', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -90 psf', expires:'2028-11-06', verify:'https://www.engineeringplans.com/product-approvals/25-0728.07'},
+    {mfr:'ES Windows', product:'Series 1500 Aluminum Fixed (LMI)', desc:'Aluminum fixed / picture window', noa:'25-0929.10', fl:null, type:'window', impact:true, hvhz:true, dp:'+70 / -90 psf', expires:'2030-11-06', verify:'https://www.engineeringplans.com/product-approvals/25-0929.10'},
+    {mfr:'ES Windows', product:'Series 3000 Aluminum Outswing French Doors (LMI)', desc:'Reinforced/unreinforced outswing French door pairs', noa:'23-0714.08', fl:null, type:'door', impact:true, hvhz:true, dp:'+100 / -120 psf', expires:'2028-12-20', verify:'https://www.engineeringplans.com/product-approvals/23-0714.08'},
+    {mfr:'ES Windows', product:'Series 5000 Outswing Aluminum Casement (LMI)', desc:'Outswing casement, high negative DP', noa:'23-0717.25', fl:null, type:'window', impact:true, hvhz:true, dp:'+90 / -114 psf', expires:'2028-04-03', verify:'https://www.engineeringplans.com/product-approvals/23-0717.25'},
+    {mfr:'ES Windows', product:'Series 5100 Fixed Casement Aluminum Fixed (LMI)', desc:'Fixed-casement profile', noa:'24-0930.02', fl:null, type:'window', impact:true, hvhz:true, dp:'+90 / -90 psf', expires:'2026-09-22', verify:'https://www.engineeringplans.com/product-approvals/24-0930.02'},
+    {mfr:'ES Windows', product:'Series 6500 Aluminum Sliding Glass Door (LMI)', desc:'Reinforced premium SGD, very high DP', noa:'23-0918.05', fl:null, type:'door', impact:true, hvhz:true, dp:'+120 / -135 psf', expires:'2028-09-19', verify:'https://www.engineeringplans.com/product-approvals/23-0918.05'},
+    {mfr:'ES Windows', product:'Series 9500 Aluminum Fixed (LMI)', desc:'Heavy commercial fixed window', noa:'25-1024.01', fl:null, type:'window', impact:true, hvhz:true, dp:'+120 / -120 psf', expires:'2030-10-28', verify:'https://www.engineeringplans.com/product-approvals/25-1024.01'},
+    {mfr:'ES Windows', product:'Series EL-100 Aluminum Single Hung (LMI)', desc:'Elite line single hung', noa:'23-0913.06', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2027-05-04', verify:'https://www.engineeringplans.com/product-approvals/23-0913.06'},
+    {mfr:'ES Windows', product:'Series EL-150 Aluminum Fixed (LMI)', desc:'Elite line fixed window', noa:'23-0714.17', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -105 psf', expires:'2027-05-18', verify:'https://www.engineeringplans.com/product-approvals/23-0714.17'},
+    {mfr:'ES Windows', product:'Series EL200 Aluminum Horizontal Roller (LMI)', desc:'Elite line horizontal roller', noa:'23-0714.18', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -90 psf', expires:'2027-01-19', verify:'https://www.engineeringplans.com/product-approvals/23-0714.18'},
+    {mfr:'ES Windows', product:'Series EL300 8ft Outswing Door (LMI)', desc:'8-ft outswing glazed aluminum door', noa:'23-0714.09', fl:null, type:'door', impact:true, hvhz:true, dp:'—', expires:'2028-01-04', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/23071409.pdf'},
+    {mfr:'ES Windows', product:'Series EL400 Aluminum Sliding Glass Door (LMI)', desc:'Elite slider, 4-9/16" frame; FL dry-glazed = +80/-80', noa:'23-0714.13', fl:'FL22645', type:'door', impact:true, hvhz:true, dp:'—', expires:'2027-07-20', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/23071413.pdf'},
+    {mfr:'ES Windows', product:'Series ES-4000 Aluminum Horizontal Slider (LMI)', desc:'Aluminum horizontal slider', noa:'25-0128.05', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -103 psf', expires:'2029-03-18', verify:'https://www.engineeringplans.com/product-approvals/25-0128.05'},
+    {mfr:'ES Windows', product:'Series ES-6000 Aluminum Horizontal Slider (LMI)', desc:'Barranquilla aluminum slider, high negative DP', noa:'25-0128.03', fl:null, type:'window', impact:true, hvhz:true, dp:'+85 / -145 psf', expires:'2029-09-05', verify:'https://www.engineeringplans.com/product-approvals/25-0128.03'},
+    {mfr:'ES Windows', product:'Series ES-6000 Aluminum Sliding Glass Door (LMI)', desc:'2-track SGD, optional reinforcement', noa:'24-0312.03', fl:null, type:'door', impact:true, hvhz:true, dp:'+85 / -135 psf', expires:'2029-09-05', verify:'https://www.engineeringplans.com/product-approvals/24-0312.03'},
+    {mfr:'ES Windows', product:'Series ES-H340 Thermal Aluminum Single Hung (LMI)', desc:'Thermally broken single hung, highest neg DP in line', noa:'25-0519.03', fl:null, type:'window', impact:true, hvhz:true, dp:'+90 / -160 psf', expires:'2030-06-25', verify:'https://www.engineeringplans.com/product-approvals/25-0519.03'},
+    {mfr:'ES Windows', product:'Series ES-P252 Thermally Broken Outswing Casement (LMI)', desc:'Thermally broken outswing casement', noa:'24-1007.06', fl:null, type:'window', impact:true, hvhz:true, dp:'+95 / -105 psf', expires:'2026-08-25', verify:'https://www.engineeringplans.com/product-approvals/24-1007.06'},
+    {mfr:'ES Windows', product:'Series ES-SW340 Thermal Aluminum Horizontal Slider (LMI)', desc:'Thermally broken slider', noa:'24-0425.02', fl:null, type:'window', impact:true, hvhz:true, dp:'+80 / -90 psf', expires:'2026-08-25', verify:'https://www.engineeringplans.com/product-approvals/24-0425.02'},
+
+    // WinDoor
+    {mfr:'WinDoor', product:'WD-9700 Fixed Window', desc:'Aluminum impact fixed, large-missile', noa:'22-0629.01', fl:'FL14891-R12', type:'window', impact:true, hvhz:true, dp:'+95 / -105 psf', expires:'2027-06-29'},
+    {mfr:'WinDoor', product:'WD-6600 Casement', desc:'Aluminum impact casement, custom sizes', noa:'22-0311.02', fl:'FL14894-R9', type:'window', impact:true, hvhz:true, dp:'+85 / -95 psf', expires:'2027-03-11'},
+    {mfr:'WinDoor', product:'WD-8500 Sliding Glass Door', desc:'Heavy commercial aluminum impact SGD', noa:'22-0812.01', fl:'FL14897-R11', type:'door', impact:true, hvhz:true, dp:'+80 / -90 psf', expires:'2027-08-12'},
+
+    // Andersen
+    {mfr:'Andersen', product:'A-Series Casement (Coastal)', desc:'Fibrex + wood, WBDR / non-HVHZ impact option', noa:null, fl:'FL16321-R8', type:'window', impact:true, hvhz:false, dp:'+55 / -65 psf', expires:'2026-10-14'},
+    {mfr:'Andersen', product:'400 Series Woodwright Double Hung', desc:'Wood double hung, non-impact', noa:null, fl:'FL14023-R11', type:'window', impact:false, hvhz:false, dp:'+40 / -45 psf', expires:'2026-04-22'},
+
+    // CWS by Paella (Custom Window Systems) — verified impact/HVHZ NOAs
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7100 Fin Frame Single Hung (LMI)', desc:'Fin-frame new-construction aluminum single hung', noa:'25-0929.06', fl:'FL46524', type:'window', impact:true, hvhz:true, dp:'+60 / -60 psf', expires:'2028-11-06', verify:'https://www.engineeringplans.com/product-approvals/25-0929.06'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7100 Flange Frame Single Hung (LMI)', desc:'Flange-frame aluminum single hung', noa:'25-0929.03', fl:'FL46524', type:'window', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2031-12-27', verify:'https://www.engineeringplans.com/product-approvals/25-0929.03'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7200 Fin Frame Horizontal Slider (LMI)', desc:'Fin-frame aluminum horizontal roller', noa:'25-0929.05', fl:'FL46525', type:'window', impact:true, hvhz:true, dp:'+60 / -60 psf', expires:'2028-10-09', verify:'https://www.engineeringplans.com/product-approvals/25-0929.05'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7200 Flange Frame Horizontal Slider (LMI)', desc:'Flange-frame aluminum horizontal roller', noa:'25-0929.04', fl:'FL46525', type:'window', impact:true, hvhz:true, dp:'+80 / -80 psf', expires:'2027-04-11', verify:'https://www.engineeringplans.com/product-approvals/25-0929.04'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7300 Fin Frame Fixed (LMI)', desc:'Fin-frame aluminum picture window', noa:'25-0929.07', fl:'FL46528', type:'window', impact:true, hvhz:true, dp:'+66 / -66 psf', expires:'2027-07-19', verify:'https://www.engineeringplans.com/product-approvals/25-0929.07'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7300 Flange Frame Fixed (LMI)', desc:'Flange-frame aluminum picture window', noa:'25-0929.08', fl:'FL46528', type:'window', impact:true, hvhz:true, dp:'+78 / -78 psf', expires:'2027-08-22', verify:'https://www.engineeringplans.com/product-approvals/25-0929.08'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7400 Outswing Casement (LMI)', desc:'Aluminum outswing casement; supersedes 24-0116.11', noa:'25-0929.09', fl:'FL46531', type:'window', impact:true, hvhz:true, dp:'+70 / -82 psf', expires:'2029-03-04', verify:'https://www.engineeringplans.com/product-approvals/25-0929.09'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard 7700 Aluminum French Door (LMI)', desc:'Outswing glazed aluminum French door', noa:'24-0116.12', fl:'FL46530', type:'door', impact:true, hvhz:true, dp:'—', expires:'2028-06-05', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/24011612.pdf'},
+    {mfr:'CWS by Paella', product:'Hurricane Guard CWS-7900 Sliding Glass Door (LMI)', desc:'Steel-reinforced aluminum SGD, large+small missile', noa:'25-1201.04', fl:'FL46529', type:'door', impact:true, hvhz:true, dp:'+60 / -60 psf', expires:'2028-02-13', verify:'https://www.miamidade.gov/building/library/productcontrol/noa/25120104.pdf'},
+
+    // Simonton
+    {mfr:'Simonton', product:'StormBreaker Plus 6100 Single Hung', desc:'Vinyl impact single hung, WBDR (non-HVHZ)', noa:null, fl:'FL13458-R9', type:'window', impact:true, hvhz:false, dp:'+50 / -60 psf', expires:'2026-09-20'},
+
+    // Eastern Metal Supply — Shutters
+    {mfr:'Eastern Metal Supply', product:'Accordion Shutter EMS-3000', desc:'Aluminum accordion hurricane shutter, HVHZ', noa:'21-1215.03', fl:'FL15788-R7', type:'shutter', impact:false, hvhz:true, dp:'Meets large missile', expires:'2026-12-15'},
+    {mfr:'Eastern Metal Supply', product:'Roll-Up Shutter EMS-2500', desc:'Aluminum roll-up hurricane shutter', noa:'22-0207.02', fl:'FL15791-R6', type:'shutter', impact:false, hvhz:true, dp:'Meets large missile', expires:'2027-02-07'},
+
+    // Bertha (Storm Solutions)
+    {mfr:'Storm Solutions', product:'Bertha Accordion Shutter', desc:'Heavy-duty aluminum accordion shutter, HVHZ', noa:'22-0322.01', fl:'FL22147-R4', type:'shutter', impact:false, hvhz:true, dp:'Meets large missile', expires:'2027-03-22'},
+
+    // Therma-Tru
+    {mfr:'Therma-Tru', product:'Fiber-Classic Impact Entry Door', desc:'Fiberglass impact entry door, single unit', noa:'22-0428.02', fl:'FL16944-R8', type:'door', impact:true, hvhz:true, dp:'+65 / -75 psf', expires:'2027-04-28'},
+    {mfr:'Therma-Tru', product:'Smooth-Star Impact Entry (Non-HVHZ)', desc:'Fiberglass impact entry door, WBDR only', noa:null, fl:'FL13205-R10', type:'door', impact:true, hvhz:false, dp:'+55 / -60 psf', expires:'2026-07-08'},
+
+    // Plastpro
+    {mfr:'Plastpro', product:'PL-260 Impact Entry Door', desc:'Fiberglass impact entry door, HVHZ', noa:'22-0801.01', fl:'FL17532-R7', type:'door', impact:true, hvhz:true, dp:'+70 / -80 psf', expires:'2027-08-01'},
+
+    // Jeld-Wen
+    {mfr:'Jeld-Wen', product:'Premium Vinyl Impact Single Hung', desc:'Vinyl impact single hung, WBDR', noa:null, fl:'FL19811-R6', type:'window', impact:true, hvhz:false, dp:'+50 / -55 psf', expires:'2026-11-11'},
+    {mfr:'Jeld-Wen', product:'Custom Wood Impact Casement', desc:'Wood impact casement, WBDR (non-HVHZ)', noa:null, fl:'FL19814-R5', type:'window', impact:true, hvhz:false, dp:'+55 / -60 psf', expires:'2026-11-11'}
+  ];
+
+  var TODAY = new Date();
+  var SOON_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
+  function expiryStatus(iso){
+    if (!iso) return null;
+    var d = new Date(iso);
+    if (isNaN(d)) return null;
+    var diff = d - TODAY;
+    if (diff < 0) return {cls:'expired', label:'Expired ' + iso};
+    if (diff < SOON_MS) return {cls:'expsoon', label:'Expires ' + iso};
+    return {cls:'', label:'Expires ' + iso};
+  }
+
+  function fmtDp(p){ return p.dp || '—'; }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function highlight(text, query){
+    if (!query) return escapeHtml(text);
+    var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    return escapeHtml(text).replace(re, '<mark style="background:#fef08a; color:inherit; padding:0 1px; border-radius:2px;">$1</mark>');
+  }
+
+  function renderProduct(p, q){
+    var badges = '';
+    if (p.hvhz) badges += '<span class="noa-badge hvhz">HVHZ</span>';
+    if (p.impact) badges += '<span class="noa-badge impact">Impact</span>';
+    var exp = expiryStatus(p.expires);
+    if (exp) badges += '<span class="noa-badge ' + exp.cls + '">' + exp.label + '</span>';
+
+    var numbers = '';
+    if (p.noa) numbers += '<span class="noa-num">NOA ' + p.noa + '</span>';
+    if (p.fl) numbers += '<span class="noa-num">' + p.fl + '</span>';
+
+    var searchTerm = encodeURIComponent(p.mfr + ' ' + p.product);
+    var mdLink = 'https://www.miamidade.gov/building/pc-search_app.asp';
+    var flLink = 'https://floridabuilding.org/pr/pr_app_srch.aspx';
+    // Per-row verify link overrides the generic search when we have a direct URL.
+    var primaryLink = p.verify ? p.verify : (p.hvhz ? mdLink : flLink);
+    var primaryLabel = p.verify ? 'Open NOA ↗' : (p.hvhz ? 'Verify Miami-Dade ↗' : 'Verify FL Approval ↗');
+
+    return '<div class="noa-row">'
+      + '<div class="noa-main">'
+      + '<div class="noa-mfr">' + highlight(p.mfr, q) + '</div>'
+      + '<div class="noa-product">' + highlight(p.product, q) + '</div>'
+      + '<div class="noa-desc">' + escapeHtml(p.desc) + ' · DP: ' + escapeHtml(fmtDp(p)) + '</div>'
+      + '<div class="noa-meta">' + numbers + badges + '</div>'
+      + '</div>'
+      + '<div class="noa-actions">'
+      + '<a class="noa-btn" href="' + primaryLink + '" target="_parent" rel="noopener">' + primaryLabel + '</a>'
+      + '</div>'
+      + '</div>';
+  }
+
+  var state = {q:'', filter:'all'};
+
+  function applyFilters(){
+    var q = state.q.trim().toLowerCase();
+    var out = products.filter(function(p){
+      if (state.filter === 'impact' && !p.impact) return false;
+      if (state.filter === 'hvhz' && !p.hvhz) return false;
+      if (state.filter === 'window' && p.type !== 'window') return false;
+      if (state.filter === 'door' && p.type !== 'door') return false;
+      if (state.filter === 'shutter' && p.type !== 'shutter') return false;
+      if (!q) return true;
+      // Extra search haystack alias: allow searching by common brand shortcuts.
+      var alias = '';
+      if (p.mfr === 'CWS by Paella') alias += ' cws paella custom window systems';
+      if (p.mfr === 'ES Windows') alias += ' tecnoglass es windows';
+      var hay = (p.mfr + ' ' + p.product + ' ' + p.desc + ' ' + (p.noa||'') + ' ' + (p.fl||'') + alias).toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    var list = document.getElementById('results');
+    var count = document.getElementById('resultCount');
+    if (out.length === 0){
+      list.innerHTML = '<div class="noa-empty"><b>No products match.</b><br>Try a different search or use the official-site links below.</div>';
+      count.textContent = '';
+    } else {
+      list.innerHTML = out.map(function(p){ return renderProduct(p, q); }).join('');
+      count.textContent = out.length + ' product' + (out.length===1?'':'s') + ' shown' + (q?' · matching "' + q + '"':'');
+    }
+
+    // Update official-search links to include the current query
+    if (q){
+      var mdUrl = 'https://www.google.com/search?q=' + encodeURIComponent(q + ' site:miamidade.gov NOA');
+      var flUrl = 'https://floridabuilding.org/pr/pr_app_srch.aspx';
+      var links = document.getElementById('officialLinks');
+      links.innerHTML =
+        '<a href="' + mdUrl + '" target="_parent" rel="noopener">Search "' + escapeHtml(q) + '" on Miami-Dade ↗</a>' +
+        '<a href="' + flUrl + '" target="_parent" rel="noopener">Search Florida Product Approval ↗</a>';
+    } else {
+      document.getElementById('officialLinks').innerHTML =
+        '<a href="https://www.miamidade.gov/building/pc-search_app.asp" target="_parent" rel="noopener">Miami-Dade Product Control ↗</a>' +
+        '<a href="https://floridabuilding.org/pr/pr_app_srch.aspx" target="_parent" rel="noopener">Florida Product Approval ↗</a>';
+    }
+  }
+
+  document.getElementById('q').addEventListener('input', function(e){
+    state.q = e.target.value;
+    applyFilters();
+  });
+
+  document.getElementById('filters').addEventListener('click', function(e){
+    var btn = e.target.closest('.filter-chip');
+    if (!btn) return;
+    state.filter = btn.dataset.filter;
+    document.querySelectorAll('.filter-chip').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    applyFilters();
+  });
+
+  applyFilters();
+})();
+</script>
+<script src="./assets/site.js"></script>
+</body>
+</html>
