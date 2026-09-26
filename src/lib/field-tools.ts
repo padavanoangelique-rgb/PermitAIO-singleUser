@@ -3,7 +3,7 @@ export type FieldTool = {
   file: string;
   title: string;
   blurb: string;
-  group: "Windows & Doors" | "Enclosures" | "Fences" | "Any Trade";
+  group: "Windows & Doors" | "Enclosures" | "Any Trade";
 };
 
 export const FIELD_TOOLS: FieldTool[] = [
@@ -64,13 +64,6 @@ export const FIELD_TOOLS: FieldTool[] = [
     group: "Enclosures",
   },
   {
-    slug: "fence-permit-builder",
-    file: "fence-permit-builder.html",
-    title: "Fence Permit Package",
-    blurb: "Trace the fence line on the survey, get the permit path and checklist, and generate the package.",
-    group: "Fences",
-  },
-  {
     slug: "property-appraisers",
     file: "property-appraisers.html",
     title: "Property Appraisers",
@@ -79,7 +72,7 @@ export const FIELD_TOOLS: FieldTool[] = [
   },
 ];
 
-export const FIELD_TOOL_GROUPS = ["Windows & Doors", "Enclosures", "Fences", "Any Trade"] as const;
+export const FIELD_TOOL_GROUPS = ["Windows & Doors", "Enclosures", "Any Trade"] as const;
 
 export function fieldToolBySlug(slug: string): FieldTool | undefined {
   return FIELD_TOOLS.find((t) => t.slug === slug);

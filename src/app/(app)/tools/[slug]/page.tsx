@@ -3,7 +3,6 @@ import { requireActiveOrg } from "@/lib/data/orgs";
 import { fieldToolBySlug } from "@/lib/field-tools";
 import { ToolFrame } from "../tool-frame";
 import { PatioChecklist } from "../patio-checklist";
-import { FenceBuilder } from "../fence-builder";
 
 export default async function ToolPage({
   params,
@@ -17,10 +16,6 @@ export default async function ToolPage({
 
   if (slug === "patio-enclosure-permit-guide") {
     return <PatioChecklist orgId={activeOrg.id} />;
-  }
-
-  if (slug === "fence-permit-builder") {
-    return <FenceBuilder orgId={activeOrg.id} />;
   }
 
   return <ToolFrame title={tool.title} src={`/tools/${tool.file}?embed=1`} />;
